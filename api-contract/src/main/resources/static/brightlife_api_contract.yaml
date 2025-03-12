@@ -1,0 +1,1408 @@
+openapi: "3.0.0"
+
+info:
+  version: 1.0.0
+  title: Bright-life Enhancement API
+  description:
+    "API documentation for Bright-life Enhancement project"
+  license:
+    name: "fronteersdev Inc"
+    url: "https://fronteersdev.com/license"
+
+servers:
+  - url: http://localhost:7081
+    description: Local test server
+  - url: https://bright-life-enhancement.fronteers-dev.com/
+    description: Dev test server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      description: This API uses JWT for authentication
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /api/v1/patients/search:
+    post:
+      summary:
+        Searches and returns all Patients matching all of the search criteria fields passed.
+        The number search results shall be constrained by the limit params in Query.
+        Search criteria, applies an **AND** based search on all fields passed in the request.
+        If the search criteria is empty/null, it returns list of patient
+      tags:
+        - Patients
+      operationId: listPatients
+      parameters:
+        - description: The page number (starting from 1)
+          $ref: "./schemas/common_models.yaml#/components/parameters/PageParam"
+        - description: How many items to return at one time (max 100)
+          $ref: "./schemas/common_models.yaml#/components/parameters/limitParam"
+      requestBody:
+        description:
+          "Search criteria, applies an **AND** based search on all fields\
+                \ passed in the request."
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/PatientSearch"
+      responses:
+        "200":
+          description: Patients Records Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/PaginatedPatients"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/{patientId}:
+    get:
+      summary: Fetches A Patient's Details
+      tags:
+        - Patients
+      operationId: getPatient
+      parameters:
+        - $ref: "./schemas/patient_id.yaml"
+      responses:
+        "200":
+          description: Patient Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/Patient"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/register:
+    post:
+      summary: Registers A New Patient
+      tags:
+        - Patients
+      operationId: register
+      requestBody:
+        description: This is used to register a new patient. A successful call returns a success response with a patient Id
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/PatientRegistrationForm"
+      responses:
+        "201":
+          description: Patient Registered Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/register/update/{recordId}:
+    put:
+      summary: Updates A Patients Registration Form
+      tags:
+        - Patients
+      operationId: updateRegistrationForm
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      requestBody:
+        description: This is used to update a patients registration form.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/PatientRegistrationForm"
+      responses:
+        "201":
+          description: Patient Registration Form Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/register/{recordId}:
+    get:
+      summary: Fetches A Patients Registration Details
+      tags:
+        - Patients
+      operationId: getRegistration
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient Registration Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/PatientRegistrationForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/adhd:
+    post:
+      summary: Submits A New ADHD Form For A Patient
+      tags:
+        - Patients
+      operationId: submitAdhd
+      requestBody:
+        description: This is used to submit a new ADHD form an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/ADHDForm"
+      responses:
+        "201":
+          description: Patient ADHD Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/adhd/{recordId}:
+    get:
+      summary: Fetches A Patients ADHD Form Details
+      tags:
+        - Patients
+      operationId: getAdhd
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient ADHD Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/ADHDForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/anxiety-disorder:
+    post:
+      summary: Submits A New Anxiety Disorder Form For A Patient
+      tags:
+        - Patients
+      operationId: submitAnxietyDisorder
+      requestBody:
+        description: This is used to submit a new Anxiety Disorder form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/AnxietyDisorderForm"
+      responses:
+        "201":
+          description: Patient Anxiety Disorder Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/anxiety-disorder/{recordId}:
+    get:
+      summary: Fetches A Patients Anxiety Disorder Form Details
+      tags:
+        - Patients
+      operationId: getAnxietyDisorder
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient Anxiety Disorder Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/AnxietyDisorderForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/controlled-substance:
+    post:
+      summary: Submits A New Controlled Substance Form For A Patient
+      tags:
+        - Patients
+      operationId: submitControlledSubstance
+      requestBody:
+        description: This is used to submit a new Controlled Substance form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/ControlledSubstanceForm"
+      responses:
+        "201":
+          description: Patient Controlled Substance Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/controlled-substance/{recordId}:
+    get:
+      summary: Fetches A Patients Controlled Substance Form Details
+      tags:
+        - Patients
+      operationId: getControlledSubstance
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient Controlled Substance Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/ControlledSubstanceForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/depression-assessment:
+    post:
+      summary: Submits A New DepressionAssessment Form For A Patient
+      tags:
+        - Patients
+      operationId: submitDepressionAssessment
+      requestBody:
+        description: This is used to submit a new Depression Assessment Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/DepressionAssessmentForm"
+      responses:
+        "201":
+          description: Patient Depression Assessment Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/depression-assessment/{recordId}:
+    get:
+      summary: Fetches A Patient's Depression Assessment Form Details
+      tags:
+        - Patients
+      operationId: getDepressionAssessment
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient Controlled Substance Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/DepressionAssessmentForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/initial-evaluation:
+    post:
+      summary: Submits A New Initial Evaluation Form For A Patient
+      tags:
+        - Patients
+      operationId: submitInitialEvaluation
+      requestBody:
+        description: This is used to submit a new Initial Evaluation Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/InitialEvaluationForm"
+      responses:
+        "201":
+          description: Patient Initial Evaluation Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/initial-evaluation/{recordId}:
+    get:
+      summary: Fetches A Patient's Initial Evaluation Form Details
+      tags:
+        - Patients
+      operationId: getInitialEvaluation
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient Initial Evaluation Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/InitialEvaluationForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/intake:
+    post:
+      summary: Submits A New Intake Form For A Patient
+      tags:
+        - Patients
+      operationId: submitIntake
+      requestBody:
+        description: This is used to submit a new Intake Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/IntakeForm"
+      responses:
+        "201":
+          description: Patient Intake Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/intake/{recordId}:
+    get:
+      summary: Fetches A Patient's Intake Form Details
+      tags:
+        - Patients
+      operationId: getIntake
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient Intake Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/IntakeForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/medication-consent:
+    post:
+      summary: Submits A New Medication Consent Form For A Patient
+      tags:
+        - Patients
+      operationId: submitMedicationConsent
+      requestBody:
+        description: This is used to submit a new Medication Consent Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/MedicationConsentForm"
+      responses:
+        "201":
+          description: Patient Medication Consent Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/medication-consent/{recordId}:
+    get:
+      summary: Fetches A Patient's Medication Consent Form Details
+      tags:
+        - Patients
+      operationId: getMedicationConsent
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient Medication Consent Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/MedicationConsentForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/mood-disorder-assessment:
+    post:
+      summary: Submits A New Mood Disorder Assessment Form For A Patient
+      tags:
+        - Patients
+      operationId: submitMoodDisorderAssessment
+      requestBody:
+        description: This is used to submit a new MoodDisorderAssessment Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/MoodDisorderAssessmentForm"
+      responses:
+        "201":
+          description: Patient Mood Disorder Assessment Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/mood-disorder-assessment/{recordId}:
+    get:
+      summary: Fetches A Patient's Mood Disorder Assessment Form Details
+      tags:
+        - Patients
+      operationId: getMoodDisorderAssessment
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient Mood Disorder Assessment Form Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/MoodDisorderAssessmentForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/privacy-practices:
+    post:
+      summary: Submits A New Notice Of Privacy Practices Form For A Patient
+      tags:
+        - Patients
+      operationId: submitNoticeOfPrivacyPractices
+      requestBody:
+        description: This is used to submit a new NoticeOfPrivacyPractices Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/NoticeOfPrivacyPracticesForm"
+      responses:
+        "201":
+          description: Patient NoticeOfPrivacyPractices Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/privacy-practices/{recordId}:
+    get:
+      summary: Fetches A Patient's Notice Of Privacy Practices Assessment Form Details
+      tags:
+        - Patients
+      operationId: getNoticeOfPrivacyPractices
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient NoticeOfPrivacyPractices Form Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/NoticeOfPrivacyPracticesForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/info-and-fin-policy:
+    post:
+      summary: Submits A Patient Information Consent And Financial Policy Form For A Patient
+      tags:
+        - Patients
+      operationId: submitPatientInformationConsentAndFinancialPolicy
+      requestBody:
+        description: This is used to submit a new PatientInformationConsentAndFinancialPolicy Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/PatientInformationConsentAndFinancialPolicyForm"
+      responses:
+        "201":
+          description: Patient PatientInformationConsentAndFinancialPolicy Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/info-and-fin-policy/{recordId}:
+    get:
+      summary: Fetches A Patient's Information Consent And Financial Policy Form Details
+      tags:
+        - Patients
+      operationId: getPatientInformationConsentAndFinancialPolicy
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient PatientInformationConsentAndFinancialPolicy Form Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/PatientInformationConsentAndFinancialPolicyForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/release-receive:
+    post:
+      summary: Submits A Release Receive Form For A Patient
+      tags:
+        - Patients
+      operationId: submitReleaseReceive
+      requestBody:
+        description: This is used to submit a new ReleaseReceive Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/ReleaseReceiveForm"
+      responses:
+        "201":
+          description: Patient ReleaseReceive Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/release-receive/{recordId}:
+    get:
+      summary: Fetches A Patient's ReleaseReceive Form Details
+      tags:
+        - Patients
+      operationId: getReleaseReceive
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient ReleaseReceive Form Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/ReleaseReceiveForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/screening:
+    post:
+      summary: Submits A Screening Form For A Patient
+      tags:
+        - Patients
+      operationId: submitScreening
+      requestBody:
+        description: This is used to submit a new Screening Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/ScreeningForm"
+      responses:
+        "201":
+          description: Patient Screening Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/screening/{recordId}:
+    get:
+      summary: Fetches A Patient's Screening Form Details
+      tags:
+        - Patients
+      operationId: getScreening
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient Screening Form Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/ScreeningForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/self-pay:
+    post:
+      summary: Submits A Self Pay Form For A Patient
+      tags:
+        - Patients
+      operationId: submitSelfPay
+      requestBody:
+        description: This is used to submit a new Self Pay Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/SelfPayForm"
+      responses:
+        "201":
+          description: Patient SelfPay Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/self-pay/{recordId}:
+    get:
+      summary: Fetches A Patient's SelfPay Form Details
+      tags:
+        - Patients
+      operationId: getSelfPay
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient SelfPay Form Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/SelfPayForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/termination-policy:
+    post:
+      summary: Submits A Termination Policy Form For A Patient
+      tags:
+        - Patients
+      operationId: submitTerminationPolicy
+      requestBody:
+        description: This is used to submit a new TerminationPolicy Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/TerminationPolicyForm"
+      responses:
+        "201":
+          description: Patient TerminationPolicy Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/termination-policy/{recordId}:
+    get:
+      summary: Fetches A Patient's TerminationPolicy Form Details
+      tags:
+        - Patients
+      operationId: getTerminationPolicy
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient TerminationPolicy Form Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/TerminationPolicyForm"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/treatment-consent:
+    post:
+      summary: Submits A TreatmentConsentTelehealthInPersonTreatmentConsent Form For A Patient
+      tags:
+        - Patients
+      operationId: submitTreatmentConsentTelehealthInPersonTreatmentConsent
+      requestBody:
+        description: This is used to submit a new TreatmentConsentTelehealthInPersonTreatmentConsent Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/TreatmentConsentTelehealthInPersonTreatmentConsent"
+      responses:
+        "201":
+          description: Patient TreatmentConsentTelehealthInPersonTreatmentConsent Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/patients/forms/treatment-consent/{recordId}:
+    get:
+      summary: Fetches A Patient's TreatmentConsentTelehealthInPersonTreatmentConsent Form Details
+      tags:
+        - Patients
+      operationId: getTreatmentConsentTelehealthInPersonTreatmentConsent
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Patient TreatmentConsentTelehealthInPersonTreatmentConsent Form Details Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/TreatmentConsentTelehealthInPersonTreatmentConsent"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+#  /api/v1/patients/forms:
+#    post:
+#      summary: Handles All Form Submissions
+#      tags:
+#        - Forms
+#      operationId: submitForms
+#      requestBody:
+#        description: Submit All Kinds of Form
+#        required: true
+#        content:
+#          application/json:
+#            schema:
+#              $ref: "./schemas/models.yaml#/components/schemas/Forms"
+#      responses:
+#        "201":
+#          description: Form Submitted Successfully
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+#        "401":
+#          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+#        "403":
+#          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+#        "400":
+#          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+#        "422":
+#          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+#        "500":
+#          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/appointments:
+    post:
+      summary: Submits An Appointment
+      tags:
+        - Appointment
+      operationId: submitAppointment
+      requestBody:
+        description: Submit All Kinds of Form
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/Appointment"
+      responses:
+        "201":
+          description: Appointment Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/appointments/search:
+    post:
+      summary:
+        Searches and returns all Appointments matching all of the search criteria fields passed.
+        The number of search results shall be constrained by the limit params in Query.
+        Search criteria, applies an **AND** based search on all fields passed in the request.
+        If the search criteria is empty/null, it returns list of appointments.
+      tags:
+        - Appointment
+      operationId: listAppointments
+      parameters:
+        - description: The page number (starting from 1)
+          $ref: "./schemas/common_models.yaml#/components/parameters/PageParam"
+        - description: How many items to return at one time (max 100)
+          $ref: "./schemas/common_models.yaml#/components/parameters/limitParam"
+      requestBody:
+        description:
+          "Search criteria, applies an **AND** based search on all fields\
+                \ passed in the request."
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/AppointmentSearch"
+      responses:
+        "200":
+          description: Appointment Records Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/PaginatedAppointments"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/appointments/{recordId}:
+    get:
+      summary: Fetches An Appointment By ID
+      tags:
+        - Appointment
+      operationId: getAppointment
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Appointment Retrieved Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/Appointment"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/appointments/update:
+    put:
+      summary: Updates An Appointment
+      tags:
+        - Appointment
+      operationId: updateAppointment
+      requestBody:
+        description: Submit All Kinds of Form
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/Appointment"
+      responses:
+        "201":
+          description: Appointment Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/reviews:
+    post:
+      summary: Submits A Review
+      tags:
+        - Review
+      operationId: submitReview
+      requestBody:
+        description: Patients have the opportunity to share their personal experiences and testimonials with others, providing a platform for them to express their thoughts, feelings, and outcomes. This allows other patients to gain insight and perspective from those who have gone through similar experiences, fostering a sense of community and support.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/Review"
+      responses:
+        "201":
+          description: Review Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/reviews/search:
+    post:
+      summary:
+        Searches and returns all Reviews matching all of the search criteria fields passed.
+        The number of search results shall be constrained by the limit params in Query.
+        Search criteria, applies an **AND** based search on all fields passed in the request.
+        If the search criteria is empty/null, it returns list of reviews.
+      tags:
+        - Review
+      operationId: listReviews
+      parameters:
+        - description: The page number (starting from 1)
+          $ref: "./schemas/common_models.yaml#/components/parameters/PageParam"
+        - description: How many items to return at one time (max 100)
+          $ref: "./schemas/common_models.yaml#/components/parameters/limitParam"
+      requestBody:
+        description:
+          "Search criteria, applies an **AND** based search on all fields\
+                \ passed in the request."
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/ReviewSearch"
+      responses:
+        "200":
+          description: Review Records Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/PaginatedReviews"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/reviews/{recordId}:
+    get:
+      summary: Fetches A Review Record Using A Uniques RecordId
+      tags:
+        - Review
+      operationId: getReview
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Review Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/Review"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/reviews/publish/{recordId}:
+    get:
+      summary: Fetches A Review Record Using A Unique RecordId And Publishes it
+      tags:
+        - Review
+      operationId: publish
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Review Published Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/reviews/unpublish/{recordId}:
+    get:
+      summary: Fetches A Review Record Using A Unique RecordId And Un-publishes it, thereby Sending It To The List Of Drafts
+      tags:
+        - Review
+      operationId: unpublish
+      parameters:
+        - $ref: "./schemas/record_id.yaml"
+      responses:
+        "200":
+          description: Review Unpublished Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common_models.yaml#/components/schemas/Success"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/reviews/published:
+    get:
+      summary: Fetches All Published Reviews
+      tags:
+        - Review
+      operationId: getPublished
+      parameters:
+        - description: The page number (starting from 1)
+          $ref: "./schemas/common_models.yaml#/components/parameters/PageParam"
+        - description: How many items to return at one time (max 100)
+          $ref: "./schemas/common_models.yaml#/components/parameters/limitParam"
+      responses:
+        "200":
+          description: Published Reviews Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/PaginatedReviews"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/reviews/drafts:
+    get:
+      summary: Fetches All Draft Reviews
+      tags:
+        - Review
+      operationId: getDrafts
+      parameters:
+        - description: The page number (starting from 1)
+          $ref: "./schemas/common_models.yaml#/components/parameters/PageParam"
+        - description: How many items to return at one time (max 100)
+          $ref: "./schemas/common_models.yaml#/components/parameters/limitParam"
+      responses:
+        "200":
+          description: Draft Reviews Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/PaginatedReviews"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"

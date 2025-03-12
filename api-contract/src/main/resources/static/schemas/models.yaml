@@ -1,0 +1,1332 @@
+components:
+  schemas:
+    ADHDForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        projectCompletionProblem:
+          $ref: '#/components/schemas/AssessmentEnum'
+        organizationRate:
+          $ref: '#/components/schemas/AssessmentEnum'
+        memoryRate:
+          $ref: '#/components/schemas/AssessmentEnum'
+        attitudeToChallenge:
+          $ref: '#/components/schemas/AssessmentEnum'
+        fidgetRateOnsit:
+          $ref: '#/components/schemas/AssessmentEnum'
+        activeToWork:
+          $ref: '#/components/schemas/AssessmentEnum'
+        carelessMistakes:
+          $ref: '#/components/schemas/AssessmentEnum'
+        attentionToBoringWork:
+          $ref: '#/components/schemas/AssessmentEnum'
+        concentrationRate:
+          $ref: '#/components/schemas/AssessmentEnum'
+        misplaceRate:
+          $ref: '#/components/schemas/AssessmentEnum'
+        distractionRate:
+          $ref: '#/components/schemas/AssessmentEnum'
+        excuseRate:
+          $ref: '#/components/schemas/AssessmentEnum'
+        restlessRate:
+          $ref: '#/components/schemas/AssessmentEnum'
+        troubleRelaxing:
+          $ref: '#/components/schemas/AssessmentEnum'
+        excessiveTalks:
+          $ref: '#/components/schemas/AssessmentEnum'
+        peopleSentenceCompletion:
+          $ref: '#/components/schemas/AssessmentEnum'
+        patienceOnQueue:
+          $ref: '#/components/schemas/AssessmentEnum'
+        interruptOthers:
+          $ref: '#/components/schemas/AssessmentEnum'
+      type: object
+
+    AssessmentEnum:
+      type: string
+      enum:
+        - Never
+        - Rarely
+        - Sometimes
+        - Often
+        - Very Often
+
+    AnxietyDisorderForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        nervousRate:
+          type: string
+        controlOverWorry:
+          type: string
+        excessiveWorry:
+          type: string
+        relaxTrouble:
+          type: string
+        restlessness:
+          type: string
+        annoyanceRate:
+          type: string
+        frightRate:
+          type: string
+        lifeInfluenceSummary:
+          type: string
+      type: object
+
+    ControlledSubstanceForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        isMinor:
+          type: boolean
+        patientSignDate:
+          $ref: "common_models.yaml#/components/schemas/DateTime"
+        guardianName:
+          type: string
+        patientGuardianRelationship:
+          type: string
+        guardianSignDate:
+          $ref: "common_models.yaml#/components/schemas/DateTime"
+        file:
+          $ref: '#/components/schemas/FileUpload'
+      type: object
+
+    DepressionAssessmentForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        pleasureInterest:
+          $ref: '#/components/schemas/AssessmentLimit'
+        depressionRate:
+          $ref: '#/components/schemas/AssessmentLimit'
+        sleepRate:
+          $ref: '#/components/schemas/AssessmentLimit'
+        fatigueRate:
+          $ref: '#/components/schemas/AssessmentLimit'
+        appetiteRate:
+          $ref: '#/components/schemas/AssessmentLimit'
+        failureRate:
+          $ref: '#/components/schemas/AssessmentLimit'
+        concentrationRate:
+          $ref: '#/components/schemas/AssessmentLimit'
+        restlessnessRate:
+          $ref: '#/components/schemas/AssessmentLimit'
+        suicideThought:
+          $ref: '#/components/schemas/AssessmentLimit'
+      type: object
+
+    AssessmentLimit:
+      type: integer
+      minimum: 0
+      maximum: 3
+
+    PatientInformationConsentAndFinancialPolicyForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        date:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        patientInformationConsentAndFinancialPolicy:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileUpload'
+      type: object
+
+    Address:
+      properties:
+        id:
+          type: integer
+          format: int64
+        streetName:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+      type: object
+
+    Pharmacy:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        name:
+          type: string
+        phone:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+      type: object
+
+    PrimaryCarePhysician:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        havePcp:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+        fax:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+      type: object
+
+    InitialEvaluationForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        pharmacy:
+          $ref: '#/components/schemas/Pharmacy'
+        primaryCarePhysician:
+          $ref: '#/components/schemas/PrimaryCarePhysician'
+        infoToRelease:
+          type: string
+        date:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        initialEvaluation:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileUpload'
+      type: object
+
+    IntakeForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        doYouShareHome:
+          type: string
+        complaints:
+          type: string
+        sexPreference:
+          type: string
+        onProbation:
+          type: string
+        inLawsuit:
+          type: string
+        childrenCount:
+          type: integer
+        marriageCount:
+          type: integer
+        pastMarriagesInfo:
+          items:
+            $ref: '#/components/schemas/PastMarriagesInfo'
+          type: array
+        pastProviders:
+          items:
+            $ref: '#/components/schemas/PastProviders'
+          type: array
+        currentMedications:
+          items:
+            $ref: '#/components/schemas/Medication'
+          type: array
+        hasAttemptedSuicide:
+          type: boolean
+        isPsychHospitalized:
+          type: boolean
+        pastMedications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Medication'
+        alcoholDrugHistory:
+          $ref: '#/components/schemas/AlcoholDrugHistory'
+      type: object
+
+
+    FrequencyEnum:
+      type: string
+      enum:
+        - None
+        - Rarely
+        - Sometimes
+        - Often
+
+    DrinkGuiltCheck:
+      type: object
+      properties:
+        haveCutBack:
+          type: boolean
+        angeredByCritics:
+          type: boolean
+        feelGuilt:
+          type: boolean
+        upWithDrink:
+          type: boolean
+
+    AlcoholDrugHistory:
+      properties:
+        id:
+          type: integer
+          format: int64
+        usageFrequency:
+          $ref: '#/components/schemas/FrequencyEnum'
+        brand:
+          type: string
+        lastUsed:
+          type: string
+        drinkGuiltCheck:
+          $ref: '#/components/schemas/DrinkGuiltCheck'
+        substanceUsages:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubstanceUsage'
+        weeklyAverageSpending:
+          type: double
+        pastTreatmentInfo:
+          type: array
+          items:
+            $ref: '#/components/schemas/PastTreatmentInfo'
+        isPastStepRecoveryParticipant:
+          type: boolean
+        isCurrentStepRecoveryParticipant:
+          type: boolean
+        birthPlace:
+          type: string
+        growthPlace:
+          type: string
+        raisedBy:
+          type: string
+        siblingsCount:
+          type: integer
+        childhoodInfo:
+          type: string
+        wasPhysicallyAbused:
+          type: boolean
+        wasEmotionallyAbused:
+          type: boolean
+        wasSexuallyAbused:
+          type: boolean
+        hasMedicalDisability:
+          type: boolean
+        pastMedicalHistory:
+          type: array
+          items:
+            type: string
+        pastSurgicalHistory:
+          type: array
+          items:
+            type: string
+        allergies:
+          type: array
+          items:
+            type: string
+        relativesWithMentalIllnessOrSuicide:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelativeWithMentalIllnessOrSuicide'
+        otherUsefulInfo:
+          type: string
+      type: object
+
+    RelativeWithMentalIllnessOrSuicide:
+      properties:
+        id:
+          type: integer
+          format: int64
+        relative:
+          type: string
+        illness:
+          type: string
+      type: object
+
+    PastTreatmentInfo:
+      properties:
+        id:
+          type: integer
+          format: int64
+        facility:
+          type: string
+        date:
+          type: string
+          format: date
+        drugTreated:
+          type: string
+        isTreatmentCompleted:
+          type: boolean
+      type: object
+
+    SubstanceUsage:
+      properties:
+        id:
+          type: integer
+          format: int64
+        substanceName:
+          type: string
+          enum:
+            - Alcohol
+            - Marijuana
+            - Cocaine
+            - Crystal Meth
+            - Ice
+            - Adderall
+            - Vyvanse
+            - Ritaline
+            - LSD
+            - XTC/Molly
+            - Peyote
+            - Ketamine
+            - Mushroom
+            - Xanax
+            - Valium
+            - Klonapin
+            - Activan
+            - Dextromethorphan
+            - Steroids
+            - Spice
+            - Bath Salts
+        ageAtFirstUse:
+          type: integer
+        qtyUse:
+          type: string
+        usageFrequency:
+          $ref: '#/components/schemas/FrequencyEnum'
+        lastUsed:
+          type: string
+      type: object
+
+    PastProviders:
+      properties:
+        id:
+          type: integer
+          format: int64
+        provider:
+          type: string
+        appointmentDate:
+          type: string
+          format: date
+      type: object
+
+    Medication:
+      properties:
+        id:
+          type: integer
+          format: int64
+        medication:
+          type: string
+        usageInstruction:
+          type: string
+        conditionTreated:
+          type: string
+        prescription:
+          type: string
+        category:
+          type: string
+          enum:
+            - past
+            - current
+      type: object
+
+    PastMarriagesInfo:
+      properties:
+        id:
+          type: integer
+          format: int64
+        marriageDescription:
+          type: string
+        duration:
+          type: string
+        divorceReason:
+          type: string
+      type: object
+
+    MedicationConsentForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        patientSignDate:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        isMinor:
+          type: boolean
+        guardianName:
+          type: string
+        patientGuardianRelationship:
+          type: string
+        guardianSignDate:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        medicationConsent:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileUpload'
+      type: object
+
+    MoodDisorderAssessmentForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        hyperFeeling:
+          type: boolean
+        isIrritable:
+          type: boolean
+        isOverConfident:
+          type: boolean
+        lessSleep:
+          type: boolean
+        talkMore:
+          type: boolean
+        pacedThoughts:
+          type: boolean
+        easyDistraction:
+          type: boolean
+        overEnergetic:
+          type: boolean
+        overActive:
+          type: boolean
+        overSocial:
+          type: boolean
+        sexaholic:
+          type: boolean
+        overFoolish:
+          type: boolean
+        overSpending:
+          type: boolean
+        sameTimeOccurrence:
+          type: boolean
+        influenceOnLife:
+          type: boolean
+        isRelativeWithBipolar:
+          type: boolean
+        isBipolarDiagnosed:
+          type: boolean
+      type: object
+
+    GenderEnum:
+      type: string
+      enum:
+        - Male
+        - Female
+        - Transgender
+        - Declined
+        - Non-Binary
+        - Prefer Not To Say
+
+    MaritalStatusEnum:
+      type: string
+      enum:
+        - Single
+        - Married
+        - Divorced
+        - Widowed
+        - Separated
+        - Domestic Partnership
+        - Prefer Not To Say
+
+    EducationLevelEnum:
+      type: string
+      enum:
+        - High School Diploma
+        - Associate Degree
+        - Bachelor's Degree
+        - Master's Degree
+        - Professional Degree
+        - Doctoral Degree
+
+    ReligionEnum:
+      type: string
+      enum:
+        - Islam
+        - Christianity
+        - Judaism
+        - Hinduism
+        - Buddhism
+        - Sikhism
+        - Atheism
+        - Agnosticism
+        - Other
+        - Prefer Not To Say
+
+    RaceEnum:
+      type: string
+      enum:
+        - White
+        - Black Or African American
+        - Asian
+        - Native American Or Alaska Native
+        - Multiracial
+        - Prefer Not To Say
+
+    EmploymentStatusEnum:
+      type: string
+      enum:
+        - Employed
+        - Self-Employed
+        - Unemployed
+        - Retired
+        - Student
+        - Homemaker
+        - Other
+
+    PersonalInfo:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        dob:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        maritalStatus:
+          $ref: "#/components/schemas/MaritalStatusEnum"
+        socialSecurityNumber:
+          type: string
+        homePhone:
+          type: string
+        cellPhone:
+          type: string
+        workPhone:
+          type: string
+        preferredPhone:
+          type: string
+          enum:
+            - Home Phone
+            - Cell Phone
+            - Work Phone
+        appointmentReminderMode:
+          type: string
+          enum:
+            - Automated Text
+            - Automated Email
+        email:
+          $ref: "common_models.yaml#/components/schemas/Email"
+        sendMsgToHomePhone:
+          type: boolean
+        sendMsgToRelative:
+          type: boolean
+        sendMsgToWork:
+          type: boolean
+        sendMsgToCellPhone:
+          type: boolean
+        address:
+          $ref: '#/components/schemas/Address'
+        highestEduLevel:
+          $ref: "#/components/schemas/EducationLevelEnum"
+        employmentStatus:
+          $ref: "#/components/schemas/EmploymentStatusEnum"
+        employer:
+          type: string
+        occupation:
+          type: string
+        religion:
+          $ref: "#/components/schemas/ReligionEnum"
+        ethnicity:
+          $ref: "#/components/schemas/EthnicityEnum"
+        race:
+          $ref: "#/components/schemas/RaceEnum"
+        preferredLanguage:
+          type: string
+
+    EthnicityEnum:
+      type: string
+      enum:
+        - Hispanic or Latino
+        - Not Hispanic or Latino
+        - Prefer Not To Say
+
+    Guarantor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dob:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        relationship:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        phone:
+          type: string
+        email:
+          $ref: "common_models.yaml#/components/schemas/Email"
+        stateIssuedId:
+          type: string
+        insuranceCard:
+          type: string
+        stateIssuedIdFile:
+          $ref: '#/components/schemas/FileUpload'
+        insuranceCardFile:
+          $ref: '#/components/schemas/FileUpload'
+
+    FileUpload:
+      type: string
+      format: binary
+
+    ParentGuardian:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        maritalStatus:
+          $ref: '#/components/schemas/MaritalStatusEnum'
+        phone:
+          type: string
+        email:
+          $ref: "common_models.yaml#/components/schemas/Email"
+        familyRole:
+          type: string
+          enum:
+            - Father
+            - Mother
+            - Husband
+            - Son
+            - Daughter
+            - Other
+        employmentStatus:
+          $ref: '#/components/schemas/EmploymentStatusEnum'
+        employer:
+          type: string
+        occupation:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+
+    EmergencyContact:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        relationship:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        homePhone:
+          type: string
+        cellPhone:
+          type: string
+        email:
+          $ref: "common_models.yaml#/components/schemas/Email"
+
+    PaymentStructure:
+      type: object
+      properties:
+        paymentMode:
+          $ref: '#/components/schemas/PaymentModeEnum'
+        insurances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Insurance'
+          maxItems: 2
+
+    PaymentModeEnum:
+      type: string
+      enum:
+        - Self Pay
+        - Insurance Card
+
+    PolicyHolder:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        relationship:
+          type: string
+        phone:
+          type: string
+        dob:
+          $ref: "common_models.yaml#/components/schemas/Date"
+
+    InsuranceProvider:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/InsuranceNameEnum'
+        phone:
+          type: string
+        policyId:
+          type: string
+        groupNumber:
+          type: string
+        authorizationId:
+          type: string
+        coPay:
+          type: string
+        coverageStartDate:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        coverageEndDate:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        address:
+          $ref: '#/components/schemas/Address'
+
+    Insurance:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        primary:
+          type: boolean
+        policyHolder:
+          $ref: '#/components/schemas/PolicyHolder'
+        insuranceProvider:
+          $ref: '#/components/schemas/InsuranceProvider'
+
+    PatientRegistrationForm:
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        personalInfo:
+          $ref: '#/components/schemas/PersonalInfo'
+        guarantor:
+          $ref: '#/components/schemas/Guarantor'
+        parentGuardian:
+          $ref: '#/components/schemas/ParentGuardian'
+        emergency:
+          $ref: '#/components/schemas/EmergencyContact'
+        paymentStructure:
+          $ref: '#/components/schemas/PaymentStructure'
+        date:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        patientRegForm:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileUpload'
+      type: object
+
+    NoticeOfPrivacyPracticesForm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        noticeEffectDate:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        date:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        noticeOfPrivacyPractices:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileUpload'
+
+    Party:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        phoneNumber:
+          type: string
+        fax:
+          type: string
+        isReceive:
+          type: boolean
+        address:
+          $ref: '#/components/schemas/Address'
+
+    ReleaseReceiveForm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        isMinor:
+          type: boolean
+        releaseHealthInfo:
+          type: boolean
+        receiveHealthInfo:
+          type: boolean
+        exchangeHealthInfo:
+          type: boolean
+        party:
+          type: array
+          items:
+            $ref: '#/components/schemas/Party'
+        disclosurePurpose:
+          type: array
+          items:
+            type: string
+            enum:
+              - Continuity of Care/Treatment
+              - Legal Purposes
+              - Insurance/Payment Processing
+              - Personal Use
+              - Other
+        infoTypeToRelease:
+          type: array
+          items:
+            type: string
+            enum:
+              - Mental Health Treatment Records
+              - Substance Use Disorder Treatment Records
+              - Psychotherapy Notes
+              - Assessment/Evaluation Reports
+              - Medication History & Prescriptions
+              - Billing & Insurance Records
+              - Discharge Summary
+              - Other
+        guardianName:
+          type: string
+        relationship:
+          type: string
+        date:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        releaseReceive:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileUpload'
+
+    ScreeningForm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        mhBhPhone:
+          type: string
+        helpNeeds:
+          type: string
+        inCrisis:
+          type: boolean
+        currentlyOnPsychMed:
+          type: boolean
+        stableOnMed:
+          type: boolean
+        isPsychiatristConsult:
+          type: boolean
+        isTherapistConsult:
+          type: boolean
+        anyMentalHealthTreatment:
+          type: boolean
+        suicideAttemptHistory:
+          type: boolean
+        harmToSelfOrOthers:
+          type: boolean
+        intent:
+          type: string
+        healthSymptoms:
+          type: boolean
+        healthSymptomsFrequency:
+          type: string
+        referral:
+          $ref: '#/components/schemas/Referral'
+
+    Referral:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        source:
+          type: string
+          enum:
+            - Insurance
+            - Internet
+            - Friend
+            - Other
+        therapist:
+          type: string
+          enum:
+            - Mental Health Therapist/MD
+            - Facility
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+
+    SelfPayForm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        date:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        selfPay:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileUpload'
+
+    TerminationPolicyForm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        patientSignDate:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        witnessName:
+          type: string
+        witnessSignDate:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        terminationPolicy:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileUpload'
+
+    TreatmentConsentTelehealthInPersonTreatmentConsent:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        patientSignDate:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        isMinor:
+          type: boolean
+        guardianName:
+          type: string
+        guardianSignDate:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        treatmentConsentTelehealthInPerson:
+          type: string
+        file:
+          $ref: '#/components/schemas/FileUpload'
+
+    PaginatedReviews:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 10
+        itemsPerPage:
+          type: integer
+          example: 100
+        reviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/Review"
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        nickname:
+          type: string
+        email:
+          type: string
+        referralWish:
+          type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        reviewMessage:
+          type: string
+        status:
+          $ref: '#/components/schemas/ReviewStatusEnum'
+
+    ReviewStatusEnum:
+      type: string
+      enum:
+        - draft
+        - published
+
+    Forms:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        adhdForm:
+          $ref: '#/components/schemas/ADHDForm'
+        anxietyDisorderForm:
+          $ref: '#/components/schemas/AnxietyDisorderForm'
+        controlledSubstanceForm:
+          $ref: '#/components/schemas/ControlledSubstanceForm'
+        depressionAssessmentForm:
+          $ref: '#/components/schemas/DepressionAssessmentForm'
+        patientInformationConsentAndFinancialPolicyForm:
+          $ref: '#/components/schemas/PatientInformationConsentAndFinancialPolicyForm'
+        initialEvaluationForm:
+          $ref: '#/components/schemas/InitialEvaluationForm'
+        intakeForm:
+          $ref: '#/components/schemas/IntakeForm'
+        relativeWithMentalIllnessOrSuicide:
+          $ref: '#/components/schemas/RelativeWithMentalIllnessOrSuicide'
+        medicationConsentForm:
+          $ref: '#/components/schemas/MedicationConsentForm'
+        moodDisorderAssessmentForm:
+          $ref: '#/components/schemas/MoodDisorderAssessmentForm'
+        patientRegistrationForm:
+          $ref: '#/components/schemas/PatientRegistrationForm'
+        noticeOfPrivacyPracticesForm:
+          $ref: '#/components/schemas/NoticeOfPrivacyPracticesForm'
+        releaseReceiveForm:
+          $ref: '#/components/schemas/ReleaseReceiveForm'
+        screeningForm:
+          $ref: '#/components/schemas/ScreeningForm'
+        selfPayForm:
+          $ref: '#/components/schemas/SelfPayForm'
+        treatmentConsentTelehealthInPersonTreatmentConsent:
+          $ref: '#/components/schemas/TreatmentConsentTelehealthInPersonTreatmentConsent'
+        terminationPolicy:
+          $ref: '#/components/schemas/TerminationPolicyForm'
+
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        forms:
+          $ref: '#/components/schemas/Forms'
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/Review'
+            maxItems: 100
+        appointments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Appointment'
+            maxItems: 100
+
+    PaginatedPatients:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 10
+        itemsPerPage:
+          type: integer
+          example: 100
+        patients:
+          type: array
+          items:
+            $ref: "#/components/schemas/Patient"
+
+    PaginatedAppointments:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 10
+        itemsPerPage:
+          type: integer
+          example: 100
+        appointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Appointment"
+
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        isNew:
+          type: boolean
+        verificationStatus:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          $ref: '#/components/schemas/GenderEnum'
+        dob:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        phone:
+          type: string
+        email:
+          $ref: "common_models.yaml#/components/schemas/Email"
+        address:
+          $ref: '#/components/schemas/Address'
+        appointmentType:
+          type: string
+          enum:
+            - In-Person
+            - Tele-Health
+            - Any
+        service:
+          type: string
+          enum:
+            - Med Management
+            - Individual Therapy
+            - Group Therapy
+            - Case Management
+            - Psychiatric Rehab.
+        appointmentDateTime:
+          $ref: "common_models.yaml#/components/schemas/DateTime"
+        purpose:
+          type: string
+        paymentMethod:
+          $ref: '#/components/schemas/PaymentModeEnum'
+        insuranceName:
+          $ref: '#/components/schemas/InsuranceNameEnum'
+        insuranceNumber:
+          type: string
+
+    InsuranceNameEnum:
+      type: string
+      enum:
+        - Medicare
+        - Main Medicaid
+        - BCBS Carefirst
+        - UHC/Optum/Medicaid
+        - Maryland Physicians Care
+        - Amerigroup
+
+    PatientSearch:
+      type: object
+      properties:
+        patientId:
+          $ref: "common_models.yaml#/components/schemas/PatientId"
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+         type: string
+        dob:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        phone:
+          type: string
+        email:
+          $ref: "common_models.yaml#/components/schemas/Email"
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        maritalStatus:
+          $ref: "#/components/schemas/MaritalStatusEnum"
+        city:
+          type: string
+        state:
+          type: string
+        paymentMode:
+          $ref: '#/components/schemas/PaymentModeEnum'
+
+    AppointmentSearch:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        dob:
+          $ref: "common_models.yaml#/components/schemas/Date"
+        phone:
+          type: string
+        email:
+          $ref: "common_models.yaml#/components/schemas/Email"
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        maritalStatus:
+          $ref: "#/components/schemas/MaritalStatusEnum"
+        city:
+          type: string
+        state:
+          type: string
+        appointmentDateTime:
+          $ref: "common_models.yaml#/components/schemas/DateTime"
+        paymentMode:
+          $ref: '#/components/schemas/PaymentModeEnum'
+
+    ReviewSearch:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          $ref: "common_models.yaml#/components/schemas/Email"
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        status:
+          $ref: '#/components/schemas/ReviewStatusEnum'

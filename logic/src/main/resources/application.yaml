@@ -1,0 +1,29 @@
+spring:
+#  devtools:
+#    add-properties: false
+  application:
+    name: brightlife
+  #  liquibase:
+  #    user: ${DB_USER}
+  #    password: ${DB_PASSWORD}
+  #    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_NAME}
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
+  #    change-log: classpath:/db/changelog/changelog-master.xml
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          jwk-set-uri: ${OAUTH_CERT_URL}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /brightlife_api_contract.yaml
+    config-url: /v3/api-docs/swagger-config
+
+server:
+  port: 8085
+#  port: ${SERVER_PORT}
+
+
+
