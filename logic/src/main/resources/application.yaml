@@ -1,14 +1,32 @@
 spring:
-#  devtools:
-#    add-properties: false
+  devtools:
+    add-properties: false
   application:
     name: brightlife
-  #  liquibase:
-  #    user: ${DB_USER}
-  #    password: ${DB_PASSWORD}
-  #    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${DB_NAME}
-  #    driver-class-name: com.mysql.cj.jdbc.Driver
-  #    change-log: classpath:/db/changelog/changelog-master.xml
+    liquibase:
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${MYSQL_DATABASE}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    change-log: classpath:/db/changelog/changelog-master.xml
+    enabled: true
+
+  datasource:
+    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${MYSQL_DATABASE}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # Disable automatic table creation
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+    # Show SQL in logs
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
 #  security:
 #    oauth2:
 #      resourceserver:
@@ -22,8 +40,8 @@ springdoc:
     config-url: /v3/api-docs/swagger-config
 
 server:
-  port: 8085
-#  port: ${SERVER_PORT}
+#  port: 8085
+  port: ${SERVER_PORT}
 
 
 
