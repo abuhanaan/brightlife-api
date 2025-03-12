@@ -1,4 +1,4 @@
-package com.fronteers.model.entity;
+package com.fronteers.models.entity;
 
 import com.fronteers.utils.TimeUtil;
 import jakarta.persistence.Basic;

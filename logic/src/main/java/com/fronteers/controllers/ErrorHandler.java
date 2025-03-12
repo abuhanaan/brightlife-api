@@ -1,13 +1,13 @@
 package com.fronteers.controllers;
 
 import com.fronteers.brightlife.model.Error;
-import com.fronteers.exception.AuthenticationException;
-import com.fronteers.exception.BadRequestException;
-import com.fronteers.exception.ConflictException;
-import com.fronteers.exception.NotFoundException;
-import com.fronteers.exception.ProcessingException;
-import com.fronteers.exception.TimeoutException;
-import com.fronteers.model.constant.ErrorCode;
+import com.fronteers.exceptions.AuthenticationException;
+import com.fronteers.exceptions.BadRequestException;
+import com.fronteers.exceptions.ConflictException;
+import com.fronteers.exceptions.NotFoundException;
+import com.fronteers.exceptions.ProcessingException;
+import com.fronteers.exceptions.TimeoutException;
+import com.fronteers.models.constant.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

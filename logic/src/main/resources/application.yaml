@@ -42,6 +42,10 @@ springdoc:
 server:
 #  port: 8085
   port: ${SERVER_PORT}
+token:
+  expirationms: 3600000
+  secret:
+    key: ${TOKEN_SECRET_KEY}
 
 
 

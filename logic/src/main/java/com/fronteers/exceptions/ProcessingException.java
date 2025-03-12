@@ -1,4 +1,4 @@
-package com.fronteers.exception;
+package com.fronteers.exceptions;
 
 public class ProcessingException extends ApiException {
 
