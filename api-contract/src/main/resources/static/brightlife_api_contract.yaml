@@ -1406,3 +1406,37 @@ paths:
           $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
         "500":
           $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
+  /api/v1/auth/login:
+    post:
+      summary:
+        Logs in a user into the system
+      tags:
+        - Authentication
+      operationId: login
+      requestBody:
+        description:
+          "Takes a email and password of which are required"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/models.yaml#/components/schemas/SignInRequest"
+      responses:
+        "200":
+          description: Review Records Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/models.yaml#/components/schemas/JwtAuthenticationResponse"
+        "401":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Unauthorized"
+        "403":
+          $ref: "./schemas/common_models.yaml#/components/schemas/Forbidden"
+        "400":
+          $ref: "./schemas/common_models.yaml#/components/schemas/BadRequest"
+        "422":
+          $ref: "./schemas/common_models.yaml#/components/schemas/UnProcessableEntity"
+        "500":
+          $ref: "./schemas/common_models.yaml#/components/schemas/InternalServerError"
+
