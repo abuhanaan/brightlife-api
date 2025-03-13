@@ -1,16 +1,14 @@
 package com.fronteers.config;
 
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-
 import com.fronteers.models.constant.Role;
 import com.fronteers.models.entity.User;
 import com.fronteers.repositories.UserRepository;
 import com.fronteers.services.UserService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor

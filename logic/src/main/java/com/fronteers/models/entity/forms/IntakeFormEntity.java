@@ -1,21 +1,19 @@
 package com.fronteers.models.entity.forms;
 
-import com.fronteers.models.entity.MedicationEntity;
-import com.fronteers.models.entity.PatientEntity;
-import jakarta.persistence.Column;
-import java.util.List;
-
 import com.fronteers.models.entity.AlcoholDrugHistoryEntity;
 import com.fronteers.models.entity.BaseEntity;
+import com.fronteers.models.entity.MedicationEntity;
 import com.fronteers.models.entity.PastMarriagesEntity;
 import com.fronteers.models.entity.PastProviderEntity;
-
+import com.fronteers.models.entity.PatientEntity;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

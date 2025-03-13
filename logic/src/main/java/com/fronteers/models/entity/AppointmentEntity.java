@@ -11,7 +11,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -28,7 +27,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "appointment")
-public class AppointmentEntity extends BaseEntity{
+public class AppointmentEntity extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name = "patient_id", referencedColumnName = "patient_id")

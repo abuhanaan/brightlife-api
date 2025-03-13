@@ -1,11 +1,9 @@
 package com.fronteers.models.entity;
 
 import jakarta.persistence.Column;
-import java.time.LocalDate;
-
+import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import java.util.Date;
 import lombok.AllArgsConstructor;

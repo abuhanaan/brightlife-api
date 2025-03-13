@@ -30,23 +30,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "users")
 public class User implements UserDetails {
 
+  LocalDateTime createdAt;
+  LocalDateTime updatedAt;
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-
   private String firstName;
-
   private String lastName;
-
   @Column(unique = true)
   private String email;
-
   private String password;
-
-  LocalDateTime createdAt;
-
-  LocalDateTime updatedAt;
-
   @Enumerated(EnumType.STRING)
   private Role role;
 

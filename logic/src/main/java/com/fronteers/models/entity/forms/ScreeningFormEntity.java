@@ -3,13 +3,10 @@ package com.fronteers.models.entity.forms;
 import com.fronteers.models.entity.BaseEntity;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.ReferralEntity;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-
-import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

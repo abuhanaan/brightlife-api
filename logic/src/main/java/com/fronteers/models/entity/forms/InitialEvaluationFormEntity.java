@@ -1,20 +1,16 @@
 package com.fronteers.models.entity.forms;
 
+import com.fronteers.models.entity.BaseEntity;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.PharmacyEntity;
 import com.fronteers.models.entity.PrimaryCarePhysicianEntity;
-import com.fronteers.models.entity.ReferralEntity;
 import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import java.sql.Date;
-
-import com.fronteers.models.entity.BaseEntity;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.sql.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

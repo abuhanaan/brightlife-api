@@ -2,7 +2,6 @@ package com.fronteers.models.entity;
 
 import com.fronteers.brightlife.model.Referral.SourceEnum;
 import com.fronteers.brightlife.model.Referral.TherapistEnum;
-import com.fronteers.models.entity.forms.InitialEvaluationFormEntity;
 import com.fronteers.models.entity.forms.ScreeningFormEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -10,17 +9,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 @Data
 @Builder

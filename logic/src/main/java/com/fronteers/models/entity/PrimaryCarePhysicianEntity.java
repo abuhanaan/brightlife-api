@@ -24,7 +24,7 @@ import org.hibernate.annotations.FetchMode;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "primary_care_physician")
-public class PrimaryCarePhysicianEntity extends BaseEntity{
+public class PrimaryCarePhysicianEntity extends BaseEntity {
 
   @Column(name = "have_pcp")
   private String havePcp;

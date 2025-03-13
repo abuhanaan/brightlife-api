@@ -40,7 +40,7 @@ springdoc:
     config-url: /v3/api-docs/swagger-config
 
 server:
-#  port: 8085
+  #  port: 8085
   port: ${SERVER_PORT}
 token:
   expirationms: 3600000

@@ -1,9 +1,16 @@
 package com.fronteers.filters;
 
-import java.io.IOException;
-
 import com.fronteers.models.constant.ErrorCode;
-
+import com.fronteers.services.JwtService;
+import com.fronteers.services.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -12,17 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.fronteers.services.JwtService;
-import com.fronteers.services.UserService;
-
-import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
@@ -93,11 +89,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return;
     } catch (Exception e) {
       log.error("Invalid token: {}", e.getMessage());
-      handleException(response, ErrorCode.UNAUTHORIZED, "Invalid token", HttpServletResponse.SC_UNAUTHORIZED);
+      handleException(response, ErrorCode.UNAUTHORIZED, "Invalid token",
+          HttpServletResponse.SC_UNAUTHORIZED);
       return;
     }
 
-    if (StringUtils.isNotEmpty(userEmail) && SecurityContextHolder.getContext().getAuthentication() == null) {
+    if (StringUtils.isNotEmpty(userEmail)
+        && SecurityContextHolder.getContext().getAuthentication() == null) {
       UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
       if (jwtService.isTokenValid(jwt, userDetails)) {
         log.debug("User - {}", userDetails);
@@ -113,11 +111,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-  private void handleException(HttpServletResponse response, ErrorCode errorCode, String message, int status)
+  private void handleException(HttpServletResponse response, ErrorCode errorCode, String message,
+      int status)
       throws IOException {
     response.setStatus(status);
     response.setContentType("application/json");
     response.getWriter().write(
-        String.format("{\"status\": false, \"error\": \"%s\", \"message\": \"%s\"}", errorCode, message));
+        String.format("{\"status\": false, \"error\": \"%s\", \"message\": \"%s\"}", errorCode,
+            message));
   }
 }

@@ -4,9 +4,7 @@ import com.fronteers.controllers.CustomAccessDeniedHandler;
 import com.fronteers.controllers.CustomAuthenticationEntryPoint;
 import com.fronteers.filters.JwtAuthenticationFilter;
 import com.fronteers.services.UserService;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -43,7 +41,8 @@ public class SecurityConfig {
   }
 
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+      throws Exception {
     return config.getAuthenticationManager();
   }
 
@@ -78,7 +77,8 @@ public class SecurityConfig {
                 "/api/v1/auth/login")
             .permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/test/**", "/v3/api-docs/**", "/v3/api-docs",
-                "/swagger-ui/**", "/swagger-ui/index.html", "/swagger-ui.html", "/brightlife_api_contract.yaml")
+                "/swagger-ui/**", "/swagger-ui/index.html", "/swagger-ui.html",
+                "/brightlife_api_contract.yaml")
             .permitAll()
             .anyRequest().authenticated())
         .exceptionHandling(exception -> exception

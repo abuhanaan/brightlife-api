@@ -1,58 +1,80 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
-  <parent>
-    <groupId>com.fronteers</groupId>
-    <artifactId>brighlife-api-contract</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
-
   <artifactId>logic</artifactId>
+
+  <build>
+    <plugins>
+      <!-- ✅ Ensure Spring Boot builds an executable JAR -->
+      <plugin>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal> <!-- Creates a fat JAR with dependencies -->
+            </goals>
+          </execution>
+        </executions>
+        <groupId>org.springframework.boot</groupId>
+      </plugin>
+
+      <!-- ✅ Include `Main-Class` in Manifest -->
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.fronteers.BrightlifeApplication</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <!-- ✅ Include Spring Boot Dependencies -->
     <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>com.fronteers</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+
+    <dependency>
       <artifactId>api-contract</artifactId>
+      <groupId>com.fronteers</groupId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
+      <groupId>org.springframework.boot</groupId>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <groupId>org.springframework.boot</groupId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
+      <groupId>org.springframework.boot</groupId>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
+      <groupId>org.springframework.boot</groupId>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
-      <scope>runtime</scope>
+      <groupId>org.springframework.boot</groupId>
       <optional>true</optional>
+      <scope>runtime</scope>
     </dependency>
     <!--		<dependency>-->
     <!--			<groupId>org.springframework.boot</groupId>-->
@@ -61,28 +83,28 @@
     <!--			<optional>true</optional>-->
     <!--		</dependency>-->
     <dependency>
-      <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
+      <groupId>com.mysql</groupId>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
+      <groupId>org.projectlombok</groupId>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>
+      <groupId>io.jsonwebtoken</groupId>
       <version>0.11.5</version>
     </dependency>
     <dependency>
-      <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-impl</artifactId>
+      <groupId>io.jsonwebtoken</groupId>
       <version>0.11.5</version>
     </dependency>
     <dependency>
-      <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-jackson</artifactId>
+      <groupId>io.jsonwebtoken</groupId>
       <version>0.11.5</version>
     </dependency>
 
@@ -93,72 +115,50 @@
     </dependency>
 
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
+      <groupId>com.fasterxml.jackson.core</groupId>
     </dependency>
 
     <dependency>
-      <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>
+      <groupId>jakarta.validation</groupId>
     </dependency>
 
     <dependency>
-      <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
+      <groupId>org.hibernate.validator</groupId>
     </dependency>
 
     <dependency>
-      <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
+      <groupId>org.apache.commons</groupId>
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
+      <groupId>org.springframework.security</groupId>
       <scope>test</scope>
     </dependency>
 
-<!--    <dependency>-->
-<!--      <artifactId>liquibase-core</artifactId>-->
-<!--      <groupId>org.liquibase</groupId>-->
-<!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <artifactId>liquibase-core</artifactId>-->
+    <!--      <groupId>org.liquibase</groupId>-->
+    <!--    </dependency>-->
 
 
   </dependencies>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>brighlife-api-contract</artifactId>
+    <groupId>com.fronteers</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
-  <build>
-    <plugins>
-      <!-- ✅ Ensure Spring Boot builds an executable JAR -->
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal> <!-- Creates a fat JAR with dependencies -->
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- ✅ Include `Main-Class` in Manifest -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>com.fronteers.BrightlifeApplication</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

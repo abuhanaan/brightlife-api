@@ -2,18 +2,15 @@ package com.fronteers.services;
 
 import com.fronteers.brightlife.model.JwtAuthenticationResponse;
 import com.fronteers.brightlife.model.SignInRequest;
+import com.fronteers.exceptions.AuthenticationException;
+import com.fronteers.exceptions.BadRequestException;
+import com.fronteers.models.entity.User;
+import com.fronteers.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.fronteers.exceptions.AuthenticationException;
-import com.fronteers.exceptions.BadRequestException;
-import com.fronteers.models.constant.Role;
-import com.fronteers.models.entity.User;
-import com.fronteers.repositories.UserRepository;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -44,8 +41,9 @@ public class AuthenticationService {
 
   public JwtAuthenticationResponse signin(SignInRequest request) {
     User user = userRepository.findByEmail(request.getEmail())
-        .orElseThrow(() -> new AuthenticationException(String.format("User with email %s does not exist",
-            request.getEmail())));
+        .orElseThrow(
+            () -> new AuthenticationException(String.format("User with email %s does not exist",
+                request.getEmail())));
 
     if (!(passwordEncoder.matches(request.getPassword(), user.getPassword()))) {
       System.out.println("Throwing Password Exception");

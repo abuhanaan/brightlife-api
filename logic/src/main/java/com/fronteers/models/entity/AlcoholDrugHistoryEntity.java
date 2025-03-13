@@ -2,7 +2,6 @@ package com.fronteers.models.entity;
 
 import com.fronteers.brightlife.model.FrequencyEnum;
 import com.fronteers.models.entity.forms.IntakeFormEntity;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

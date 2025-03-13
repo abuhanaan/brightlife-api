@@ -1,122 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.fronteers</groupId>
-    <artifactId>brighlife-api-contract</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
-
   <artifactId>api-contract</artifactId>
-
-  <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
   <build>
     <plugins>
       <plugin>
-        <groupId>org.openapitools</groupId>
         <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>6.6.0</version>
         <executions>
           <execution>
-            <goals>
-              <goal>generate</goal>
-            </goals>
             <configuration>
-              <inputSpec>
-                ${project.basedir}/src/main/resources/static/brightlife_api_contract.yaml
-              </inputSpec>
-
-              <generatorName>spring</generatorName>
-              <packageName>
-                com.fronteers.brightlife</packageName>
               <apiPackage>
-                com.fronteers.brightlife.api</apiPackage>
-              <modelPackage>
-                com.fronteers.brightlife.model</modelPackage>
+                com.fronteers.brightlife.api
+              </apiPackage>
+
               <configOptions>
                 <dateLibrary>java8</dateLibrary>
                 <delegatePattern>false</delegatePattern>
+                <documentationProvider>springdoc</documentationProvider>
                 <interfaceOnly>true</interfaceOnly>
                 <library>spring-boot</library>
+                <sourceFolder>src/gen/java/main</sourceFolder>
                 <useJakartaEe>true</useJakartaEe>
                 <useSpringBoot3>true</useSpringBoot3>
                 <useSwaggerUI>true</useSwaggerUI>
                 <useTags>true</useTags>
-                <documentationProvider>springdoc</documentationProvider>
-                <sourceFolder>src/gen/java/main</sourceFolder>
               </configOptions>
+              <generatorName>spring</generatorName>
+              <inputSpec>
+                ${project.basedir}/src/main/resources/static/brightlife_api_contract.yaml
+              </inputSpec>
+              <modelPackage>
+                com.fronteers.brightlife.model
+              </modelPackage>
+              <packageName>
+                com.fronteers.brightlife
+              </packageName>
             </configuration>
+            <goals>
+              <goal>generate</goal>
+            </goals>
           </execution>
         </executions>
+        <groupId>org.openapitools</groupId>
+        <version>6.6.0</version>
       </plugin>
 
 
       <!--            To generate a single open api specification file-->
 
       <plugin>
-        <groupId>io.swagger.codegen.v3</groupId>
         <artifactId>swagger-codegen-maven-plugin</artifactId>
-        <version>3.0.33</version>
         <executions>
           <execution>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
             <configuration>
-              <inputSpec>
-                ${project.basedir}/src/main/resources/static/brightlife_api_contract.yaml</inputSpec>
-
-              <!-- Use 'openapi-yaml' to get resolved YAML or
-              'openapi' to get resolved JSON -->
-              <language>openapi-yaml</language>
-
-              <!-- Default is
-              ${project.build.directory}/generated-sources/swagger -->
-              <output>${project.build.directory}/classes/static</output>
-
               <configOptions>
                 <!-- Default output file name is 'openapi.yaml'
                 or 'openapi.json'. But you can change
                                  the name by <outputFile>myapi.yaml</outputFile> -->
                 <outputFile>${project.name}.yaml</outputFile>
               </configOptions>
+
+              <!-- Use 'openapi-yaml' to get resolved YAML or
+              'openapi' to get resolved JSON -->
+              <inputSpec>
+                ${project.basedir}/src/main/resources/static/brightlife_api_contract.yaml
+              </inputSpec>
+
+              <!-- Default is
+              ${project.build.directory}/generated-sources/swagger -->
+              <language>openapi-yaml</language>
+
+              <output>${project.build.directory}/classes/static</output>
             </configuration>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>process-resources</phase>
           </execution>
         </executions>
+        <groupId>io.swagger.codegen.v3</groupId>
+        <version>3.0.33</version>
       </plugin>
 
       <!--            To delete some files which are not required-->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
         <executions>
           <execution>
-            <phase>process-resources</phase>
+            <configuration>
+              <target>
+                <delete file="${project.basedir}/target/classes/static/README.md"/>
+                <delete file="${project.basedir}/target/classes/static/.swagger-codegen-ignore"/>
+                <delete file="${project.basedir}/target/classes/static/openapi.yaml"/>
+                <delete dir="${project.basedir}/target/classes/static/.swagger-codegen"/>
+                <delete dir="${project.basedir}/target/classes/static/schemas"/>
+              </target>
+            </configuration>
             <goals>
               <goal>run</goal>
             </goals>
-            <configuration>
-              <target>
-                <delete file="${project.basedir}/target/classes/static/README.md" />
-                <delete file="${project.basedir}/target/classes/static/.swagger-codegen-ignore" />
-                <delete file="${project.basedir}/target/classes/static/openapi.yaml" />
-                <delete dir="${project.basedir}/target/classes/static/.swagger-codegen" />
-                <delete dir="${project.basedir}/target/classes/static/schemas" />
-              </target>
-            </configuration>
+            <phase>process-resources</phase>
           </execution>
         </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.1.0</version>
       </plugin>
     </plugins>
   </build>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>brighlife-api-contract</artifactId>
+    <groupId>com.fronteers</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
 </project>

@@ -1,6 +1,5 @@
 package com.fronteers.models.entity.forms;
 
-import com.fronteers.brightlife.model.ReleaseReceiveForm;
 import com.fronteers.models.entity.BaseEntity;
 import com.fronteers.models.entity.PartyEntity;
 import com.fronteers.models.entity.PatientEntity;

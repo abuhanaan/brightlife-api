@@ -2,12 +2,11 @@ package com.fronteers.models.entity;
 
 import com.fronteers.models.entity.forms.IntakeFormEntity;
 import jakarta.persistence.Column;
-import java.sql.Date;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.sql.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

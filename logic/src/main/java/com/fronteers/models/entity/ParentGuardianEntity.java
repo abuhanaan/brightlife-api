@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "parent_guardian")
-public class ParentGuardianEntity extends BaseEntity{
+public class ParentGuardianEntity extends BaseEntity {
 
   @Column(name = "firstName")
   private String firstName;

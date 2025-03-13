@@ -1528,7 +1528,7 @@ components:
   responses:
 
     BadRequest:
-#      type: object
+      #      type: object
       description: |
         Bad Request
         The request body or parameters does not conform to the schema.

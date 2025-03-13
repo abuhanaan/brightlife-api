@@ -1,7 +1,6 @@
 package com.fronteers.models.entity;
 
 import com.fronteers.models.entity.forms.IntakeFormEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;

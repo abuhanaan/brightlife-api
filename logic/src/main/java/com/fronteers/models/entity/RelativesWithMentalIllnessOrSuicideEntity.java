@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "mental_suicide_relative")
-public class RelativesWithMentalIllnessOrSuicideEntity extends BaseEntity{
+public class RelativesWithMentalIllnessOrSuicideEntity extends BaseEntity {
 
   @Column(name = "relative")
   private String relative;
