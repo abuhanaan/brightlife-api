@@ -1,0 +1,113 @@
+package com.fronteers.models.entity;
+
+import com.fronteers.brightlife.model.FrequencyEnum;
+import com.fronteers.models.entity.forms.IntakeFormEntity;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@EqualsAndHashCode(callSuper = false)
+@Entity
+@Table(name = "alcohol_drug_history")
+public class AlcoholDrugHistoryEntity extends BaseEntity {
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "usage_frequency")
+  private FrequencyEnum usageFrequency;
+
+  @Column(name = "brand")
+  private String brand;
+
+  @Column(name = "last_used")
+  private String lastUsed;
+
+  @Column(name = "have_cut_back")
+  private Boolean haveCutBack;
+
+  @Column(name = "angered_by_critics")
+  private Boolean angeredByCritics;
+
+  @Column(name = "feel_guilt")
+  private Boolean feelGuilt;
+
+  @Column(name = "up_with_drink")
+  private Boolean upWithDrink;
+
+  @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL)
+  @Fetch(value = FetchMode.SUBSELECT)
+  private List<SubstanceUsageEntity> substanceUsages;
+
+  @Column(name = "weekly_average_spending")
+  private Double weeklyAverageSpending;
+
+  @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL)
+  @Fetch(value = FetchMode.SUBSELECT)
+  private List<PastTreatmentEntity> pastTreatments;
+
+  @Column(name = "is_past_step_recovery_participant")
+  private Boolean isPastStepRecoveryParticipant;
+
+  @Column(name = "is_current_step_recovery_participant")
+  private Boolean isCurrentStepRecoveryParticipant;
+
+  @Column(name = "birth_place")
+  private String birthPlace;
+
+  @Column(name = "growth_place")
+  private String growthPlace;
+
+  @Column(name = "raised_by")
+  private String raisedBy;
+
+  @Column(name = "siblings_count")
+  private Integer siblingsCount;
+
+  @Column(name = "child_hood_info")
+  private String childhoodInfo;
+
+  @Column(name = "was_physically_abused")
+  private Boolean wasPhysicallyAbused;
+
+  @Column(name = "was_emotionally_abused")
+  private Boolean wasEmotionallyAbused;
+
+  @Column(name = "was_sexually_abused")
+  private Boolean wasSexuallyAbused;
+
+  @Column(name = "has_medical_disability")
+  private Boolean hasMedicalDisability;
+
+  @Column(name = "past_medical_history")
+  private List<String> pastMedicalHistory;
+
+  @Column(name = "past_surgical_history")
+  private List<String> pastSurgicalHistory;
+
+  @Column(name = "allergies")
+  private List<String> allergies;
+
+  @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL)
+  @Fetch(value = FetchMode.SUBSELECT)
+  private List<RelativesWithMentalIllnessOrSuicideEntity> relativesWithMentalIllnessOrSuicide;
+
+  @OneToOne(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL)
+  private IntakeFormEntity intakeForm;
+}
