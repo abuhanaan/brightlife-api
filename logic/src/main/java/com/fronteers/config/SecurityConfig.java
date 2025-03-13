@@ -75,7 +75,7 @@ public class SecurityConfig {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers(HttpMethod.POST, "/api/v1/signup",
-                "/api/v1/signin")
+                "/api/v1/auth/login")
             .permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/test/**", "/v3/api-docs/**", "/v3/api-docs",
                 "/swagger-ui/**", "/swagger-ui/index.html", "/swagger-ui.html", "/brightlife_api_contract.yaml")

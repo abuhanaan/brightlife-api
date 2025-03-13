@@ -6,6 +6,7 @@ import com.fronteers.brightlife.model.Review;
 import com.fronteers.brightlife.model.ReviewSearch;
 import com.fronteers.brightlife.model.Success;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -37,8 +38,13 @@ public class ReviewController implements ReviewApi {
   }
 
   @Override
+//  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Success> submitReview(Review request){
-    return null;
+    Success response = new Success();
+    response.setMessage("Review Submitted Successfully! - Test");
+    response.setStatus(true);
+    response.setSuccess("Yes");
+    return ResponseEntity.ok(response);
   }
 
   @Override

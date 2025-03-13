@@ -1,6 +1,0 @@
-in: path
-name: patientId
-description: A unique id to update or fetch a patients record.
-required: true
-schema:
-  type: string
