@@ -30,12 +30,15 @@ import com.fronteers.services.PatientService;
 import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Controller
+@Slf4j
 public class PatientsController implements PatientsApi {
 
   final PatientService patientService;
@@ -154,9 +157,11 @@ public class PatientsController implements PatientsApi {
 
   //  Registration
   @Override
-  public ResponseEntity<PatientRegistrationForm> getRegistration(Long id) {
-
-    return null;
+  public ResponseEntity<PatientRegistrationForm> getRegistration(@PathVariable("patientId") String patientId) {
+    log.info("Fetching Patient Registartion Details");
+    PatientRegistrationForm response = patientService.getRegistrationDetails(patientId);
+    log.info("Fetch Patient Response: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   @Override

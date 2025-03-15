@@ -20,13 +20,13 @@ spring:
   # Disable automatic table creation
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
     # Show SQL in logs
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
 
 logging:
   level:

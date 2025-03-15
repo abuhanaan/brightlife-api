@@ -10,6 +10,7 @@ import com.fronteers.brightlife.model.PaymentModeEnum;
 import com.fronteers.brightlife.model.PaymentStructure;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.exceptions.ConflictException;
+import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.AddressEntity;
 import com.fronteers.models.entity.EmergencyContactEntity;
 import com.fronteers.models.entity.GuarantorEntity;
@@ -23,6 +24,7 @@ import com.fronteers.repositories.GuarantorRepository;
 import com.fronteers.repositories.ParentGuardianRepository;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
+import com.fronteers.services.mappers.PatientMapper;
 import jakarta.validation.Valid;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -204,5 +206,18 @@ public class PatientService {
         .state(address.getState())
         .zipCode(address.getZipCode())
         .build());
+  }
+
+  public PatientRegistrationForm getRegistrationDetails(String patientId) {
+    PatientRegistrationFormEntity patientRegistrationFormEntity = checkIfPatientExist(patientId);
+    return PatientMapper.mapPatientRegFormEntityToPatientRegFormDTO(patientRegistrationFormEntity);
+  }
+
+  private PatientRegistrationFormEntity checkIfPatientExist(String patientId) {
+    PatientRegistrationFormEntity patientRegistrationFormEntity = patientRegistrationFormRepository.findOneByPatientId(patientId);
+    if (patientRegistrationFormEntity == null){
+      throw new NotFoundException(String.format("Patient with id %s does not exist", patientId));
+    }
+    return patientRegistrationFormEntity;
   }
 }

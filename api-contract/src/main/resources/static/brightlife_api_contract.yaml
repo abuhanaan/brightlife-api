@@ -64,7 +64,7 @@ components:
       schema:
         type: integer
         format: int64
-    patientIdParam:
+    patientId:
       in: path
       name: patientId
       description: A unique id to update or fetch a patients record.
@@ -1634,7 +1634,7 @@ paths:
         - Patients
       operationId: getPatient
       parameters:
-        - $ref: "#/components/parameters/patientIdParam"
+        - $ref: "#/components/parameters/patientId"
       responses:
         "200":
           description: Patient Details Fetched Successfully
@@ -1718,14 +1718,14 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
-  /api/v1/patients/forms/register/{idParam}:
+  /api/v1/patients/forms/register/{patientId}:
     get:
       summary: Fetches A Patients Registration Details
       tags:
         - Patients
       operationId: getRegistration
       parameters:
-        - $ref: "#/components/parameters/idParam"
+        - $ref: "#/components/parameters/patientId"
       responses:
         "200":
           description: Patient Registration Details Fetched Successfully
