@@ -1,5 +1,6 @@
 package com.fronteers.models.entity;
 
+import com.fronteers.brightlife.model.InsuranceNameEnum;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,7 +46,7 @@ public class InsuranceEntity extends BaseEntity {
   private Date dob;
 
   @Column(name = "provider_name")
-  private String providerName;
+  private InsuranceNameEnum providerName;
 
   @Column(name = "provider_phone")
   private String providerPhone;

@@ -893,6 +893,7 @@ components:
           $ref: '#/components/schemas/InsuranceProvider'
 
     PatientRegistrationForm:
+      type: object
       properties:
         id:
           type: integer
@@ -915,7 +916,6 @@ components:
           type: string
         file:
           $ref: '#/components/schemas/FileUpload'
-      type: object
 
     NoticeOfPrivacyPracticesForm:
       type: object
@@ -1663,6 +1663,7 @@ paths:
         description: This is used to register a new patient. A successful call returns a success response with a patient Id
         required: true
         content:
+#          multipart/form-data:
           application/json:
             schema:
               $ref: "#/components/schemas/PatientRegistrationForm"

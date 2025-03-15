@@ -53,6 +53,9 @@ public class AddressEntity extends BaseEntity {
   private EmergencyContactEntity emergencyContact;
 
   @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  private GuarantorEntity guarantor;
+
+  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
   private InsuranceEntity insurance;
 
   @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
@@ -61,8 +64,8 @@ public class AddressEntity extends BaseEntity {
   @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
   private PartyEntity party;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
-  private AppointmentEntity appointment;
+//  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+//  private AppointmentEntity appointment;
 
   @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
   @Fetch(FetchMode.SELECT)

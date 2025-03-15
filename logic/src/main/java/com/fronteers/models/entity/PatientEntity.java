@@ -46,17 +46,19 @@ public class PatientEntity extends BaseEntity {
   @Column(name = "patient_id", unique = true, nullable = false)
   private String patientId;
 
-  @Column(name = "first_name")
-  private String firstName;
+  @Column(name = "full_name")
+  private String fullName;
+//  @Column(name = "first_name")
+//  private String firstName;
+//
+//  @Column(name = "middle_name")
+//  private String middleName;
+//
+//  @Column(name = "last_name")
+//  private String lastName;
 
-  @Column(name = "middle_name")
-  private String middleName;
-
-  @Column(name = "last_name")
-  private String lastName;
-
-  @Column(name = "gender")
-  private GenderEnum gender;
+  @Column(name = "email")
+  private String email;
 
   @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
   @Fetch(FetchMode.SELECT)
@@ -114,11 +116,11 @@ public class PatientEntity extends BaseEntity {
   @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL)
   private TreatmentConsentTelehealthInPersonTreatmentConsentEntity treatmentConsentTelehealth;
 
-  @PrePersist
-  public void generatePatientId() {
-    if (patientId == null) {
-      this.patientId = UUID.randomUUID().toString();
-    }
-  }
+//  @PrePersist
+//  public void generatePatientId() {
+//    if (patientId == null) {
+//      this.patientId = UUID.randomUUID().toString();
+//    }
+//  }
 
 }

@@ -110,7 +110,7 @@ public class PatientRegistrationFormEntity extends BaseEntity {
   @Column(name = "address_id", updatable = false, insertable = false)
   private Long addressId;
 
-  @OneToOne()
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "address_id", referencedColumnName = "id")
   private AddressEntity address;
 
@@ -146,21 +146,21 @@ public class PatientRegistrationFormEntity extends BaseEntity {
   @Column(name = "guarantor_id", updatable = false, insertable = false)
   private Long guarantorId;
 
-  @OneToOne()
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "guarantor_id", referencedColumnName = "id")
   private GuarantorEntity guarantor;
 
   @Column(name = "parent_guardian_id", updatable = false, insertable = false)
   private Long parentGuardianId;
 
-  @OneToOne()
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "parent_guardian_id", referencedColumnName = "id")
   private ParentGuardianEntity parentGuardian;
 
   @Column(name = "emergency_contact_id", updatable = false, insertable = false)
   private Long emergencyContactId;
 
-  @OneToOne()
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "emergency_contact_id", referencedColumnName = "id")
   private EmergencyContactEntity emergencyContact;
 

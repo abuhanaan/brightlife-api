@@ -5,27 +5,40 @@ import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.AnxietyDisorderForm;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
+import com.fronteers.brightlife.model.EmergencyContact;
+import com.fronteers.brightlife.model.Guarantor;
 import com.fronteers.brightlife.model.InitialEvaluationForm;
 import com.fronteers.brightlife.model.IntakeForm;
 import com.fronteers.brightlife.model.MedicationConsentForm;
 import com.fronteers.brightlife.model.MoodDisorderAssessmentForm;
 import com.fronteers.brightlife.model.NoticeOfPrivacyPracticesForm;
 import com.fronteers.brightlife.model.PaginatedPatients;
+import com.fronteers.brightlife.model.ParentGuardian;
 import com.fronteers.brightlife.model.Patient;
 import com.fronteers.brightlife.model.PatientInformationConsentAndFinancialPolicyForm;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PatientSearch;
+import com.fronteers.brightlife.model.PaymentStructure;
+import com.fronteers.brightlife.model.PersonalInfo;
 import com.fronteers.brightlife.model.ReleaseReceiveForm;
 import com.fronteers.brightlife.model.ScreeningForm;
 import com.fronteers.brightlife.model.SelfPayForm;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.brightlife.model.TerminationPolicyForm;
 import com.fronteers.brightlife.model.TreatmentConsentTelehealthInPersonTreatmentConsent;
+import com.fronteers.services.PatientService;
+import java.time.LocalDate;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
 
+@RequiredArgsConstructor
 @Controller
 public class PatientsController implements PatientsApi {
+
+  final PatientService patientService;
 
   //  ADHD
   @Override
@@ -142,13 +155,35 @@ public class PatientsController implements PatientsApi {
   //  Registration
   @Override
   public ResponseEntity<PatientRegistrationForm> getRegistration(Long id) {
+
     return null;
   }
 
   @Override
   public ResponseEntity<Success> register(PatientRegistrationForm request) {
-    return null;
+
+    Success response = patientService.submitRegistrationForm(request);
+    return ResponseEntity.ok(response);
   }
+
+//  @Override
+//  public ResponseEntity<Success> register(Long id, UUID patientId, PersonalInfo personalInfo, Guarantor guarantor,
+//      ParentGuardian parentGuardian, EmergencyContact emergency, PaymentStructure paymentStructure, LocalDate date,
+//      String patientRegForm, MultipartFile file) {
+//    PatientRegistrationForm request = new PatientRegistrationForm();
+//    request.setId(id);
+//    request.setPatientId(patientId);
+//    request.setPersonalInfo(personalInfo);
+//    request.setGuarantor(guarantor);
+//    request.setParentGuardian(parentGuardian);
+//    request.setEmergency(emergency);
+//    request.setPaymentStructure(paymentStructure);
+//    request.setDate(date);
+//    request.setPatientRegForm(patientRegForm);
+//    request.setFile(file.getResource());
+//    Success response = patientService.submitRegistrationForm(request);
+//    return ResponseEntity.ok(response);
+//  }
 
   //  PatientInformationConsentAndFinancialPolicy
   @Override
