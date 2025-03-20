@@ -161,7 +161,7 @@ public class PatientMapper {
     return personalInfo;
   }
 
-  private static Address mapAddressEntityToAddressDto(AddressEntity addressEntity) {
+  public static Address mapAddressEntityToAddressDto(AddressEntity addressEntity) {
     Address addressDTO = new Address();
     addressDTO.setId(addressEntity.getId());
     addressDTO.setCity(addressEntity.getCity());

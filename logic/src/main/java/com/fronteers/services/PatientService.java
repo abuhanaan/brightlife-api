@@ -199,7 +199,7 @@ public class PatientService {
     return guarantorEntity;
   }
 
-  private AddressEntity mapAddressProperties(Address address) {
+  public AddressEntity mapAddressProperties(Address address) {
     return addressRepository.save(AddressEntity.builder()
         .streetName(address.getStreetName())
         .city(address.getCity())
@@ -213,7 +213,7 @@ public class PatientService {
     return PatientMapper.mapPatientRegFormEntityToPatientRegFormDTO(patientRegistrationFormEntity);
   }
 
-  private PatientRegistrationFormEntity checkIfPatientExist(String patientId) {
+  public PatientRegistrationFormEntity checkIfPatientExist(String patientId) {
     PatientRegistrationFormEntity patientRegistrationFormEntity = patientRegistrationFormRepository.findOneByPatientId(patientId);
     if (patientRegistrationFormEntity == null){
       throw new NotFoundException(String.format("Patient with id %s does not exist", patientId));

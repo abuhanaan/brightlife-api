@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,11 +70,12 @@ public class AppointmentEntity extends BaseEntity {
   @Column(name = "appointment_type")
   private AppointmentTypeEnum appointmentType;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "service")
   private ServiceEnum service;
 
   @Column(name = "appointment_date_time")
-  private Timestamp appointmentDateTime;
+  private OffsetDateTime appointmentDateTime;
 
   @Column(name = "purpose")
   private String purpose;

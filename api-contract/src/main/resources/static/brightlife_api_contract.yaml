@@ -1449,7 +1449,7 @@ components:
       format: email
     DateTime:
       type: string
-      format: timestamp
+      format: date-time
     Date:
       type: string
       format: date

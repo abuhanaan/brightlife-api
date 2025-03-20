@@ -5,11 +5,16 @@ import com.fronteers.brightlife.model.Appointment;
 import com.fronteers.brightlife.model.AppointmentSearch;
 import com.fronteers.brightlife.model.PaginatedAppointments;
 import com.fronteers.brightlife.model.Success;
+import com.fronteers.services.AppointmentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
+@RequiredArgsConstructor
 @Controller
 public class AppointmentController implements AppointmentApi {
+
+  final AppointmentService appointmentService;
 
   @Override
   public ResponseEntity<PaginatedAppointments> listAppointments(Integer pageNumber, Integer limit,
@@ -19,12 +24,13 @@ public class AppointmentController implements AppointmentApi {
 
   @Override
   public ResponseEntity<Appointment> getAppointment(Long appointmentId) {
-    return null;
+    return ResponseEntity.ok(appointmentService.getAppointment(appointmentId));
   }
 
   @Override
   public ResponseEntity<Success> submitAppointment(Appointment request) {
-    return null;
+
+    return ResponseEntity.ok(appointmentService.submit(request));
   }
 
   @Override
