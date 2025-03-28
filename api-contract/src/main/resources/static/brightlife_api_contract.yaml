@@ -1404,6 +1404,24 @@ components:
         status:
           $ref: '#/components/schemas/ReviewStatusEnum'
 
+    TimeSlot:
+      type: object
+      properties:
+        date:
+          $ref: "#/components/schemas/Date"
+        daySlots:
+          type: array
+          items:
+            type: string
+
+    TimeSlots:
+      type: object
+      properties:
+        slots:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeSlot"
+
     JwtAuthenticationResponse:
       type: object
       properties:
@@ -2692,6 +2710,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PaginatedAppointments"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/appointments/slots:
+    get:
+      summary: Fetches Three Months Already Picked Appointment Slots From the Current Day
+      tags:
+        - Appointment
+      operationId: getAppointmentSlots
+      responses:
+        "200":
+          description: Already Picked Appointment Slots Retrieved Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimeSlots"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":

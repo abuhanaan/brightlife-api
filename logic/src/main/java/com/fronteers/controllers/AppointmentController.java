@@ -5,6 +5,7 @@ import com.fronteers.brightlife.model.Appointment;
 import com.fronteers.brightlife.model.AppointmentSearch;
 import com.fronteers.brightlife.model.PaginatedAppointments;
 import com.fronteers.brightlife.model.Success;
+import com.fronteers.brightlife.model.TimeSlots;
 import com.fronteers.services.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +37,10 @@ public class AppointmentController implements AppointmentApi {
   @Override
   public ResponseEntity<Success> updateAppointment(Appointment request) {
     return null;
+  }
+
+  @Override
+  public ResponseEntity<TimeSlots> getAppointmentSlots(){
+    return ResponseEntity.ok(appointmentService.getAppointmentTimeSlots());
   }
 }
