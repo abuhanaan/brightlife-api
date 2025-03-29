@@ -17,6 +17,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,8 +90,12 @@ public class AppointmentService {
     LocalDate today = LocalDate.now();
     LocalDate threeMonthsLater = today.plusMonths(3);
 
-    // Fetch appointments within the next 3 months
-    List<AppointmentEntity> appointments = appointmentRepository.findAppointmentsBetween(today, threeMonthsLater);
+    // Convert LocalDate to OffsetDateTime at start of the day (09:00 AM as per your conditions)
+    OffsetDateTime startDateTime = today.atTime(9, 0).atOffset(ZoneOffset.UTC);
+    OffsetDateTime endDateTime = threeMonthsLater.atTime(17, 0).atOffset(ZoneOffset.UTC);
+
+    // Fetch appointments within the next 3 months using OffsetDateTime
+    List<AppointmentEntity> appointments = appointmentRepository.findAppointmentsBetween(startDateTime, endDateTime);
 
     // Use a TreeMap to store and group appointments by date in sorted order
     Map<LocalDate, List<String>> slotMap = new TreeMap<>();
@@ -107,10 +112,12 @@ public class AppointmentService {
     List<TimeSlot> timeSlots = slotMap.entrySet().stream()
         .map(entry -> mapToTimeSlot(entry.getKey(), entry.getValue()))
         .collect(Collectors.toList());
+
     TimeSlots response = new TimeSlots();
     response.setSlots(timeSlots);
     return response;
   }
+
 
   public Appointment getAppointment(Long appointmentId) {
     AppointmentEntity appointmentEntity = checkIfAppointmentExists(appointmentId);

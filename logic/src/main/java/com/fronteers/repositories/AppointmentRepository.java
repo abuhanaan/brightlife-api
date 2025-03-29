@@ -22,5 +22,5 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
   List<AppointmentEntity> findByPatient_PatientId(String patientId);
 
   @Query("SELECT a FROM AppointmentEntity a WHERE a.appointmentDateTime BETWEEN :start AND :end")
-  List<AppointmentEntity> findAppointmentsBetween(@Param("start") LocalDate start, @Param("end") LocalDate end);
+  List<AppointmentEntity> findAppointmentsBetween(@Param("start") OffsetDateTime start, @Param("end") OffsetDateTime end);
 }
