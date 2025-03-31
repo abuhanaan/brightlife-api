@@ -5,11 +5,15 @@ import com.fronteers.brightlife.model.PaginatedReviews;
 import com.fronteers.brightlife.model.Review;
 import com.fronteers.brightlife.model.ReviewSearch;
 import com.fronteers.brightlife.model.Success;
+import com.fronteers.services.ReviewService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 @Controller
+@RequiredArgsConstructor
 public class ReviewController implements ReviewApi {
+  private final ReviewService reviewService;
 
   @Override
   public ResponseEntity<PaginatedReviews> getDrafts(Integer pageNumber, Integer limit) {
@@ -39,11 +43,7 @@ public class ReviewController implements ReviewApi {
   @Override
 //  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Success> submitReview(Review request) {
-    Success response = new Success();
-    response.setMessage("Review Submitted Successfully! - Test");
-    response.setStatus(true);
-    response.setSuccess("Yes");
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(reviewService.submit(request));
   }
 
   @Override
