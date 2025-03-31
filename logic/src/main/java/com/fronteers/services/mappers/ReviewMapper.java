@@ -1,0 +1,21 @@
+package com.fronteers.services.mappers;
+
+import com.fronteers.brightlife.model.Review;
+import com.fronteers.brightlife.model.ReviewStatusEnum;
+import com.fronteers.models.entity.ReviewEntity;
+
+public class ReviewMapper {
+
+  public static Review mapReviewEntityToDto(ReviewEntity reviewEntity) {
+    Review reviewDto = new Review();
+    reviewDto.setId(reviewEntity.getId());
+    reviewDto.setNickname(reviewEntity.getNickname());
+    reviewDto.setEmail(reviewEntity.getEmail());
+    reviewDto.setReferralWish(reviewEntity.getReferralWish());
+    reviewDto.setRating(reviewEntity.getRating());
+    reviewDto.setRating(reviewEntity.getRating());
+    reviewDto.setReviewMessage(reviewEntity.getReviewMessage());
+    reviewDto.setStatus(reviewEntity.getPublished() ? ReviewStatusEnum.PUBLISHED : ReviewStatusEnum.DRAFT);
+    return reviewDto;
+  }
+}

@@ -27,7 +27,7 @@ public class ReviewController implements ReviewApi {
 
   @Override
   public ResponseEntity<Review> getReview(Long reviewId) {
-    return null;
+    return ResponseEntity.ok(reviewService.fetch(reviewId));
   }
 
   @Override

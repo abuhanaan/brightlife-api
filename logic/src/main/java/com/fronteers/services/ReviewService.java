@@ -7,6 +7,7 @@ import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.ReviewEntity;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.ReviewRepository;
+import com.fronteers.services.mappers.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,19 @@ public class ReviewService {
     reviewEntity.setPatient(patient);
     reviewRepository.save(reviewEntity);
     return new Success(true, "Review Submitted Successfully", "Submitted Review will be published soon");
+  }
+
+  public Review fetch(Long reviewId) {
+    ReviewEntity reviewEntity = checkIfReviewExist(reviewId);
+    return ReviewMapper.mapReviewEntityToDto(reviewEntity);
+  }
+
+  private ReviewEntity checkIfReviewExist(Long reviewId) {
+    ReviewEntity review = reviewRepository.findOneById(reviewId);
+    if (review == null){
+      throw new BadRequestException(String.format("Review with id %s does not exist", reviewId));
+    }
+    return review;
   }
 
   private PatientEntity checkIfPatientExist(String email) {
