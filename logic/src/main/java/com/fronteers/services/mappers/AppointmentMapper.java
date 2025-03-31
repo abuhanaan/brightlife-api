@@ -4,6 +4,7 @@ import com.fronteers.brightlife.model.Appointment;
 import com.fronteers.models.entity.AppointmentEntity;
 import com.fronteers.services.PatientService;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.UUID;
 
 public class AppointmentMapper {
@@ -30,5 +31,9 @@ public class AppointmentMapper {
     appointment.setInsuranceName(appointmentEntity.getInsuranceName());
     appointment.setInsuranceNumber(appointmentEntity.getInsuranceNumber());
     return appointment;
+  }
+
+  public static List<Appointment> mapAppointmentEntitiesToDto(List<AppointmentEntity> appointmentEntities) {
+    return appointmentEntities.stream().map(AppointmentMapper::mapAppointmentEntityToDto).toList();
   }
 }

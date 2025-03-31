@@ -1,18 +1,19 @@
 package com.fronteers.services;
 
 import com.fronteers.brightlife.model.Appointment;
-import com.fronteers.brightlife.model.PatientRegistrationForm;
+import com.fronteers.brightlife.model.AppointmentSearch;
+import com.fronteers.brightlife.model.PaginatedAppointments;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.brightlife.model.TimeSlot;
 import com.fronteers.brightlife.model.TimeSlots;
 import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.models.entity.AppointmentEntity;
+import com.fronteers.models.entity.QAppointmentEntity;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
 import com.fronteers.repositories.AppointmentRepository;
 import com.fronteers.services.mappers.AppointmentMapper;
-import jakarta.servlet.Registration;
+import com.querydsl.core.BooleanBuilder;
 import java.sql.Date;
-import java.sql.Time;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -26,14 +27,18 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
-  final AppointmentRepository appointmentRepository;
-  final PatientService patientService;
+  private final AppointmentRepository appointmentRepository;
+  private final PatientService patientService;
 
   // U.S. Federal Holidays (Static for demo, can be dynamically fetched from an API)
   private static final Set<LocalDate> US_HOLIDAYS = Set.of(
@@ -186,5 +191,63 @@ public class AppointmentService {
     return timeSlot;
   }
 
-//  TODO: Implement search, and getOne
+  public PaginatedAppointments searchAppointment(Integer pageNumber, Integer limit, AppointmentSearch searchCriteria) {
+    int maxLimit = (limit == null || limit > 100) ? 100 : limit;
+    int currentPage = (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
+    int safeLimit = Math.max(1, Math.min(maxLimit, 100));
+
+    BooleanBuilder predicate = new BooleanBuilder();
+    QAppointmentEntity qAppointment = QAppointmentEntity.appointmentEntity;
+
+    if (searchCriteria.getFirstName() != null) {
+      predicate.and(qAppointment.firstName.eq(searchCriteria.getFirstName()));
+    }
+    if (searchCriteria.getLastName() != null) {
+      predicate.and(qAppointment.lastName.eq(searchCriteria.getLastName()));
+    }
+    if (searchCriteria.getMiddleName() != null) {
+      predicate.and(qAppointment.middleName.eq(searchCriteria.getMiddleName()));
+    }
+    if (searchCriteria.getDob() != null) {
+      predicate.and(qAppointment.dob.eq(Date.valueOf(searchCriteria.getDob())));
+    }
+    if (searchCriteria.getPhone() != null) {
+      predicate.and(qAppointment.phone.eq(searchCriteria.getPhone()));
+    }
+    if (searchCriteria.getEmail() != null) {
+      predicate.and(qAppointment.email.eq(searchCriteria.getEmail()));
+    }
+    if (searchCriteria.getGender() != null) {
+      predicate.and(qAppointment.gender.eq(searchCriteria.getGender()));
+    }
+    if (searchCriteria.getCity() != null) {
+      predicate.and(qAppointment.address.city.eq(searchCriteria.getCity()));
+    }
+    if (searchCriteria.getState() != null) {
+      predicate.and(qAppointment.address.state.eq(searchCriteria.getState()));
+    }
+    if (searchCriteria.getAppointmentDateTime() != null) {
+      predicate.and(qAppointment.appointmentDateTime.eq(searchCriteria.getAppointmentDateTime()));
+    }
+    if (searchCriteria.getPaymentMode() != null) {
+      predicate.and(qAppointment.paymentMethod.eq(searchCriteria.getPaymentMode()));
+    }
+
+    // Fetch all records if no filters are applied
+    if (predicate.getValue() == null) {
+      log.info("No search filters applied, fetching all records");
+      predicate.and(qAppointment.id.isNotNull());
+    }
+    Pageable pageable = PageRequest.of(currentPage, safeLimit);
+    Page<AppointmentEntity> appointmentPage = appointmentRepository.findAll(predicate, pageable);
+    List<AppointmentEntity> entityList = appointmentPage.getContent();
+    List<Appointment> appointmentDtos = AppointmentMapper.mapAppointmentEntitiesToDto(entityList);
+
+    PaginatedAppointments response = new PaginatedAppointments();
+    response.setAppointments(appointmentDtos);
+    response.setCurrentPage(appointmentPage.getNumber() + 1);
+    response.setItemsPerPage(appointmentPage.getSize());
+    response.setTotalPages(appointmentPage.getTotalPages());
+    return response;
+  }
 }

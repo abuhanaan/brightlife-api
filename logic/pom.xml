@@ -30,6 +30,34 @@
         </configuration>
         <groupId>org.apache.maven.plugins</groupId>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <dependency>
+              <artifactId>jakarta.persistence-api</artifactId>
+              <groupId>jakarta.persistence</groupId>
+              <version>3.1.0</version>
+            </dependency>
+            <path>
+              <artifactId>querydsl-apt</artifactId>
+              <classifier>jakarta</classifier>
+              <groupId>com.querydsl</groupId>
+              <version>5.0.0</version>
+            </path>
+            <!--            In case your project uses Lombok add here the Lombok dep below -->
+            <path>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+              <version>1.18.30</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.11.0</version>
+      </plugin>
+
     </plugins>
   </build>
 
@@ -76,6 +104,21 @@
       <optional>true</optional>
       <scope>runtime</scope>
     </dependency>
+
+    <dependency>
+      <artifactId>querydsl-jpa</artifactId>
+      <classifier>jakarta</classifier>
+      <groupId>com.querydsl</groupId>
+      <version>5.0.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>querydsl-apt</artifactId>
+      <classifier>jakarta</classifier>
+      <groupId>com.querydsl</groupId>
+      <scope>provided</scope>
+      <version>5.0.0</version>
+    </dependency>
+
     <!--		<dependency>-->
     <!--			<groupId>org.springframework.boot</groupId>-->
     <!--			<artifactId>spring-boot-docker-compose</artifactId>-->

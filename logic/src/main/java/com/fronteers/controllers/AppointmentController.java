@@ -20,7 +20,8 @@ public class AppointmentController implements AppointmentApi {
   @Override
   public ResponseEntity<PaginatedAppointments> listAppointments(Integer pageNumber, Integer limit,
       AppointmentSearch searchCriteria) {
-    return null;
+
+    return ResponseEntity.ok(appointmentService.searchAppointment(pageNumber, limit, searchCriteria));
   }
 
   @Override
