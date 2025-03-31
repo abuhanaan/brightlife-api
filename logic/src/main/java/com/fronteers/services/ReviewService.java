@@ -39,6 +39,26 @@ public class ReviewService {
     return ReviewMapper.mapReviewEntityToDto(reviewEntity);
   }
 
+  public Success publish(Long reviewId) {
+    ReviewEntity reviewEntity = checkIfReviewExist(reviewId);
+    if (reviewEntity.getPublished()){
+      throw new BadRequestException("Review Record Is Already Published");
+    }
+    reviewEntity.setPublished(true);
+    reviewRepository.save(reviewEntity);
+    return new Success(true, "Review Updated Successfully", "Review Record Has Been Successfully Published");
+  }
+
+  public Success unpublish(Long reviewId) {
+    ReviewEntity reviewEntity = checkIfReviewExist(reviewId);
+    if (!reviewEntity.getPublished()){
+      throw new BadRequestException("Review Record Is Already In Draft");
+    }
+    reviewEntity.setPublished(false);
+    reviewRepository.save(reviewEntity);
+    return new Success(true, "Review Updated Successfully", "Review Record Has Been Successfully Un-published");
+  }
+
   private ReviewEntity checkIfReviewExist(Long reviewId) {
     ReviewEntity review = reviewRepository.findOneById(reviewId);
     if (review == null){

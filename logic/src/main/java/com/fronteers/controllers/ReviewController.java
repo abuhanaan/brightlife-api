@@ -32,12 +32,13 @@ public class ReviewController implements ReviewApi {
 
   @Override
   public ResponseEntity<Success> publish(Long reviewId) {
-    return null;
+    return ResponseEntity.ok(reviewService.publish(reviewId));
   }
 
   @Override
   public ResponseEntity<Success> unpublish(Long reviewId) {
-    return null;
+
+    return ResponseEntity.ok(reviewService.unpublish(reviewId));
   }
 
   @Override

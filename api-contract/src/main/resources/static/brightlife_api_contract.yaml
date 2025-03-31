@@ -2902,7 +2902,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
   /api/v1/reviews/publish/{idParam}:
-    get:
+    put:
       summary: Fetches A Review Record Using A Unique idParam And Publishes it
       tags:
         - Review
@@ -2928,7 +2928,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
   /api/v1/reviews/unpublish/{idParam}:
-    get:
+    put:
       summary: Fetches A Review Record Using A Unique idParam And Un-publishes it, thereby Sending It To The List Of Drafts
       tags:
         - Review
