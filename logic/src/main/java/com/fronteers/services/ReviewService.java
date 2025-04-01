@@ -2,13 +2,17 @@ package com.fronteers.services;
 
 import com.fronteers.brightlife.model.PaginatedReviews;
 import com.fronteers.brightlife.model.Review;
+import com.fronteers.brightlife.model.ReviewSearch;
+import com.fronteers.brightlife.model.ReviewStatusEnum;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.models.entity.PatientEntity;
+import com.fronteers.models.entity.QReviewEntity;
 import com.fronteers.models.entity.ReviewEntity;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.ReviewRepository;
 import com.fronteers.services.mappers.ReviewMapper;
+import com.querydsl.core.BooleanBuilder;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +101,48 @@ public class ReviewService {
 
     Page<ReviewEntity> reviewPage = isPublished ? reviewRepository.findByPublishedTrue(pageable) : reviewRepository.findByPublishedFalse(pageable);
     List<ReviewEntity> reviewList = reviewPage.getContent();
-    List<Review> reviewDtos = ReviewMapper.mapReviewEntitieToDtos(reviewList);
+    List<Review> reviewDtos = ReviewMapper.mapReviewEntitiesToDtos(reviewList);
+
+    PaginatedReviews response = new PaginatedReviews();
+    response.setReviews(reviewDtos);
+    response.setCurrentPage(reviewPage.getNumber() + 1);
+    response.setItemsPerPage(reviewPage.getSize());
+    response.setTotalPages(reviewPage.getTotalPages());
+    return response;
+  }
+
+  public PaginatedReviews search(Integer pageNumber, Integer limit, ReviewSearch searchCriteria) {
+    int maxLimit = (limit == null || limit > 100) ? 100 : limit;
+    int currentPage = (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
+    int safeLimit = Math.max(1, Math.min(maxLimit, 100));
+
+    BooleanBuilder predicate = new BooleanBuilder();
+    QReviewEntity qReview = QReviewEntity.reviewEntity;
+
+    if(searchCriteria.getEmail() != null){
+      predicate.and(qReview.email.eq(searchCriteria.getEmail()));
+    }
+    if(searchCriteria.getNickName() != null){
+      predicate.and(qReview.nickname.eq(searchCriteria.getNickName()));
+    }
+    if (searchCriteria.getRating() != null){
+      predicate.and(qReview.rating.eq(searchCriteria.getRating()));
+    }
+    if (searchCriteria.getStatus() != null){
+      predicate.and(qReview.published.eq(
+          searchCriteria.getStatus().equals(ReviewStatusEnum.PUBLISHED)));
+    }
+
+    // Fetch all records if no filters are applied
+    if (predicate.getValue() == null) {
+      log.info("No search filters applied, fetching all records");
+      predicate.and(qReview.id.isNotNull());
+    }
+
+    Pageable pageable = PageRequest.of(currentPage, safeLimit);
+    Page<ReviewEntity> reviewPage = reviewRepository.findAll(predicate, pageable);
+    List<ReviewEntity> reviewList = reviewPage.getContent();
+    List<Review> reviewDtos = ReviewMapper.mapReviewEntitiesToDtos(reviewList);
 
     PaginatedReviews response = new PaginatedReviews();
     response.setReviews(reviewDtos);

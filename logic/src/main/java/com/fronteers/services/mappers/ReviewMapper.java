@@ -20,7 +20,7 @@ public class ReviewMapper {
     return reviewDto;
   }
 
-  public static List<Review> mapReviewEntitieToDtos(List<ReviewEntity> reviewEntities) {
+  public static List<Review> mapReviewEntitiesToDtos(List<ReviewEntity> reviewEntities) {
     return reviewEntities.stream().map(ReviewMapper::mapReviewEntityToDto).toList();
   }
 }

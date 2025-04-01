@@ -50,6 +50,6 @@ public class ReviewController implements ReviewApi {
   @Override
   public ResponseEntity<PaginatedReviews> listReviews(Integer pageNumber, Integer limit,
       ReviewSearch searchCriteria) {
-    return null;
+    return ResponseEntity.ok(reviewService.search(pageNumber, limit, searchCriteria));
   }
 }

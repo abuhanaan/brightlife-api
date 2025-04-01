@@ -1393,7 +1393,7 @@ components:
     ReviewSearch:
       type: object
       properties:
-        name:
+        nickName:
           type: string
         email:
           $ref: "#/components/schemas/Email"
