@@ -26,6 +26,7 @@ import com.fronteers.brightlife.model.SelfPayForm;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.brightlife.model.TerminationPolicyForm;
 import com.fronteers.brightlife.model.TreatmentConsentTelehealthInPersonTreatmentConsent;
+import com.fronteers.services.AdhdService;
 import com.fronteers.services.PatientService;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -42,16 +43,19 @@ import org.springframework.web.multipart.MultipartFile;
 public class PatientsController implements PatientsApi {
 
   final PatientService patientService;
+  final AdhdService adhdService;
 
   //  ADHD
   @Override
   public ResponseEntity<ADHDForm> getAdhd(Long id) {
-    return null;
+
+    return ResponseEntity.ok(adhdService.getAdhd(id));
   }
 
   @Override
   public ResponseEntity<Success> submitAdhd(ADHDForm request) {
-    return null;
+
+    return ResponseEntity.ok(adhdService.submitAdhd(request));
   }
 
   //  AnxietyDisorder
@@ -158,7 +162,7 @@ public class PatientsController implements PatientsApi {
   //  Registration
   @Override
   public ResponseEntity<PatientRegistrationForm> getRegistration(@PathVariable("patientId") String patientId) {
-    log.info("Fetching Patient Registartion Details");
+    log.info("Fetching Patient Registartion Details with patientId: {}", patientId);
     PatientRegistrationForm response = patientService.getRegistrationDetails(patientId);
     log.info("Fetch Patient Response: {}", response);
     return ResponseEntity.ok(response);
@@ -166,29 +170,9 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> register(PatientRegistrationForm request) {
-
     Success response = patientService.submitRegistrationForm(request);
     return ResponseEntity.ok(response);
   }
-
-//  @Override
-//  public ResponseEntity<Success> register(Long id, UUID patientId, PersonalInfo personalInfo, Guarantor guarantor,
-//      ParentGuardian parentGuardian, EmergencyContact emergency, PaymentStructure paymentStructure, LocalDate date,
-//      String patientRegForm, MultipartFile file) {
-//    PatientRegistrationForm request = new PatientRegistrationForm();
-//    request.setId(id);
-//    request.setPatientId(patientId);
-//    request.setPersonalInfo(personalInfo);
-//    request.setGuarantor(guarantor);
-//    request.setParentGuardian(parentGuardian);
-//    request.setEmergency(emergency);
-//    request.setPaymentStructure(paymentStructure);
-//    request.setDate(date);
-//    request.setPatientRegForm(patientRegForm);
-//    request.setFile(file.getResource());
-//    Success response = patientService.submitRegistrationForm(request);
-//    return ResponseEntity.ok(response);
-//  }
 
   //  PatientInformationConsentAndFinancialPolicy
   @Override

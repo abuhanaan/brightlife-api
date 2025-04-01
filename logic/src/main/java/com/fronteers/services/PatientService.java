@@ -1,5 +1,6 @@
 package com.fronteers.services;
 
+import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.Address;
 import com.fronteers.brightlife.model.EmergencyContact;
 import com.fronteers.brightlife.model.Guarantor;
@@ -25,7 +26,6 @@ import com.fronteers.repositories.ParentGuardianRepository;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.services.mappers.PatientMapper;
-import jakarta.validation.Valid;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +37,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PatientService {
 
-  final PatientRepository patientRepository;
-  final PatientRegistrationFormRepository patientRegistrationFormRepository;
-  final AddressRepository addressRepository;
-  final GuarantorRepository guarantorRepository;
+  private final PatientRepository patientRepository;
+  private final PatientRegistrationFormRepository patientRegistrationFormRepository;
+  private final AddressRepository addressRepository;
+  private final GuarantorRepository guarantorRepository;
   private final ParentGuardianRepository parentGuardianRepository;
   private final EmergencyContactRepository emergencyContactRepository;
 
