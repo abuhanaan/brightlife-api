@@ -3,6 +3,7 @@ package com.fronteers.services.mappers;
 import com.fronteers.brightlife.model.Review;
 import com.fronteers.brightlife.model.ReviewStatusEnum;
 import com.fronteers.models.entity.ReviewEntity;
+import java.util.List;
 
 public class ReviewMapper {
 
@@ -17,5 +18,9 @@ public class ReviewMapper {
     reviewDto.setReviewMessage(reviewEntity.getReviewMessage());
     reviewDto.setStatus(reviewEntity.getPublished() ? ReviewStatusEnum.PUBLISHED : ReviewStatusEnum.DRAFT);
     return reviewDto;
+  }
+
+  public static List<Review> mapReviewEntitieToDtos(List<ReviewEntity> reviewEntities) {
+    return reviewEntities.stream().map(ReviewMapper::mapReviewEntityToDto).toList();
   }
 }

@@ -17,12 +17,12 @@ public class ReviewController implements ReviewApi {
 
   @Override
   public ResponseEntity<PaginatedReviews> getDrafts(Integer pageNumber, Integer limit) {
-    return null;
+    return ResponseEntity.ok(reviewService.getUnpublished(pageNumber, limit));
   }
 
   @Override
   public ResponseEntity<PaginatedReviews> getPublished(Integer pageNumber, Integer limit) {
-    return null;
+    return ResponseEntity.ok(reviewService.getPublished(pageNumber, limit));
   }
 
   @Override

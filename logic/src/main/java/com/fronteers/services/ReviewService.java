@@ -1,5 +1,6 @@
 package com.fronteers.services;
 
+import com.fronteers.brightlife.model.PaginatedReviews;
 import com.fronteers.brightlife.model.Review;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.exceptions.BadRequestException;
@@ -8,8 +9,12 @@ import com.fronteers.models.entity.ReviewEntity;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.ReviewRepository;
 import com.fronteers.services.mappers.ReviewMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -73,5 +78,32 @@ public class ReviewService {
       throw new BadRequestException("The provided email is not connect to a patient record");
     }
     return patient;
+  }
+
+  public PaginatedReviews getPublished(Integer pageNumber, Integer limit) {
+    return processPublishedAndDraft(pageNumber, limit, true);
+  }
+
+  public PaginatedReviews getUnpublished(Integer pageNumber, Integer limit) {
+    return processPublishedAndDraft(pageNumber, limit, false);
+  }
+
+  private PaginatedReviews processPublishedAndDraft(Integer pageNumber, Integer limit, Boolean isPublished){
+    int maxLimit = (limit == null || limit > 100) ? 100 : limit;
+    int currentPage = (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
+    int safeLimit = Math.max(1, Math.min(maxLimit, 100));
+
+    Pageable pageable = PageRequest.of(currentPage, safeLimit);
+
+    Page<ReviewEntity> reviewPage = isPublished ? reviewRepository.findByPublishedTrue(pageable) : reviewRepository.findByPublishedFalse(pageable);
+    List<ReviewEntity> reviewList = reviewPage.getContent();
+    List<Review> reviewDtos = ReviewMapper.mapReviewEntitieToDtos(reviewList);
+
+    PaginatedReviews response = new PaginatedReviews();
+    response.setReviews(reviewDtos);
+    response.setCurrentPage(reviewPage.getNumber() + 1);
+    response.setItemsPerPage(reviewPage.getSize());
+    response.setTotalPages(reviewPage.getTotalPages());
+    return response;
   }
 }
