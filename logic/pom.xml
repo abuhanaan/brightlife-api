@@ -63,6 +63,21 @@
 
   <dependencies>
     <!-- ✅ Include Spring Boot Dependencies -->
+
+    <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
+    <!--    <dependency>-->
+    <!--      <groupId>com.amazonaws</groupId>-->
+    <!--      <artifactId>aws-java-sdk-s3</artifactId>-->
+    <!--      <version>1.12.781</version>-->
+    <!--    </dependency>-->
+
+    <dependency>
+      <artifactId>s3</artifactId>
+      <groupId>software.amazon.awssdk</groupId>
+      <version>2.25.0</version>
+    </dependency>
+
+
     <dependency>
       <artifactId>spring-boot-starter</artifactId>
       <groupId>org.springframework.boot</groupId>

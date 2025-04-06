@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 @RequiredArgsConstructor
 public class ReviewController implements ReviewApi {
+
   private final ReviewService reviewService;
 
   @Override

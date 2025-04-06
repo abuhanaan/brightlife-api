@@ -40,7 +40,8 @@ public class ReviewService {
     reviewEntity.setPublished(false);
     reviewEntity.setPatient(patient);
     reviewRepository.save(reviewEntity);
-    return new Success(true, "Review Submitted Successfully", "Submitted Review will be published soon");
+    return new Success(true, "Review Submitted Successfully",
+        "Submitted Review will be published soon");
   }
 
   public Review fetch(Long reviewId) {
@@ -50,27 +51,29 @@ public class ReviewService {
 
   public Success publish(Long reviewId) {
     ReviewEntity reviewEntity = checkIfReviewExist(reviewId);
-    if (reviewEntity.getPublished()){
+    if (reviewEntity.getPublished()) {
       throw new BadRequestException("Review Record Is Already Published");
     }
     reviewEntity.setPublished(true);
     reviewRepository.save(reviewEntity);
-    return new Success(true, "Review Updated Successfully", "Review Record Has Been Successfully Published");
+    return new Success(true, "Review Updated Successfully",
+        "Review Record Has Been Successfully Published");
   }
 
   public Success unpublish(Long reviewId) {
     ReviewEntity reviewEntity = checkIfReviewExist(reviewId);
-    if (!reviewEntity.getPublished()){
+    if (!reviewEntity.getPublished()) {
       throw new BadRequestException("Review Record Is Already In Draft");
     }
     reviewEntity.setPublished(false);
     reviewRepository.save(reviewEntity);
-    return new Success(true, "Review Updated Successfully", "Review Record Has Been Successfully Un-published");
+    return new Success(true, "Review Updated Successfully",
+        "Review Record Has Been Successfully Un-published");
   }
 
   private ReviewEntity checkIfReviewExist(Long reviewId) {
     ReviewEntity review = reviewRepository.findOneById(reviewId);
-    if (review == null){
+    if (review == null) {
       throw new BadRequestException(String.format("Review with id %s does not exist", reviewId));
     }
     return review;
@@ -78,7 +81,7 @@ public class ReviewService {
 
   private PatientEntity checkIfPatientExist(String email) {
     PatientEntity patient = patientRepository.findOneByEmail(email);
-    if (patient == null){
+    if (patient == null) {
       throw new BadRequestException("The provided email is not connect to a patient record");
     }
     return patient;
@@ -92,14 +95,17 @@ public class ReviewService {
     return processPublishedAndDraft(pageNumber, limit, false);
   }
 
-  private PaginatedReviews processPublishedAndDraft(Integer pageNumber, Integer limit, Boolean isPublished){
+  private PaginatedReviews processPublishedAndDraft(Integer pageNumber, Integer limit,
+      Boolean isPublished) {
     int maxLimit = (limit == null || limit > 100) ? 100 : limit;
-    int currentPage = (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
+    int currentPage =
+        (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
     int safeLimit = Math.max(1, Math.min(maxLimit, 100));
 
     Pageable pageable = PageRequest.of(currentPage, safeLimit);
 
-    Page<ReviewEntity> reviewPage = isPublished ? reviewRepository.findByPublishedTrue(pageable) : reviewRepository.findByPublishedFalse(pageable);
+    Page<ReviewEntity> reviewPage = isPublished ? reviewRepository.findByPublishedTrue(pageable)
+        : reviewRepository.findByPublishedFalse(pageable);
     List<ReviewEntity> reviewList = reviewPage.getContent();
     List<Review> reviewDtos = ReviewMapper.mapReviewEntitiesToDtos(reviewList);
 
@@ -113,22 +119,23 @@ public class ReviewService {
 
   public PaginatedReviews search(Integer pageNumber, Integer limit, ReviewSearch searchCriteria) {
     int maxLimit = (limit == null || limit > 100) ? 100 : limit;
-    int currentPage = (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
+    int currentPage =
+        (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
     int safeLimit = Math.max(1, Math.min(maxLimit, 100));
 
     BooleanBuilder predicate = new BooleanBuilder();
     QReviewEntity qReview = QReviewEntity.reviewEntity;
 
-    if(searchCriteria.getEmail() != null){
+    if (searchCriteria.getEmail() != null) {
       predicate.and(qReview.email.eq(searchCriteria.getEmail()));
     }
-    if(searchCriteria.getNickName() != null){
+    if (searchCriteria.getNickName() != null) {
       predicate.and(qReview.nickname.eq(searchCriteria.getNickName()));
     }
-    if (searchCriteria.getRating() != null){
+    if (searchCriteria.getRating() != null) {
       predicate.and(qReview.rating.eq(searchCriteria.getRating()));
     }
-    if (searchCriteria.getStatus() != null){
+    if (searchCriteria.getStatus() != null) {
       predicate.and(qReview.published.eq(
           searchCriteria.getStatus().equals(ReviewStatusEnum.PUBLISHED)));
     }

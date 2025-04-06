@@ -37,8 +37,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
-  private final AppointmentRepository appointmentRepository;
-  private final PatientService patientService;
 
   // U.S. Federal Holidays (Static for demo, can be dynamically fetched from an API)
   private static final Set<LocalDate> US_HOLIDAYS = Set.of(
@@ -46,6 +44,8 @@ public class AppointmentService {
       LocalDate.of(2025, 7, 4),  // Independence Day
       LocalDate.of(2025, 12, 25) // Christmas Day
   );
+  private final AppointmentRepository appointmentRepository;
+  private final PatientService patientService;
 
   public Success submit(Appointment request) {
     OffsetDateTime appointmentDateTime = request.getAppointmentDateTime();
@@ -77,10 +77,12 @@ public class AppointmentService {
     PatientRegistrationFormEntity patientRegistrationFormEntity = null;
 
     if (request.getPatientId() != null) {
-      patientRegistrationFormEntity = patientService.checkIfPatientExist(request.getPatientId().toString());
+      patientRegistrationFormEntity = patientService.checkIfPatientExist(
+          request.getPatientId().toString());
     }
     if (patientRegistrationFormEntity != null) {
-      mapOldPatientAppointmentDetails(appointmentEntity, request, patientRegistrationFormEntity, appointmentDateTime);
+      mapOldPatientAppointmentDetails(appointmentEntity, request, patientRegistrationFormEntity,
+          appointmentDateTime);
     } else {
       mapNewPatientAppointmentDetails(appointmentEntity, request, appointmentDateTime);
     }
@@ -100,7 +102,8 @@ public class AppointmentService {
     OffsetDateTime endDateTime = threeMonthsLater.atTime(17, 0).atOffset(ZoneOffset.UTC);
 
     // Fetch appointments within the next 3 months using OffsetDateTime
-    List<AppointmentEntity> appointments = appointmentRepository.findAppointmentsBetween(startDateTime, endDateTime);
+    List<AppointmentEntity> appointments = appointmentRepository.findAppointmentsBetween(
+        startDateTime, endDateTime);
 
     // Use a TreeMap to store and group appointments by date in sorted order
     Map<LocalDate, List<String>> slotMap = new TreeMap<>();
@@ -129,7 +132,9 @@ public class AppointmentService {
     return AppointmentMapper.mapAppointmentEntityToDto(appointmentEntity);
   }
 
-  private void mapOldPatientAppointmentDetails(AppointmentEntity appointmentEntity, Appointment request, PatientRegistrationFormEntity patientRegFormEntity, OffsetDateTime appointmentDateTime) {
+  private void mapOldPatientAppointmentDetails(AppointmentEntity appointmentEntity,
+      Appointment request, PatientRegistrationFormEntity patientRegFormEntity,
+      OffsetDateTime appointmentDateTime) {
     appointmentEntity.setPatient(patientRegFormEntity.getPatient());
     appointmentEntity.setIsNew(false);
     appointmentEntity.setVerificationStatus(request.getVerificationStatus());
@@ -149,7 +154,8 @@ public class AppointmentService {
     appointmentEntity.setInsuranceNumber(request.getInsuranceNumber());
   }
 
-  private void mapNewPatientAppointmentDetails(AppointmentEntity appointmentEntity, Appointment request, OffsetDateTime appointmentDateTime) {
+  private void mapNewPatientAppointmentDetails(AppointmentEntity appointmentEntity,
+      Appointment request, OffsetDateTime appointmentDateTime) {
     appointmentEntity.setIsNew(true);
     appointmentEntity.setVerificationStatus(request.getVerificationStatus());
     appointmentEntity.setFirstName(request.getFirstName());
@@ -178,22 +184,25 @@ public class AppointmentService {
 
   private AppointmentEntity checkIfAppointmentExists(Long appointmentId) {
     AppointmentEntity appointment = appointmentRepository.findOneById(appointmentId);
-    if (appointment == null){
-      throw new BadRequestException(String.format("Appointment with id %s does not exist", appointmentId));
+    if (appointment == null) {
+      throw new BadRequestException(
+          String.format("Appointment with id %s does not exist", appointmentId));
     }
     return appointment;
   }
 
-  private TimeSlot mapToTimeSlot(LocalDate date, List<String> slots){
+  private TimeSlot mapToTimeSlot(LocalDate date, List<String> slots) {
     TimeSlot timeSlot = new TimeSlot();
     timeSlot.setDate(date);
     timeSlot.setDaySlots(slots);
     return timeSlot;
   }
 
-  public PaginatedAppointments searchAppointment(Integer pageNumber, Integer limit, AppointmentSearch searchCriteria) {
+  public PaginatedAppointments searchAppointment(Integer pageNumber, Integer limit,
+      AppointmentSearch searchCriteria) {
     int maxLimit = (limit == null || limit > 100) ? 100 : limit;
-    int currentPage = (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
+    int currentPage =
+        (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
     int safeLimit = Math.max(1, Math.min(maxLimit, 100));
 
     BooleanBuilder predicate = new BooleanBuilder();

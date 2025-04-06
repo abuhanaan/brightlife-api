@@ -5,31 +5,28 @@ import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.AnxietyDisorderForm;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
-import com.fronteers.brightlife.model.EmergencyContact;
-import com.fronteers.brightlife.model.Guarantor;
 import com.fronteers.brightlife.model.InitialEvaluationForm;
 import com.fronteers.brightlife.model.IntakeForm;
 import com.fronteers.brightlife.model.MedicationConsentForm;
 import com.fronteers.brightlife.model.MoodDisorderAssessmentForm;
 import com.fronteers.brightlife.model.NoticeOfPrivacyPracticesForm;
 import com.fronteers.brightlife.model.PaginatedPatients;
-import com.fronteers.brightlife.model.ParentGuardian;
+import com.fronteers.brightlife.model.PassportResponse;
 import com.fronteers.brightlife.model.Patient;
 import com.fronteers.brightlife.model.PatientInformationConsentAndFinancialPolicyForm;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PatientSearch;
-import com.fronteers.brightlife.model.PaymentStructure;
-import com.fronteers.brightlife.model.PersonalInfo;
 import com.fronteers.brightlife.model.ReleaseReceiveForm;
 import com.fronteers.brightlife.model.ScreeningForm;
 import com.fronteers.brightlife.model.SelfPayForm;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.brightlife.model.TerminationPolicyForm;
 import com.fronteers.brightlife.model.TreatmentConsentTelehealthInPersonTreatmentConsent;
+import com.fronteers.exceptions.ProcessingException;
 import com.fronteers.services.AdhdService;
+import com.fronteers.services.AnxietyDisorderService;
 import com.fronteers.services.PatientService;
-import java.time.LocalDate;
-import java.util.UUID;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +41,18 @@ public class PatientsController implements PatientsApi {
 
   final PatientService patientService;
   final AdhdService adhdService;
+  final AnxietyDisorderService anxietyDisorderService;
+
+
+  @Override
+  public ResponseEntity<PassportResponse> uploadPatientPassport(String name, Integer age,
+      MultipartFile file) {
+    try {
+      return ResponseEntity.ok(patientService.upload(name, age, file));
+    } catch (IOException e) {
+      throw new ProcessingException("Object could not be uploaded with reason: " + e);
+    }
+  }
 
   //  ADHD
   @Override
@@ -66,7 +75,7 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitAnxietyDisorder(AnxietyDisorderForm request) {
-    return null;
+    return ResponseEntity.ok(anxietyDisorderService.submitAnxietyDisorder(request));
   }
 
   //  ControlledSubstance
@@ -161,7 +170,8 @@ public class PatientsController implements PatientsApi {
 
   //  Registration
   @Override
-  public ResponseEntity<PatientRegistrationForm> getRegistration(@PathVariable("patientId") String patientId) {
+  public ResponseEntity<PatientRegistrationForm> getRegistration(
+      @PathVariable("patientId") String patientId) {
     log.info("Fetching Patient Registartion Details with patientId: {}", patientId);
     PatientRegistrationForm response = patientService.getRegistrationDetails(patientId);
     log.info("Fetch Patient Response: {}", response);
@@ -169,9 +179,15 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> register(PatientRegistrationForm request) {
-    Success response = patientService.submitRegistrationForm(request);
-    return ResponseEntity.ok(response);
+  public ResponseEntity<Success> register(PatientRegistrationForm request, MultipartFile formFile,
+      MultipartFile stateIssuedIdFile, MultipartFile insuranceCardFile) {
+    try {
+      Success response = patientService.submitRegistrationForm(request, formFile, stateIssuedIdFile,
+          insuranceCardFile);
+      return ResponseEntity.ok(response);
+    } catch (IOException e) {
+      throw new ProcessingException("Object could not be uploaded with reason: " + e);
+    }
   }
 
   //  PatientInformationConsentAndFinancialPolicy

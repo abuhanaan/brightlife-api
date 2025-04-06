@@ -1,6 +1,5 @@
 package com.fronteers.models.entity;
 
-import com.fronteers.brightlife.model.GenderEnum;
 import com.fronteers.models.entity.forms.AdhdFormEntity;
 import com.fronteers.models.entity.forms.AnxietyDisorderFormEntity;
 import com.fronteers.models.entity.forms.ControlledSubstanceFormEntity;
@@ -22,10 +21,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -73,6 +73,26 @@ components:
         type: string
 
   schemas:
+    Passport:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+          format: int32
+        file:
+          $ref: '#/components/schemas/FileUpload'
+    PassportResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+          format: int32
+        passportUrl:
+          type: string
     ADHDForm:
       properties:
         id:
@@ -758,10 +778,10 @@ components:
           type: string
         insuranceCard:
           type: string
-        stateIssuedIdFile:
-          $ref: '#/components/schemas/FileUpload'
-        insuranceCardFile:
-          $ref: '#/components/schemas/FileUpload'
+#        stateIssuedIdFile:
+#          $ref: '#/components/schemas/FileUpload'
+#        insuranceCardFile:
+#          $ref: '#/components/schemas/FileUpload'
 
     FileUpload:
       type: string
@@ -914,8 +934,8 @@ components:
           $ref: "#/components/schemas/Date"
         patientRegForm:
           type: string
-        file:
-          $ref: '#/components/schemas/FileUpload'
+#        file:
+#          $ref: '#/components/schemas/FileUpload'
 
     NoticeOfPrivacyPracticesForm:
       type: object
@@ -1603,6 +1623,70 @@ components:
             $ref: "#/components/schemas/Error"
 
 paths:
+  /api/v1/passports/upload:
+    post:
+      summary:
+        Uploads passport to s3bucket
+      tags:
+        - Passport
+      operationId: uploadPassport
+      requestBody:
+        description: Uploads Passport
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Passport"
+      responses:
+        "200":
+          description: Passport Uploaded Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PassportResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/passports/upload:
+    post:
+      summary:
+        Uploads patient passport to s3bucket
+      tags:
+        - Patients
+      operationId: uploadPatientPassport
+      requestBody:
+        description: Uploads Passport
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Passport"
+      responses:
+        "200":
+          description: Passport Uploaded Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PassportResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
   /api/v1/patients/search:
     post:
       summary:
@@ -1677,14 +1761,46 @@ paths:
       tags:
         - Patients
       operationId: register
+#      requestBody:
+#        description: This is used to register a new patient. A successful call returns a success response with a patient Id
+#        required: true
+#        content:
+##          multipart/form-data:
+#          application/json:
+#            schema:
+#              $ref: "#/components/schemas/PatientRegistrationForm"
       requestBody:
         description: This is used to register a new patient. A successful call returns a success response with a patient Id
         required: true
         content:
-#          multipart/form-data:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatientRegistrationForm"
+              type: object
+              required:
+                - payload
+                - formFile
+              properties:
+                payload:
+                  $ref: '#/components/schemas/PatientRegistrationForm'
+                formFile:
+                  type: string
+                  format: binary
+                stateIssuedIdFile:
+                  type: string
+                  format: binary
+                insuranceCardFile:
+                  type: string
+                  format: binary
+            encoding:
+              payload:
+                contentType: application/json
+              formFile:
+                contentType: application/pdf
+              stateIssuedIdFile:
+                contentType: image/png
+              insuranceCardFile:
+                contentType: image/png
+
       responses:
         "201":
           description: Patient Registered Successfully

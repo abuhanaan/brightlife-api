@@ -13,8 +13,8 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class HolidayService {
 
-  private final RestTemplate restTemplate = new RestTemplate();
   private static final String API_URL = "https://date.nager.at/Api/v2/PublicHolidays/%d/US";
+  private final RestTemplate restTemplate = new RestTemplate();
 
   public List<Holiday> getUSHolidays(int year) {
     String url = String.format(API_URL, year);

@@ -17,7 +17,6 @@ import com.fronteers.models.entity.GuarantorEntity;
 import com.fronteers.models.entity.InsuranceEntity;
 import com.fronteers.models.entity.ParentGuardianEntity;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
-import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,27 +28,35 @@ public class PatientMapper {
       PatientRegistrationFormEntity patientRegistrationFormEntity) {
     PatientRegistrationForm patientRegistrationForm = new PatientRegistrationForm();
     patientRegistrationForm.setId(patientRegistrationFormEntity.getId());
-    patientRegistrationForm.setPatientId(UUID.fromString(patientRegistrationFormEntity.getPatientId()));
+    patientRegistrationForm.setPatientId(
+        UUID.fromString(patientRegistrationFormEntity.getPatientId()));
     patientRegistrationForm.setPersonalInfo(mapPersonalInfoDtoProps(patientRegistrationFormEntity));
-    patientRegistrationForm.setGuarantor(mapGuarantorEntityToGuarantorDto(patientRegistrationFormEntity.getGuarantor()));
-    patientRegistrationForm.setParentGuardian(mapParentGuardianDtoProps(patientRegistrationFormEntity.getParentGuardian()));
-    patientRegistrationForm.setEmergency(mapEmergencyDtoProps(patientRegistrationFormEntity.getEmergencyContact()));
-    patientRegistrationForm.setPaymentStructure(mapPaymentStructureDtoProps(patientRegistrationFormEntity));
+    patientRegistrationForm.setGuarantor(
+        mapGuarantorEntityToGuarantorDto(patientRegistrationFormEntity.getGuarantor()));
+    patientRegistrationForm.setParentGuardian(
+        mapParentGuardianDtoProps(patientRegistrationFormEntity.getParentGuardian()));
+    patientRegistrationForm.setEmergency(
+        mapEmergencyDtoProps(patientRegistrationFormEntity.getEmergencyContact()));
+    patientRegistrationForm.setPaymentStructure(
+        mapPaymentStructureDtoProps(patientRegistrationFormEntity));
     return patientRegistrationForm;
   }
 
-  private static PaymentStructure mapPaymentStructureDtoProps(PatientRegistrationFormEntity patientRegistrationFormEntity) {
+  private static PaymentStructure mapPaymentStructureDtoProps(
+      PatientRegistrationFormEntity patientRegistrationFormEntity) {
     PaymentStructure paymentStructureDTO = new PaymentStructure();
     paymentStructureDTO.setPaymentMode(paymentStructureDTO.getPaymentMode());
-    if (patientRegistrationFormEntity.getPaymentMode().equals(PaymentModeEnum.INSURANCE_CARD)){
-      paymentStructureDTO.setInsurances(mapInsuranceEntitiesToDTO(patientRegistrationFormEntity.getInsurances()));
+    if (patientRegistrationFormEntity.getPaymentMode().equals(PaymentModeEnum.INSURANCE_CARD)) {
+      paymentStructureDTO.setInsurances(
+          mapInsuranceEntitiesToDTO(patientRegistrationFormEntity.getInsurances()));
     }
     return paymentStructureDTO;
   }
 
-  private static List<Insurance> mapInsuranceEntitiesToDTO(List<InsuranceEntity> insuranceEntities) {
+  private static List<Insurance> mapInsuranceEntitiesToDTO(
+      List<InsuranceEntity> insuranceEntities) {
     List<Insurance> insurances = new ArrayList<>();
-    for (InsuranceEntity insuranceEntity: insuranceEntities){
+    for (InsuranceEntity insuranceEntity : insuranceEntities) {
       Insurance insurance = new Insurance();
       insurance.setId(insuranceEntity.getId());
       insurance.setInsuranceProvider(mapInsuranceProviderDTO(insuranceEntity));
@@ -85,7 +92,8 @@ public class PatientMapper {
     return insuranceProvider;
   }
 
-  private static EmergencyContact mapEmergencyDtoProps(EmergencyContactEntity emergencyContactEntity) {
+  private static EmergencyContact mapEmergencyDtoProps(
+      EmergencyContactEntity emergencyContactEntity) {
     EmergencyContact emergencyContactDTO = new EmergencyContact();
     emergencyContactDTO.setId(emergencyContactEntity.getId());
     emergencyContactDTO.setFirstName(emergencyContactDTO.getFirstName());
@@ -94,11 +102,13 @@ public class PatientMapper {
     emergencyContactDTO.setCellPhone(emergencyContactEntity.getCellPhone());
     emergencyContactDTO.setHomePhone(emergencyContactEntity.getHomePhone());
     emergencyContactDTO.setRelationship(emergencyContactEntity.getRelationship());
-    emergencyContactDTO.setAddress(mapAddressEntityToAddressDto(emergencyContactEntity.getAddress()));
+    emergencyContactDTO.setAddress(
+        mapAddressEntityToAddressDto(emergencyContactEntity.getAddress()));
     return emergencyContactDTO;
   }
 
-  private static ParentGuardian mapParentGuardianDtoProps(ParentGuardianEntity parentGuardianEntity) {
+  private static ParentGuardian mapParentGuardianDtoProps(
+      ParentGuardianEntity parentGuardianEntity) {
     ParentGuardian parentGuardianDTO = new ParentGuardian();
     parentGuardianDTO.setId(parentGuardianEntity.getId());
     parentGuardianEntity.setFirstName(parentGuardianEntity.getFirstName());
@@ -130,7 +140,8 @@ public class PatientMapper {
     return guarantorDTO;
   }
 
-  private static PersonalInfo mapPersonalInfoDtoProps(PatientRegistrationFormEntity patientRegistrationFormEntity) {
+  private static PersonalInfo mapPersonalInfoDtoProps(
+      PatientRegistrationFormEntity patientRegistrationFormEntity) {
     PersonalInfo personalInfo = new PersonalInfo();
     personalInfo.setFirstName(patientRegistrationFormEntity.getFirstName());
     personalInfo.setLastName(patientRegistrationFormEntity.getLastName());
@@ -143,13 +154,15 @@ public class PatientMapper {
     personalInfo.setCellPhone(patientRegistrationFormEntity.getCellPhone());
     personalInfo.setWorkPhone(patientRegistrationFormEntity.getWorkPhone());
     personalInfo.setPreferredPhone(patientRegistrationFormEntity.getPreferredPhone());
-    personalInfo.setAppointmentReminderMode(patientRegistrationFormEntity.getAppointmentReminderMode());
+    personalInfo.setAppointmentReminderMode(
+        patientRegistrationFormEntity.getAppointmentReminderMode());
     personalInfo.setEmail(patientRegistrationFormEntity.getEmail());
     personalInfo.setSendMsgToHomePhone(patientRegistrationFormEntity.getSendMsgToHomePhone());
     personalInfo.setSendMsgToRelative(patientRegistrationFormEntity.getSendMsgToRelative());
     personalInfo.setSendMsgToWork(patientRegistrationFormEntity.getSendMsgToWork());
     personalInfo.setSendMsgToCellPhone(patientRegistrationFormEntity.getSendMsgToCellPhone());
-    personalInfo.setAddress(mapAddressEntityToAddressDto(patientRegistrationFormEntity.getAddress()));
+    personalInfo.setAddress(
+        mapAddressEntityToAddressDto(patientRegistrationFormEntity.getAddress()));
     personalInfo.setHighestEduLevel(patientRegistrationFormEntity.getHighestEduLevel());
     personalInfo.setEmploymentStatus(patientRegistrationFormEntity.getEmploymentStatus());
     personalInfo.setEmployer(patientRegistrationFormEntity.getEmployer());

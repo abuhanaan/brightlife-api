@@ -1,15 +1,16 @@
 package com.fronteers.services;
 
-import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.Address;
 import com.fronteers.brightlife.model.EmergencyContact;
 import com.fronteers.brightlife.model.Guarantor;
 import com.fronteers.brightlife.model.Insurance;
 import com.fronteers.brightlife.model.ParentGuardian;
+import com.fronteers.brightlife.model.PassportResponse;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PaymentModeEnum;
 import com.fronteers.brightlife.model.PaymentStructure;
 import com.fronteers.brightlife.model.Success;
+import com.fronteers.config.AwsConfig;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.AddressEntity;
@@ -26,12 +27,16 @@ import com.fronteers.repositories.ParentGuardianRepository;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.services.mappers.PatientMapper;
+import com.fronteers.utils.FileUploadUtil;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.S3Client;
 
 @Service
 @RequiredArgsConstructor
@@ -43,34 +48,52 @@ public class PatientService {
   private final GuarantorRepository guarantorRepository;
   private final ParentGuardianRepository parentGuardianRepository;
   private final EmergencyContactRepository emergencyContactRepository;
+  private final AwsConfig awsConfig;
+  private final S3Client s3Client;
+  private final FileUploadUtil fileUploadUtil;
 
 
-  public Success submitRegistrationForm(PatientRegistrationForm request) {
-    PatientEntity existingPatient = patientRepository.findOneByEmail(request.getPersonalInfo().getEmail());
-    if (existingPatient != null){
-      throw new ConflictException(String.format("Patient with email: %s already exist", request.getPersonalInfo().getEmail()));
+  public Success submitRegistrationForm(PatientRegistrationForm request, MultipartFile formFile,
+      MultipartFile stateIssuedIdFile, MultipartFile insuranceCardFile) throws IOException {
+    PatientEntity existingPatient = patientRepository.findOneByEmail(
+        request.getPersonalInfo().getEmail());
+    if (existingPatient != null) {
+      throw new ConflictException(String.format("Patient with email: %s already exist",
+          request.getPersonalInfo().getEmail()));
     }
     String patientId = generateUUID();
     PatientEntity newPatient = PatientEntity.builder()
         .patientId(patientId)
-        .fullName(String.format("%s %s", request.getPersonalInfo().getLastName(), request.getPersonalInfo().getFirstName()))
+        .fullName(String.format("%s %s", request.getPersonalInfo().getLastName(),
+            request.getPersonalInfo().getFirstName()))
         .email(request.getPersonalInfo().getEmail())
         .build();
-    PatientRegistrationFormEntity patientRegistrationFormEntity = mapRegFormToRegFormEntity(request, newPatient);
+    String fileUrl = fileUploadUtil.uploadFile(formFile, "regForm");
+    assert stateIssuedIdFile != null;
+    String stateIssuedIdUrl = fileUploadUtil.uploadFile(stateIssuedIdFile, "stateIssuedId");
+    assert insuranceCardFile != null;
+    String insuranceCardUrl = fileUploadUtil.uploadFile(insuranceCardFile, "insuranceCard");
+    PatientRegistrationFormEntity patientRegistrationFormEntity = mapRegFormToRegFormEntity(request,
+        newPatient,
+        stateIssuedIdUrl, insuranceCardUrl);
+    patientRegistrationFormEntity.setPatientRegFormFile(fileUrl);
     newPatient.setPatientRegistrationForm(patientRegistrationFormEntity);
     //    TODO: file upload
     //    TODO: save entity
+
     patientRepository.save(newPatient);
     //    TODO: send email
 
-    return new Success(true, "Patient Registered Successfully", String.format("PatientId: %s", patientId));
+    return new Success(true, "Patient Registered Successfully",
+        String.format("PatientId: %s", patientId));
   }
 
   private String generateUUID() {
     return UUID.randomUUID().toString();
   }
 
-  private PatientRegistrationFormEntity mapRegFormToRegFormEntity(PatientRegistrationForm request, PatientEntity patientEntity) {
+  private PatientRegistrationFormEntity mapRegFormToRegFormEntity(PatientRegistrationForm request,
+      PatientEntity patientEntity, String stateIssuedIdUrl, String insuranceCardUrl) {
     PatientRegistrationFormEntity patientRegistrationFormEntity = PatientRegistrationFormEntity.builder()
         .patientId(patientEntity.getPatientId())
         .patient(patientEntity)
@@ -110,19 +133,26 @@ public class PatientService {
     patientRegistrationFormEntity.setAddress(addressEntity);
 //    patientRegistrationFormEntity.getAddress().setPatientRegistrationForm(patientRegistrationFormEntity);
 //    patientRegistrationFormEntity.setGuarantor(mapRegFormToGuarantorEntity(request.getGuarantor(), patientRegistrationFormEntity));
-    GuarantorEntity guarantorEntity = mapRegFormToGuarantorEntity(request.getGuarantor(), patientRegistrationFormEntity);
+    GuarantorEntity guarantorEntity = mapRegFormToGuarantorEntity(request.getGuarantor(),
+        patientRegistrationFormEntity, stateIssuedIdUrl, insuranceCardUrl);
     patientRegistrationFormEntity.setGuarantor(guarantorEntity);
-    patientRegistrationFormEntity.setParentGuardian(mapRegFormToParentGuardianEntity(request.getParentGuardian(), patientRegistrationFormEntity));
-    patientRegistrationFormEntity.setEmergencyContact(mapRegFormToEmergencyContactEntity(request.getEmergency(), patientRegistrationFormEntity));
-    if (patientRegistrationFormEntity.getPaymentMode().equals(PaymentModeEnum.INSURANCE_CARD)){
-      patientRegistrationFormEntity.setInsurances(mapRegFormToInsuranceEntities(request.getPaymentStructure(), patientRegistrationFormEntity));
+    patientRegistrationFormEntity.setParentGuardian(
+        mapRegFormToParentGuardianEntity(request.getParentGuardian(),
+            patientRegistrationFormEntity));
+    patientRegistrationFormEntity.setEmergencyContact(
+        mapRegFormToEmergencyContactEntity(request.getEmergency(), patientRegistrationFormEntity));
+    if (patientRegistrationFormEntity.getPaymentMode().equals(PaymentModeEnum.INSURANCE_CARD)) {
+      patientRegistrationFormEntity.setInsurances(
+          mapRegFormToInsuranceEntities(request.getPaymentStructure(),
+              patientRegistrationFormEntity));
     }
     return patientRegistrationFormEntity;
   }
 
-  private List<InsuranceEntity> mapRegFormToInsuranceEntities(PaymentStructure paymentStructure, PatientRegistrationFormEntity patientRegistrationFormEntity) {
+  private List<InsuranceEntity> mapRegFormToInsuranceEntities(PaymentStructure paymentStructure,
+      PatientRegistrationFormEntity patientRegistrationFormEntity) {
     List<InsuranceEntity> insuranceEntities = new ArrayList<>();
-    for (Insurance insurance: paymentStructure.getInsurances()){
+    for (Insurance insurance : paymentStructure.getInsurances()) {
       InsuranceEntity insuranceEntity = InsuranceEntity.builder()
           .primary(insurance.getPrimary())
           .firstName(insurance.getPolicyHolder().getFirstName())
@@ -148,7 +178,8 @@ public class PatientService {
     return insuranceEntities;
   }
 
-  private EmergencyContactEntity mapRegFormToEmergencyContactEntity(EmergencyContact emergency, PatientRegistrationFormEntity patientRegistrationFormEntity) {
+  private EmergencyContactEntity mapRegFormToEmergencyContactEntity(EmergencyContact emergency,
+      PatientRegistrationFormEntity patientRegistrationFormEntity) {
     EmergencyContactEntity emergencyContactEntity = EmergencyContactEntity.builder()
         .firstName(emergency.getFirstName())
         .lastName(emergency.getLastName())
@@ -165,7 +196,8 @@ public class PatientService {
     return emergencyContactEntity;
   }
 
-  private ParentGuardianEntity mapRegFormToParentGuardianEntity(ParentGuardian parentGuardian, PatientRegistrationFormEntity patientRegistrationFormEntity) {
+  private ParentGuardianEntity mapRegFormToParentGuardianEntity(ParentGuardian parentGuardian,
+      PatientRegistrationFormEntity patientRegistrationFormEntity) {
     ParentGuardianEntity parentGuardianEntity = ParentGuardianEntity.builder()
         .firstName(parentGuardian.getFirstName())
         .lastName(parentGuardian.getLastName())
@@ -185,13 +217,17 @@ public class PatientService {
     return parentGuardianEntity;
   }
 
-  private GuarantorEntity mapRegFormToGuarantorEntity(Guarantor guarantor, PatientRegistrationFormEntity patientRegistrationFormEntity) {
+  private GuarantorEntity mapRegFormToGuarantorEntity(Guarantor guarantor,
+      PatientRegistrationFormEntity patientRegistrationFormEntity, String stateIssuedIdUrl,
+      String insuranceCardUrl) {
     GuarantorEntity guarantorEntity = GuarantorEntity.builder()
         .firstName(guarantor.getFirstName())
         .lastName(guarantor.getLastName())
         .dob(Date.valueOf(guarantor.getDob()))
         .relationship(guarantor.getRelationship())
         .address(mapAddressProperties(guarantor.getAddress()))
+        .insuranceCardFile(insuranceCardUrl)
+        .stateIssuedIdFile(stateIssuedIdUrl)
         .build();
     guarantorEntity.getAddress().setGuarantor(guarantorEntity);
     guarantorRepository.save(guarantorEntity);
@@ -214,10 +250,21 @@ public class PatientService {
   }
 
   public PatientRegistrationFormEntity checkIfPatientExist(String patientId) {
-    PatientRegistrationFormEntity patientRegistrationFormEntity = patientRegistrationFormRepository.findOneByPatientId(patientId);
-    if (patientRegistrationFormEntity == null){
+    PatientRegistrationFormEntity patientRegistrationFormEntity = patientRegistrationFormRepository.findOneByPatientId(
+        patientId);
+    if (patientRegistrationFormEntity == null) {
       throw new NotFoundException(String.format("Patient with id %s does not exist", patientId));
     }
     return patientRegistrationFormEntity;
+  }
+
+  public PassportResponse upload(String name, Integer age, MultipartFile file) throws IOException {
+    String bucketName = awsConfig.getBucketName();
+    String fileUrl = fileUploadUtil.uploadFile(file, "RegForm");
+    PassportResponse response = new PassportResponse();
+    response.setAge(age);
+    response.setName(name);
+    response.setPassportUrl(fileUrl);
+    return response;
   }
 }

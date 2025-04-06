@@ -76,7 +76,7 @@ public class AdhdService {
 
   private AdhdFormEntity checkIfAdhdFormExists(Long id) {
     AdhdFormEntity adhdFormEntity = adhdRepository.findOneById(id);
-    if (adhdFormEntity == null){
+    if (adhdFormEntity == null) {
       throw new NotFoundException(String.format("Adhd form with id %s does not exist", id));
     }
     return adhdFormEntity;

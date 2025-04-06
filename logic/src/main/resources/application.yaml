@@ -52,5 +52,19 @@ token:
   secret:
     key: ${TOKEN_SECRET_KEY}
 
+#aws:
+#  access-key: AKIAV55DNA7UBJJG7JVM
+#  secret-key: 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
+#  s3:
+#    bucket-name: brightlife-test
+#    region: us-east-2
+
+aws:
+  access-key: AKIAV55DNA7UBJJG7JVM
+  secret-key: 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
+  bucket-name: brightlife-test
+  region: us-east-2
+
+
 
 

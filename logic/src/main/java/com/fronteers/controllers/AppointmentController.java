@@ -21,7 +21,8 @@ public class AppointmentController implements AppointmentApi {
   public ResponseEntity<PaginatedAppointments> listAppointments(Integer pageNumber, Integer limit,
       AppointmentSearch searchCriteria) {
 
-    return ResponseEntity.ok(appointmentService.searchAppointment(pageNumber, limit, searchCriteria));
+    return ResponseEntity.ok(
+        appointmentService.searchAppointment(pageNumber, limit, searchCriteria));
   }
 
   @Override
@@ -41,7 +42,7 @@ public class AppointmentController implements AppointmentApi {
   }
 
   @Override
-  public ResponseEntity<TimeSlots> getAppointmentSlots(){
+  public ResponseEntity<TimeSlots> getAppointmentSlots() {
     return ResponseEntity.ok(appointmentService.getAppointmentTimeSlots());
   }
 }

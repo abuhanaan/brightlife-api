@@ -16,7 +16,8 @@ public class ReviewMapper {
     reviewDto.setRating(reviewEntity.getRating());
     reviewDto.setRating(reviewEntity.getRating());
     reviewDto.setReviewMessage(reviewEntity.getReviewMessage());
-    reviewDto.setStatus(reviewEntity.getPublished() ? ReviewStatusEnum.PUBLISHED : ReviewStatusEnum.DRAFT);
+    reviewDto.setStatus(
+        reviewEntity.getPublished() ? ReviewStatusEnum.PUBLISHED : ReviewStatusEnum.DRAFT);
     return reviewDto;
   }
 
