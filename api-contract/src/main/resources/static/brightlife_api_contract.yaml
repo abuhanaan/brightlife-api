@@ -132,7 +132,6 @@ components:
     AssessmentEnum:
       type: string
       enum:
-        - ""
         - Never
         - Rarely
         - Sometimes
