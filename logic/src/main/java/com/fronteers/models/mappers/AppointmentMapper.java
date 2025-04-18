@@ -1,4 +1,4 @@
-package com.fronteers.services.mappers;
+package com.fronteers.models.mappers;
 
 import com.fronteers.brightlife.model.Appointment;
 import com.fronteers.models.entity.AppointmentEntity;
@@ -24,7 +24,7 @@ public class AppointmentMapper {
     appointment.setPhone(appointmentEntity.getPhone());
     appointment.setEmail(appointmentEntity.getEmail());
     appointment.setAddress(
-        PatientMapper.mapAddressEntityToAddressDto(appointmentEntity.getAddress()));
+        PatientDtoMapper.mapAddressEntityToAddressDto(appointmentEntity.getAddress()));
     appointment.setAppointmentType(appointmentEntity.getAppointmentType());
     appointment.setService(appointmentEntity.getService());
     appointment.setAppointmentDateTime(appointmentEntity.getAppointmentDateTime());

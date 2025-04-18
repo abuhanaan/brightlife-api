@@ -10,8 +10,9 @@ import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.models.entity.AppointmentEntity;
 import com.fronteers.models.entity.QAppointmentEntity;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
+import com.fronteers.models.mappers.AppointmentMapper;
 import com.fronteers.repositories.AppointmentRepository;
-import com.fronteers.services.mappers.AppointmentMapper;
+import com.fronteers.utils.PatientUtils;
 import com.querydsl.core.BooleanBuilder;
 import java.sql.Date;
 import java.time.DayOfWeek;
@@ -46,6 +47,7 @@ public class AppointmentService {
   );
   private final AppointmentRepository appointmentRepository;
   private final PatientService patientService;
+  private final PatientUtils patientUtils;
 
   public Success submit(Appointment request) {
     OffsetDateTime appointmentDateTime = request.getAppointmentDateTime();
@@ -164,7 +166,7 @@ public class AppointmentService {
     appointmentEntity.setDob(Date.valueOf(request.getDob()));
     appointmentEntity.setPhone(request.getPhone());
     appointmentEntity.setEmail(request.getEmail());
-    appointmentEntity.setAddress(patientService.mapAddressProperties(request.getAddress()));
+    appointmentEntity.setAddress(patientUtils.mapAddressProperties(request.getAddress()));
     appointmentEntity.setAppointmentType(request.getAppointmentType());
     appointmentEntity.setService(request.getService());
     appointmentEntity.setAppointmentDateTime(appointmentDateTime);

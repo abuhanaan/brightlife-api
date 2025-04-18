@@ -1,4 +1,4 @@
-package com.fronteers.services.mappers;
+package com.fronteers.models.mappers;
 
 import com.fronteers.brightlife.model.Review;
 import com.fronteers.brightlife.model.ReviewStatusEnum;

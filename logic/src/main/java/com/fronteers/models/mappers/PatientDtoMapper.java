@@ -1,4 +1,4 @@
-package com.fronteers.services.mappers;
+package com.fronteers.models.mappers;
 
 import com.fronteers.brightlife.model.Address;
 import com.fronteers.brightlife.model.EmergencyContact;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PatientMapper {
+public class PatientDtoMapper {
 
 
   public static PatientRegistrationForm mapPatientRegFormEntityToPatientRegFormDTO(
