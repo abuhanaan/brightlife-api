@@ -73,12 +73,15 @@ public class SecurityConfig {
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/v1/signup",
-                "/api/v1/auth/login")
+                "/api/v1/auth/login", "/api/v1/patients/forms/register", "/api/v1/appointments",
+                "/api/v1/reviews", "/api/v1/file/upload")
             .permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/test/**", "/v3/api-docs/**", "/v3/api-docs",
                 "/swagger-ui/**", "/swagger-ui/index.html", "/swagger-ui.html",
-                "/brightlife_api_contract.yaml")
+                "/brightlife_api_contract.yaml", "/api/v1/patients/forms/register/slots",
+                "/api/v1/reviews/published")
             .permitAll()
             .anyRequest().authenticated())
         .exceptionHandling(exception -> exception
@@ -87,7 +90,6 @@ public class SecurityConfig {
         .authenticationProvider(authenticationProvider())
         .addFilterBefore(jwtAuthenticationFilter,
             UsernamePasswordAuthenticationFilter.class);
-
     return http.build();
   }
 
