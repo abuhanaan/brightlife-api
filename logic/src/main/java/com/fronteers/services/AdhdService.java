@@ -2,6 +2,7 @@ package com.fronteers.services;
 
 import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.Success;
+import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.AdhdFormEntity;
@@ -22,6 +23,7 @@ public class AdhdService {
 
   public Success submitAdhd(ADHDForm request) {
     PatientEntity patient = patientUtils.checkIfPatientExists(request.getPatientId().toString());
+    checkForAdhDUniqueness(request.getPatientId().toString());
     AdhdFormEntity adhdForm = new AdhdFormEntity();
     adhdForm.setPatientId(patient.getPatientId());
     adhdForm.setPatient(patient);
@@ -75,10 +77,14 @@ public class AdhdService {
   }
 
   private AdhdFormEntity checkIfAdhdFormExists(Long id) {
-    AdhdFormEntity adhdFormEntity = adhdRepository.findOneById(id);
-    if (adhdFormEntity == null) {
-      throw new NotFoundException(String.format("Adhd form with id %s does not exist", id));
+    return adhdRepository.findOneById(id).orElseThrow(() ->
+        new NotFoundException(String.format("Adhd form with id %s does not exist", id)));
+  }
+
+  private void checkForAdhDUniqueness(String patientId){
+    AdhdFormEntity adhdFormEntity = adhdRepository.findOneByPatientId(patientId);
+    if (adhdFormEntity != null) {
+        throw new ConflictException(String.format("Adhd form has already been filled for patient %s", patientId));
     }
-    return adhdFormEntity;
   }
 }

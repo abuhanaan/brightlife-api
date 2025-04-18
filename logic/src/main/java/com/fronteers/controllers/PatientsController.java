@@ -40,17 +40,6 @@ public class PatientsController implements PatientsApi {
   final AnxietyDisorderService anxietyDisorderService;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-//  @Override
-//  public ResponseEntity<FileUploadResponse> uploadFile(String fileType, String owner, MultipartFile file)
-//  {
-//    try {
-//      return ResponseEntity.ok(patientService.upload(fileType, owner, file));
-//    } catch (IOException e){
-//      log.error("File could not be uploaded {}", e.toString());
-//      throw new ProcessingException("file could not be uploaded " + e);
-//    }
-//  }
-
   //  ADHD
   @Override
   public ResponseEntity<ADHDForm> getAdhd(Long id) {
@@ -60,8 +49,10 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitAdhd(ADHDForm request) {
-
-    return ResponseEntity.ok(adhdService.submitAdhd(request));
+    log.info("Submitting Adhd form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = adhdService.submitAdhd(request);
+    log.info("Adhd form submission response: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  AnxietyDisorder
@@ -174,29 +165,8 @@ public class PatientsController implements PatientsApi {
     return ResponseEntity.ok(response);
   }
 
-  //  @Override
-//  @PostMapping(
-//      value = "/api/v1/patients/forms/register",
-//      consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-//      produces = MediaType.APPLICATION_JSON_VALUE
-//  )
-//  public ResponseEntity<Success> register(
-//      @RequestPart("payload") String stringRequest,
-//      @RequestPart(value = "formFile", required = false) MultipartFile formFile,
-//      @RequestPart(value = "stateIssuedIdFile", required = false) MultipartFile stateIssuedIdFile,
-//      @RequestPart(value = "insuranceCardFile", required = false) MultipartFile insuranceCardFile
-//  ) {
   @Override
   public ResponseEntity<Success> register(PatientRegistrationForm request) {
-//    try {
-//      PatientRegistrationForm request = objectMapper.readValue(stringRequest, PatientRegistrationForm.class);
-//      Success response = patientService.submitRegistrationForm(request, formFile, stateIssuedIdFile,
-//          insuranceCardFile);
-//      return ResponseEntity.ok(response);
-//    } catch (IOException e) {
-//      log.error("Object could not be uploaded with reason: {}", String.valueOf(e));
-//      throw new ProcessingException("Object could not be uploaded with reason: " + e);
-//    }
     log.info("Patient Registration Request payload: {}", request.toString());
     Success response = patientService.submitRegistrationForm(request);
     log.info("Patient Registration Response: {}", response);
