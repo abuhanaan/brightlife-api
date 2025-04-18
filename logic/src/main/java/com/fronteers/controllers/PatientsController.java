@@ -58,12 +58,15 @@ public class PatientsController implements PatientsApi {
   //  AnxietyDisorder
   @Override
   public ResponseEntity<AnxietyDisorderForm> getAnxietyDisorder(Long id) {
-    return null;
+    return ResponseEntity.ok(anxietyDisorderService.getAnxietyDisorder(id));
   }
 
   @Override
   public ResponseEntity<Success> submitAnxietyDisorder(AnxietyDisorderForm request) {
-    return ResponseEntity.ok(anxietyDisorderService.submitAnxietyDisorder(request));
+    log.info("Submitting Anxiety Disorder form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = anxietyDisorderService.submitAnxietyDisorder(request);
+    log.info("Anxiety Disorder form submission response: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  ControlledSubstance
