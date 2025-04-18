@@ -45,25 +45,26 @@ springdoc:
     config-url: /v3/api-docs/swagger-config
 
 server:
-  #  port: 8085
   port: ${SERVER_PORT}
+#  ssl:
+#    enabled: true
+#    key-store: file:/opt/brightlife_app/brightlife.p12  # Path on EC2, NOT your local!
+#    key-store-password: ${KEY_STORE_PASSWORD}
+#    key-store-type: ${KEY_STORE_TYPE}
+#    key-alias: ${KEY_ALIAS}
+#http:
+#  port: ${HTTP_PORT}
+
 token:
   expirationms: 3600000
   secret:
     key: ${TOKEN_SECRET_KEY}
 
-#aws:
-#  access-key: AKIAV55DNA7UBJJG7JVM
-#  secret-key: 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
-#  s3:
-#    bucket-name: brightlife-test
-#    region: us-east-2
-
 aws:
-  access-key: AKIAV55DNA7UBJJG7JVM
-  secret-key: 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
-  bucket-name: brightlife-test
-  region: us-east-2
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  bucket-name: ${S3_BUCKET_NAME}
+  region: ${AWS_REGION}
 
 
 
