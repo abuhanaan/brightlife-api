@@ -18,9 +18,10 @@ public class FileUploadUtil {
   private final S3Client s3Client;
   private final AwsConfig awsConfig;
 
-  public String uploadFile(MultipartFile file, String filePrefix) throws IOException {
+  public String uploadFile(MultipartFile file, String fileType, String owner) throws IOException {
     String bucketName = awsConfig.getBucketName();
-    String fileName = UUID.randomUUID() + "_" + filePrefix + "_" + file.getOriginalFilename();
+    String fileName =
+        UUID.randomUUID() + "_" + fileType + "_" + owner + "_" + file.getOriginalFilename();
 
     PutObjectRequest putObjectRequest = PutObjectRequest.builder()
         .bucket(bucketName)
