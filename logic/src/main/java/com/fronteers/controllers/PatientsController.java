@@ -24,6 +24,7 @@ import com.fronteers.brightlife.model.TreatmentConsentTelehealthInPersonTreatmen
 import com.fronteers.services.AdhdService;
 import com.fronteers.services.AnxietyDisorderService;
 import com.fronteers.services.ControlledSubstanceService;
+import com.fronteers.services.DepressionAssessmentService;
 import com.fronteers.services.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,7 @@ public class PatientsController implements PatientsApi {
   final AdhdService adhdService;
   final AnxietyDisorderService anxietyDisorderService;
   private final ControlledSubstanceService controlledSubstanceService;
+  private final DepressionAssessmentService depressionAssessmentService;
 
   //  ADHD
   @Override
@@ -92,12 +94,18 @@ public class PatientsController implements PatientsApi {
   //  DepressionAssessment
   @Override
   public ResponseEntity<DepressionAssessmentForm> getDepressionAssessment(Long id) {
-    return null;
+    log.info("Fetching Depression Assessment with id {}", id);
+    DepressionAssessmentForm response = depressionAssessmentService.getDepAssessment(id);
+    log.info("Depression Assessment form Fetched Successfully: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitDepressionAssessment(DepressionAssessmentForm request) {
-    return null;
+    log.info("Submitting Depression Assessment form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = depressionAssessmentService.submitDepressionAssessment(request);
+    log.info("Depression Assessment form submission response: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  InitialEvaluation

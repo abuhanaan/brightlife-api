@@ -10,7 +10,6 @@ import com.fronteers.models.entity.forms.ControlledSubstanceFormEntity;
 import com.fronteers.repositories.ControlledSubstanceRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.ZoneOffset;
 import java.util.UUID;
