@@ -1,6 +1,5 @@
 package com.fronteers.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fronteers.brightlife.api.PatientsApi;
 import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.AnxietyDisorderForm;
@@ -24,6 +23,7 @@ import com.fronteers.brightlife.model.TerminationPolicyForm;
 import com.fronteers.brightlife.model.TreatmentConsentTelehealthInPersonTreatmentConsent;
 import com.fronteers.services.AdhdService;
 import com.fronteers.services.AnxietyDisorderService;
+import com.fronteers.services.ControlledSubstanceService;
 import com.fronteers.services.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class PatientsController implements PatientsApi {
   final PatientService patientService;
   final AdhdService adhdService;
   final AnxietyDisorderService anxietyDisorderService;
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ControlledSubstanceService controlledSubstanceService;
 
   //  ADHD
   @Override
@@ -58,7 +58,10 @@ public class PatientsController implements PatientsApi {
   //  AnxietyDisorder
   @Override
   public ResponseEntity<AnxietyDisorderForm> getAnxietyDisorder(Long id) {
-    return ResponseEntity.ok(anxietyDisorderService.getAnxietyDisorder(id));
+    log.info("Anxiety Disorder with id {}", id);
+    AnxietyDisorderForm response = anxietyDisorderService.getAnxietyDisorder(id);
+    log.info("Anxiety Disorder form Fetched Successfully: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
@@ -72,12 +75,18 @@ public class PatientsController implements PatientsApi {
   //  ControlledSubstance
   @Override
   public ResponseEntity<ControlledSubstanceForm> getControlledSubstance(Long id) {
-    return null;
+    log.info("Fetching Controlled Substance with id {}", id);
+    ControlledSubstanceForm response = controlledSubstanceService.getControlledSubstance(id);
+    log.info("Controlled Substance form Fetched Successfully: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitControlledSubstance(ControlledSubstanceForm request) {
-    return null;
+    log.info("Submitting Controlled Substance form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = controlledSubstanceService.submitControlled(request);
+    log.info("Controlled Substance form submission response: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  DepressionAssessment
