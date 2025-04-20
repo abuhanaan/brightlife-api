@@ -5,6 +5,8 @@ import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.AnxietyDisorderForm;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
+import com.fronteers.brightlife.model.IdGenerationRequest;
+import com.fronteers.brightlife.model.IdGenerationResponse;
 import com.fronteers.brightlife.model.InitialEvaluationForm;
 import com.fronteers.brightlife.model.IntakeForm;
 import com.fronteers.brightlife.model.MedicationConsentForm;
@@ -12,6 +14,7 @@ import com.fronteers.brightlife.model.MoodDisorderAssessmentForm;
 import com.fronteers.brightlife.model.NoticeOfPrivacyPracticesForm;
 import com.fronteers.brightlife.model.PaginatedPatients;
 import com.fronteers.brightlife.model.Patient;
+import com.fronteers.brightlife.model.PatientIdValidationResponse;
 import com.fronteers.brightlife.model.PatientInformationConsentAndFinancialPolicyForm;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PatientSearch;
@@ -174,6 +177,22 @@ public class PatientsController implements PatientsApi {
   public ResponseEntity<PaginatedPatients> listPatients(Integer pageNumber, Integer limit,
       PatientSearch searchCriteria) {
     return null;
+  }
+
+  @Override
+  public ResponseEntity<PatientIdValidationResponse> validatePatient(String patientId){
+    log.info("Validating Patient with id: {}", patientId);
+    PatientIdValidationResponse response = patientService.validatePatientId(patientId);
+    log.info("Patient Validation Successful with response: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<IdGenerationResponse> generateId(IdGenerationRequest request){
+    log.info("Generating new patient id with request: {}", request);
+    IdGenerationResponse response = patientService.generateId(request);
+    log.info("Id generation succesful with response: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  Registration

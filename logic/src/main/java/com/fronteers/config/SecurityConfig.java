@@ -83,12 +83,13 @@ public class SecurityConfig {
                 "/api/v1/patients/forms/mood-disorder-assessment", "/api/v1/patients/forms/privacy-practices",
                 "/api/v1/patients/forms/info-and-fin-policy", "/api/v1/patients/forms/release-receive",
                 "/api/v1/patients/forms/screening", "/api/v1/patients/forms/self-pay",
-                "/api/v1/patients/forms/termination-policy", "/api/v1/patients/forms/treatment-consent")
+                "/api/v1/patients/forms/termination-policy", "/api/v1/patients/forms/treatment-consent",
+                "/api/v1/patients/register/id")
             .permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/test/**", "/v3/api-docs/**", "/v3/api-docs",
                 "/swagger-ui/**", "/swagger-ui/index.html", "/swagger-ui.html",
                 "/brightlife_api_contract.yaml", "/api/v1/patients/forms/register/slots",
-                "/api/v1/reviews/published")
+                "/api/v1/reviews/published", "/api/v1/patients/validate/{patientId}")
             .permitAll()
             .anyRequest().authenticated())
         .exceptionHandling(exception -> exception

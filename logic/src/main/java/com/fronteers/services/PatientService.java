@@ -1,5 +1,8 @@
 package com.fronteers.services;
 
+import com.fronteers.brightlife.model.IdGenerationRequest;
+import com.fronteers.brightlife.model.IdGenerationResponse;
+import com.fronteers.brightlife.model.PatientIdValidationResponse;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.exceptions.ConflictException;
@@ -10,8 +13,12 @@ import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.models.mappers.PatientEntityMapper;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
+import com.fronteers.utils.PatientUtils;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,32 +28,21 @@ public class PatientService {
   private final PatientRepository patientRepository;
   private final PatientEntityMapper patientEntityMapper;
   private final PatientRegistrationFormRepository patientRegistrationFormRepository;
+  private final PatientUtils patientUtils;
 
   public Success submitRegistrationForm(PatientRegistrationForm request) {
-    PatientEntity existingPatient = patientRepository.findOneByEmail(
-        request.getPersonalInfo().getEmail());
-    if (existingPatient != null) {
-      throw new ConflictException(String.format("Patient with email: %s already exist",
-          request.getPersonalInfo().getEmail()));
-    }
-    String patientId = generateUUID();
-    PatientEntity newPatient = PatientEntity.builder()
-        .patientId(patientId)
-        .fullName(String.format("%s %s", request.getPersonalInfo().getLastName(),
-            request.getPersonalInfo().getFirstName()))
-        .email(request.getPersonalInfo().getEmail())
-        .build();
+    PatientEntity existingPatient = patientUtils.checkIfPatientExists(request.getPatientId().toString());
+    String patientId = existingPatient.getPatientId();
     PatientRegistrationFormEntity patientRegistrationFormEntity = patientEntityMapper.mapRegFormToRegFormEntity(
-        request,
-        newPatient);
-    newPatient.setPatientRegistrationForm(patientRegistrationFormEntity);
-    patientRepository.save(newPatient);
+        request, existingPatient);
+    existingPatient.setPatientRegistrationForm(patientRegistrationFormEntity);
+    patientRepository.save(existingPatient);
     //    TODO: send email
     return new Success(true, "Patient Registered Successfully",
         String.format("PatientId: %s", patientId));
   }
 
-  private String generateUUID() {
+  private String generatePatientId() {
     return UUID.randomUUID().toString();
   }
 
@@ -57,11 +53,44 @@ public class PatientService {
   }
 
   public PatientRegistrationFormEntity checkIfPatientExist(String patientId) {
-    PatientRegistrationFormEntity patientRegistrationFormEntity = patientRegistrationFormRepository.findOneByPatientId(
-        patientId);
-    if (patientRegistrationFormEntity == null) {
-      throw new NotFoundException(String.format("Patient with id %s does not exist", patientId));
+    return patientRegistrationFormRepository.findOneByPatientId(patientId).orElseThrow(() ->
+        new NotFoundException(String.format("Patient with id %s does not exist", patientId)));
+  }
+
+  public PatientIdValidationResponse validatePatientId(String patientId) {
+    PatientRegistrationFormEntity patientRegFormEntity = checkIfPatientExist(patientId);
+    PatientIdValidationResponse response = new PatientIdValidationResponse();
+    response.setPatientId(patientRegFormEntity.getPatientId());
+    response.setFirstName(patientRegFormEntity.getFirstName());
+    response.setLastName(patientRegFormEntity.getLastName());
+    response.setMiddleName(patientRegFormEntity.getMiddleName());
+    response.setGender(patientRegFormEntity.getGender());
+    response.setDob(patientRegFormEntity.getDob().toLocalDate());
+    response.setPhone(patientRegFormEntity.getCellPhone());
+    response.setEmail(patientRegFormEntity.getEmail());
+    response.setAddress(PatientDtoMapper.mapAddressEntityToAddressDto(patientRegFormEntity.getAddress()));
+    return response;
+  }
+
+  public IdGenerationResponse generateId(IdGenerationRequest request) {
+    confirmPatientUniqueness(request.getEmail());
+    PatientEntity newPatientEntity = new PatientEntity();
+    String patientId = generatePatientId();
+    newPatientEntity.setPatientId(patientId);
+    newPatientEntity.setFullName(request.getFirstName() + " " + request.getLastName());
+    newPatientEntity.setEmail(request.getEmail());
+    patientRepository.save(newPatientEntity);
+    IdGenerationResponse response = new IdGenerationResponse();
+    response.setPatientId(patientId);
+    response.setMessage("Patient Id generated successfully");
+    response.setStatus(true);
+    return response;
+  }
+
+  private void confirmPatientUniqueness(String email) {
+    PatientEntity patientEntity = patientRepository.findOneByEmail(email);
+    if (patientEntity != null){
+      throw new ConflictException(String.format("Patient with email %s already exist", email));
     }
-    return patientRegistrationFormEntity;
   }
 }

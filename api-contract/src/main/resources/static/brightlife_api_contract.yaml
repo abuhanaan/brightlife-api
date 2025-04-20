@@ -75,6 +75,52 @@ components:
         type: string
 
   schemas:
+    IdGenerationRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+    IdGenerationResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        message:
+          type: string
+        patientId:
+          type: string
+    PatientIdValidationResponse:
+      type: object
+      properties:
+        patientId:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        dob:
+          $ref: "#/components/schemas/Date"
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          $ref: '#/components/schemas/Address'
+
     FileUploadResponse:
       type: object
       properties:
@@ -1748,6 +1794,65 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
+  /api/v1/patients/validate/{patientId}:
+    get:
+      summary: Validates A Patients Id And Returns Their Basic Information
+      security: [ ]
+      tags:
+        - Patients
+      operationId: validatePatient
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+      responses:
+        "200":
+          description: Patient Id Validated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientIdValidationResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/register/id:
+    post:
+      summary: Generates A New Patient Id
+      security: [ ]
+      tags:
+        - Patients
+      operationId: generateId
+      requestBody:
+        description: This is used to register a new patient. A successful call returns a success response with a patient's basic details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdGenerationRequest"
+      responses:
+        "201":
+          description: Patient Id Generated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdGenerationResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
   /api/v1/patients/forms/register:
     post:
       summary: Registers A New Patient
@@ -1762,7 +1867,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/PatientRegistrationForm"
-
       responses:
         "201":
           description: Patient Registered Successfully

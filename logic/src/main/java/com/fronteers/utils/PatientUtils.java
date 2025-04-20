@@ -17,11 +17,8 @@ public class PatientUtils {
   private final AddressRepository addressRepository;
 
   public PatientEntity checkIfPatientExists(String patientId) {
-    PatientEntity patientEntity = patientRepository.findOneByPatientId(patientId);
-    if (patientEntity == null) {
-      throw new BadRequestException(String.format("Patient with id %s does not exist", patientId));
-    }
-    return patientEntity;
+    return patientRepository.findOneByPatientId(patientId).orElseThrow(() ->
+        new BadRequestException(String.format("Patient with id %s does not exist", patientId)));
   }
 
   public AddressEntity mapAddressProperties(Address address) {
