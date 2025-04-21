@@ -20,7 +20,6 @@ import com.fronteers.utils.PatientUtils;
 import jakarta.transaction.Transactional;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,6 +47,11 @@ public class InitialEvaluationService {
     patient.setInitialEvaluationForm(newForm);
     patientRepository.save(patient);
     return new Success(true, "Form Submitted Successfully", "Initial Evaluation Form Submitted");
+  }
+
+  public InitialEvaluationForm getInitialEvaluation(Long id) {
+    InitialEvaluationFormEntity initialEvaluationForm = checkIfInitialEvaluationFormExists(id);
+    return mapInitialEvaluationEntityToDto(initialEvaluationForm);
   }
 
   private PrimaryCarePhysicianEntity mapPrimaryCarePhysicianEmtity(PrimaryCarePhysician pcpDto, InitialEvaluationFormEntity initialEvaluationForm) {
@@ -92,11 +96,6 @@ public class InitialEvaluationService {
     if (initialEvaluationForm != null){
       throw new ConflictException(String.format("Initial Evaluation form has already been filled for patient %s", patientId));
     }
-  }
-
-  public InitialEvaluationForm getInitialEvaluation(Long id) {
-    InitialEvaluationFormEntity initialEvaluationForm = checkIfInitialEvaluationFormExists(id);
-    return mapInitialEvaluationEntityToDto(initialEvaluationForm);
   }
 
   private InitialEvaluationForm mapInitialEvaluationEntityToDto(InitialEvaluationFormEntity initialEvaluationEntity) {
