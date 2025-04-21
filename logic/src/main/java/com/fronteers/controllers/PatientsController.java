@@ -28,6 +28,7 @@ import com.fronteers.services.AdhdService;
 import com.fronteers.services.AnxietyDisorderService;
 import com.fronteers.services.ControlledSubstanceService;
 import com.fronteers.services.DepressionAssessmentService;
+import com.fronteers.services.InitialEvaluationService;
 import com.fronteers.services.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,7 @@ public class PatientsController implements PatientsApi {
   final AnxietyDisorderService anxietyDisorderService;
   private final ControlledSubstanceService controlledSubstanceService;
   private final DepressionAssessmentService depressionAssessmentService;
+  private final InitialEvaluationService initialEvaluationService;
 
   //  ADHD
   @Override
@@ -114,12 +116,18 @@ public class PatientsController implements PatientsApi {
   //  InitialEvaluation
   @Override
   public ResponseEntity<InitialEvaluationForm> getInitialEvaluation(Long id) {
-    return null;
+    log.info("Fetching Initial Evaluation Form with id {}", id);
+    InitialEvaluationForm response = initialEvaluationService.getInitialEvaluation(id);
+    log.info("Initial Evaluation form fetched successfully: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitInitialEvaluation(InitialEvaluationForm request) {
-    return null;
+    log.info("Submitting Initial Evaluation form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = initialEvaluationService.submitInitialEvaluation(request);
+    log.info("Initial Evcaluation Form submitted successfully with response: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  IntakeForm

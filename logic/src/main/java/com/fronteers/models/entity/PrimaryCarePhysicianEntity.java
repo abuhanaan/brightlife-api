@@ -29,7 +29,7 @@ public class PrimaryCarePhysicianEntity extends BaseEntity {
   @Column(name = "have_pcp")
   private String havePcp;
 
-  @Column(name = "name")
+  @Column(name = "name", unique = true, nullable = false)
   private String name;
 
   @Column(name = "phone")
