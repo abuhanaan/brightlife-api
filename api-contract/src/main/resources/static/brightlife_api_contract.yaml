@@ -325,6 +325,10 @@ components:
         address:
           $ref: '#/components/schemas/Address'
       type: object
+      required:
+        - name
+        - address
+        - phone
 
     InitialEvaluationForm:
       properties:
@@ -651,7 +655,7 @@ components:
         sameTimeOccurrence:
           type: boolean
         influenceOnLife:
-          type: boolean
+          type: string
         isRelativeWithBipolar:
           type: boolean
         isBipolarDiagnosed:

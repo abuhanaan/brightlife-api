@@ -72,7 +72,7 @@ public class MoodDisorderAssessmentFormEntity extends BaseEntity {
   private Boolean sameTimeOccurrence;
 
   @Column(name = "influence_on_life")
-  private Boolean influenceOnLife;
+  private String influenceOnLife;
 
   @Column(name = "is_relative_with_bipolar")
   private Boolean isRelativeWithBipolar;
