@@ -33,6 +33,7 @@ import com.fronteers.services.IntakeService;
 import com.fronteers.services.MedicationConsentService;
 import com.fronteers.services.MoodDisorderService;
 import com.fronteers.services.NoticeOfPrivacyService;
+import com.fronteers.services.PatientInfoConsentAndFinPolicyService;
 import com.fronteers.services.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,7 @@ public class PatientsController implements PatientsApi {
   private final MedicationConsentService medConsentService;
   private final MoodDisorderService moodDisorderService;
   private final NoticeOfPrivacyService noticeOfPrivacyService;
+  private final PatientInfoConsentAndFinPolicyService patientInfoConsentAndFinPolicyService;
 
   //  ADHD
   @Override
@@ -256,13 +258,19 @@ public class PatientsController implements PatientsApi {
   @Override
   public ResponseEntity<PatientInformationConsentAndFinancialPolicyForm> getPatientInformationConsentAndFinancialPolicy(
       Long id) {
-    return null;
+    log.info("Patient Information Consent And Financial Policy form with id {}", id);
+    PatientInformationConsentAndFinancialPolicyForm response = patientInfoConsentAndFinPolicyService.getNoticeOfPrivacy(id);
+    log.info("Patient Information Consent And Financial Policy form with id {} fetched successfully with response: {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitPatientInformationConsentAndFinancialPolicy(
       PatientInformationConsentAndFinancialPolicyForm request) {
-    return null;
+    log.info("Submitting Patient Information Consent And Financial Policy form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = patientInfoConsentAndFinPolicyService.submitPatientInfoAndConsentFinPolicy(request);
+    log.info("Patient Information Consent And Financial Policy form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  ReleaseReceive
