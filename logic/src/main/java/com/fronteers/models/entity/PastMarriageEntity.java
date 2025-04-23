@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "past_marriage")
-public class PastMarriagesEntity extends BaseEntity {
+public class PastMarriageEntity extends BaseEntity {
 
   @Column(name = "description")
   private String description;

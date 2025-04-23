@@ -65,10 +65,12 @@ public class PatientService {
     response.setLastName(patientRegFormEntity.getLastName());
     response.setMiddleName(patientRegFormEntity.getMiddleName());
     response.setGender(patientRegFormEntity.getGender());
-    response.setDob(patientRegFormEntity.getDob().toLocalDate());
+    response.setDob(patientRegFormEntity.getDob() != null ?
+        patientRegFormEntity.getDob().toLocalDate(): null);
     response.setPhone(patientRegFormEntity.getCellPhone());
     response.setEmail(patientRegFormEntity.getEmail());
-    response.setAddress(PatientDtoMapper.mapAddressEntityToAddressDto(patientRegFormEntity.getAddress()));
+    response.setAddress(patientRegFormEntity.getAddress() != null ?
+        PatientDtoMapper.mapAddressEntityToAddressDto(patientRegFormEntity.getAddress()) : null);
     return response;
   }
 

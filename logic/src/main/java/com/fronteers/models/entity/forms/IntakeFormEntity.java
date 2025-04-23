@@ -3,7 +3,7 @@ package com.fronteers.models.entity.forms;
 import com.fronteers.models.entity.AlcoholDrugHistoryEntity;
 import com.fronteers.models.entity.BaseEntity;
 import com.fronteers.models.entity.MedicationEntity;
-import com.fronteers.models.entity.PastMarriagesEntity;
+import com.fronteers.models.entity.PastMarriageEntity;
 import com.fronteers.models.entity.PastProviderEntity;
 import com.fronteers.models.entity.PatientEntity;
 import jakarta.persistence.CascadeType;
@@ -44,12 +44,24 @@ public class IntakeFormEntity extends BaseEntity {
   @Column(name = "complaints")
   private String complaints;
 
+  @Column(name = "sex_preference")
+  private String sexPreference;
+
+  @Column(name = "on_probation")
+  private String onProbation;
+
+  @Column(name = "in_lawsuit")
+  private String inLawsuit;
+
+  @Column(name = "children_count")
+  private Integer childrenCount;
+
   @Column(name = "marriage_count")
   private Integer marriageCount;
 
   @OneToMany(mappedBy = "intakeForm", cascade = CascadeType.ALL)
   @Fetch(value = FetchMode.SUBSELECT)
-  private List<PastMarriagesEntity> pastMarriagesInfo;
+  private List<PastMarriageEntity> pastMarriagesInfo;
 
   @OneToMany(mappedBy = "intakeForm", cascade = CascadeType.ALL)
   @Fetch(value = FetchMode.SUBSELECT)

@@ -29,6 +29,7 @@ import com.fronteers.services.AnxietyDisorderService;
 import com.fronteers.services.ControlledSubstanceService;
 import com.fronteers.services.DepressionAssessmentService;
 import com.fronteers.services.InitialEvaluationService;
+import com.fronteers.services.IntakeService;
 import com.fronteers.services.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,7 @@ public class PatientsController implements PatientsApi {
   private final ControlledSubstanceService controlledSubstanceService;
   private final DepressionAssessmentService depressionAssessmentService;
   private final InitialEvaluationService initialEvaluationService;
+  private final IntakeService intakeService;
 
   //  ADHD
   @Override
@@ -133,12 +135,18 @@ public class PatientsController implements PatientsApi {
   //  IntakeForm
   @Override
   public ResponseEntity<IntakeForm> getIntake(Long id) {
-    return null;
+    log.info("Fetching Intake form with id {}", id);
+    IntakeForm response = intakeService.getIntake(id);
+    log.info("Intake form with id {} fetched successfully with response {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitIntake(IntakeForm request) {
-    return null;
+    log.info("Submitting Intake form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = intakeService.submitIntake(request);
+    log.info("Intake form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  MedicationConsent

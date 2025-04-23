@@ -11,6 +11,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -95,13 +96,16 @@ public class AlcoholDrugHistoryEntity extends BaseEntity {
   private Boolean hasMedicalDisability;
 
   @Column(name = "past_medical_history")
-  private List<String> pastMedicalHistory;
+  private Set<String> pastMedicalHistory;
 
   @Column(name = "past_surgical_history")
-  private List<String> pastSurgicalHistory;
+  private Set<String> pastSurgicalHistory;
 
   @Column(name = "allergies")
-  private List<String> allergies;
+  private Set<String> allergies;
+
+  @Column(name = "others")
+  private String otherUsefulInfo;
 
   @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL)
   @Fetch(value = FetchMode.SUBSELECT)

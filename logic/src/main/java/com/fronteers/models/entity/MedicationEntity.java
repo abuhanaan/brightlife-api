@@ -34,6 +34,9 @@ public class MedicationEntity extends BaseEntity {
   @Column(name = "prescription")
   private String prescription;
 
+  @Column(name = "is_current")
+  private Boolean isCurrent;
+
   @ManyToOne
   @JoinColumn(name = "intake_form_id", referencedColumnName = "id")
   private IntakeFormEntity intakeForm;
