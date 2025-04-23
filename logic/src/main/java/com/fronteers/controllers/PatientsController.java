@@ -30,6 +30,7 @@ import com.fronteers.services.ControlledSubstanceService;
 import com.fronteers.services.DepressionAssessmentService;
 import com.fronteers.services.InitialEvaluationService;
 import com.fronteers.services.IntakeService;
+import com.fronteers.services.MedicationConsentService;
 import com.fronteers.services.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,7 @@ public class PatientsController implements PatientsApi {
   private final DepressionAssessmentService depressionAssessmentService;
   private final InitialEvaluationService initialEvaluationService;
   private final IntakeService intakeService;
+  private final MedicationConsentService medConsentService;
 
   //  ADHD
   @Override
@@ -152,12 +154,17 @@ public class PatientsController implements PatientsApi {
   //  MedicationConsent
   @Override
   public ResponseEntity<MedicationConsentForm> getMedicationConsent(Long id) {
-    return null;
+    log.info("Fetching Medication Consent form with id {}", id);
+    MedicationConsentForm response = medConsentService.getMedConsent(id);
+    log.info("Medication Consent with id {} fetched successfully with response: {}", id, response);
   }
 
   @Override
   public ResponseEntity<Success> submitMedicationConsent(MedicationConsentForm request) {
-    return null;
+    log.info("Submitting Medication Consent form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = medConsentService.medConsent(request);
+    log.info("Medication Consent form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  MoodDisorderAssessment
