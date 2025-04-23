@@ -32,6 +32,7 @@ import com.fronteers.services.InitialEvaluationService;
 import com.fronteers.services.IntakeService;
 import com.fronteers.services.MedicationConsentService;
 import com.fronteers.services.MoodDisorderService;
+import com.fronteers.services.NoticeOfPrivacyService;
 import com.fronteers.services.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,7 @@ public class PatientsController implements PatientsApi {
   private final IntakeService intakeService;
   private final MedicationConsentService medConsentService;
   private final MoodDisorderService moodDisorderService;
+  private final NoticeOfPrivacyService noticeOfPrivacyService;
 
   //  ADHD
   @Override
@@ -190,13 +192,19 @@ public class PatientsController implements PatientsApi {
   //  NoticeOfPrivacyPractices
   @Override
   public ResponseEntity<NoticeOfPrivacyPracticesForm> getNoticeOfPrivacyPractices(Long id) {
-    return null;
+    log.info("Fetching Notice Of Privacy Practice form with id {}", id);
+    NoticeOfPrivacyPracticesForm response = noticeOfPrivacyService.getNoticeOfPrivacy(id);
+    log.info("Notice Of Privacy Practice form with id {} fetched successfully with response: {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitNoticeOfPrivacyPractices(
       NoticeOfPrivacyPracticesForm request) {
-    return null;
+    log.info("Submitting Notice Of Privacy Practice form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = noticeOfPrivacyService.submitNoticeOfPrivacy(request);
+    log.info("Notice Of Privacy Practice form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  Patient
