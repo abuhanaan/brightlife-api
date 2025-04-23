@@ -31,6 +31,7 @@ import com.fronteers.services.DepressionAssessmentService;
 import com.fronteers.services.InitialEvaluationService;
 import com.fronteers.services.IntakeService;
 import com.fronteers.services.MedicationConsentService;
+import com.fronteers.services.MoodDisorderService;
 import com.fronteers.services.PatientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,14 +43,15 @@ import org.springframework.stereotype.Controller;
 @Slf4j
 public class PatientsController implements PatientsApi {
 
-  final PatientService patientService;
-  final AdhdService adhdService;
-  final AnxietyDisorderService anxietyDisorderService;
+  private final PatientService patientService;
+  private final AdhdService adhdService;
+  private final AnxietyDisorderService anxietyDisorderService;
   private final ControlledSubstanceService controlledSubstanceService;
   private final DepressionAssessmentService depressionAssessmentService;
   private final InitialEvaluationService initialEvaluationService;
   private final IntakeService intakeService;
   private final MedicationConsentService medConsentService;
+  private final MoodDisorderService moodDisorderService;
 
   //  ADHD
   @Override
@@ -171,12 +173,18 @@ public class PatientsController implements PatientsApi {
   //  MoodDisorderAssessment
   @Override
   public ResponseEntity<MoodDisorderAssessmentForm> getMoodDisorderAssessment(Long id) {
-    return null;
+    log.info("Fetching Mood Disorder Assessment form with id {}", id);
+    MoodDisorderAssessmentForm response = moodDisorderService.getMoodDisorder(id);
+    log.info("Mood Disorder Assessment with id {} fetched successfully with response: {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitMoodDisorderAssessment(MoodDisorderAssessmentForm request) {
-    return null;
+    log.info("Submitting Mood Disorder Assessment form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = moodDisorderService.submitMoodDisorderAssessment(request);
+    log.info("Mood Disorder Assessment form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  NoticeOfPrivacyPractices

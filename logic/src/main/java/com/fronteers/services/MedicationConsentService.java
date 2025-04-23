@@ -50,6 +50,7 @@ public class MedicationConsentService {
     medConsentEntity.setPatientGuardianRelationship(request.getPatientGuardianRelationship());
     medConsentEntity.setGuardianSignDate(Date.valueOf(request.getGuardianSignDate()));
     medConsentEntity.setMedicationConsentFile(request.getFile());
+    patient.setMedicationConsentForm(medConsentEntity);
     patientRepository.save(patient);
     return new Success(true, "Form Submitted Successfully", "Medication Consent Form Submitted");
   }
