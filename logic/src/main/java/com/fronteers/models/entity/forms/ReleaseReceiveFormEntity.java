@@ -1,5 +1,7 @@
 package com.fronteers.models.entity.forms;
 
+import com.fronteers.brightlife.model.ReleaseReceiveForm.DisclosurePurposeEnum;
+import com.fronteers.brightlife.model.ReleaseReceiveForm.InfoTypeToReleaseEnum;
 import com.fronteers.models.entity.BaseEntity;
 import com.fronteers.models.entity.PartyEntity;
 import com.fronteers.models.entity.PatientEntity;
@@ -10,8 +12,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -53,10 +56,10 @@ public class ReleaseReceiveFormEntity extends BaseEntity {
   private List<PartyEntity> parties;
 
   @Column(name = "disclosure_purposes")
-  private List<String> disclosurePurposes;
+  private Set<DisclosurePurposeEnum> disclosurePurposes;
 
   @Column(name = "info_type_to_release")
-  private List<String> infoTypeToRelease;
+  private Set<InfoTypeToReleaseEnum> infoTypeToRelease;
 
   @Column(name = "guardian_name")
   private String guardianName;

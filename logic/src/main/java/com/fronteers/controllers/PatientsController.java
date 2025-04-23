@@ -35,6 +35,7 @@ import com.fronteers.services.MoodDisorderService;
 import com.fronteers.services.NoticeOfPrivacyService;
 import com.fronteers.services.PatientInfoConsentAndFinPolicyService;
 import com.fronteers.services.PatientService;
+import com.fronteers.services.ReleaseReceiveService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,7 @@ public class PatientsController implements PatientsApi {
   private final MoodDisorderService moodDisorderService;
   private final NoticeOfPrivacyService noticeOfPrivacyService;
   private final PatientInfoConsentAndFinPolicyService patientInfoConsentAndFinPolicyService;
+  private final ReleaseReceiveService releaseReceiveService;
 
   //  ADHD
   @Override
@@ -276,12 +278,18 @@ public class PatientsController implements PatientsApi {
   //  ReleaseReceive
   @Override
   public ResponseEntity<ReleaseReceiveForm> getReleaseReceive(Long id) {
-    return null;
+    log.info("Fetching Release Receive form with id {}", id);
+    ReleaseReceiveForm response = releaseReceiveService.getReleaseReceive(id);
+    log.info("Release Receive form with id {} fetched successfully with response: {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitReleaseReceive(ReleaseReceiveForm request) {
-    return null;
+    log.info("Submitting Release Receive form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = releaseReceiveService.submitReleaseReceive(request);
+    log.info("Release Receive form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  Screening
