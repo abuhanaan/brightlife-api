@@ -157,6 +157,7 @@ public class PatientsController implements PatientsApi {
     log.info("Fetching Medication Consent form with id {}", id);
     MedicationConsentForm response = medConsentService.getMedConsent(id);
     log.info("Medication Consent with id {} fetched successfully with response: {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
