@@ -36,6 +36,7 @@ import com.fronteers.services.NoticeOfPrivacyService;
 import com.fronteers.services.PatientInfoConsentAndFinPolicyService;
 import com.fronteers.services.PatientService;
 import com.fronteers.services.ReleaseReceiveService;
+import com.fronteers.services.ScreeningService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,7 @@ public class PatientsController implements PatientsApi {
   private final NoticeOfPrivacyService noticeOfPrivacyService;
   private final PatientInfoConsentAndFinPolicyService patientInfoConsentAndFinPolicyService;
   private final ReleaseReceiveService releaseReceiveService;
+  private final ScreeningService screeningService;
 
   //  ADHD
   @Override
@@ -295,12 +297,18 @@ public class PatientsController implements PatientsApi {
   //  Screening
   @Override
   public ResponseEntity<ScreeningForm> getScreening(Long id) {
-    return null;
+    log.info("Fetching Screening form with id {}", id);
+    ScreeningForm response = screeningService.getScreening(id);
+    log.info("Screening form with id {} fetched successfully with response: {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitScreening(ScreeningForm request) {
-    return null;
+    log.info("Submitting Screening form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = screeningService.submitScreening(request);
+    log.info("Screening form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  SelfPay
