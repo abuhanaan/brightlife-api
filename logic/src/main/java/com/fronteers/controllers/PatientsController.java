@@ -38,6 +38,7 @@ import com.fronteers.services.PatientService;
 import com.fronteers.services.ReleaseReceiveService;
 import com.fronteers.services.ScreeningService;
 import com.fronteers.services.SelfPayService;
+import com.fronteers.services.TerminationPolicyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -62,6 +63,7 @@ public class PatientsController implements PatientsApi {
   private final ReleaseReceiveService releaseReceiveService;
   private final ScreeningService screeningService;
   private final SelfPayService selfPayService;
+  private final TerminationPolicyService terminationPolicyService;
 
   //  ADHD
   @Override
@@ -333,12 +335,18 @@ public class PatientsController implements PatientsApi {
   //  TerminationPolicy
   @Override
   public ResponseEntity<TerminationPolicyForm> getTerminationPolicy(Long id) {
-    return null;
+    log.info("Fetching Termination Policy form with id {}", id);
+    TerminationPolicyForm response = terminationPolicyService.getTp(id);
+    log.info("Termination Policy form with id {} fetched successfully with response: {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitTerminationPolicy(TerminationPolicyForm request) {
-    return null;
+    log.info("Submitting Termination Policy form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = terminationPolicyService.submit(request);
+    log.info("Termination Policy form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  TreatmentConsentTelehealthInPersonTreatmentConsent
