@@ -39,6 +39,7 @@ import com.fronteers.services.ReleaseReceiveService;
 import com.fronteers.services.ScreeningService;
 import com.fronteers.services.SelfPayService;
 import com.fronteers.services.TerminationPolicyService;
+import com.fronteers.services.TreatmentConsentTelehealthInPersonTreatmentConsentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +65,7 @@ public class PatientsController implements PatientsApi {
   private final ScreeningService screeningService;
   private final SelfPayService selfPayService;
   private final TerminationPolicyService terminationPolicyService;
+  private final TreatmentConsentTelehealthInPersonTreatmentConsentService tctInPersontcService;
 
   //  ADHD
   @Override
@@ -353,12 +355,18 @@ public class PatientsController implements PatientsApi {
   @Override
   public ResponseEntity<TreatmentConsentTelehealthInPersonTreatmentConsent> getTreatmentConsentTelehealthInPersonTreatmentConsent(
       Long id) {
-    return null;
+    log.info("Fetching TreatmentConsentTelehealthInPersonTreatmentConsent form with id {}", id);
+    TreatmentConsentTelehealthInPersonTreatmentConsent response = tctInPersontcService.fetch(id);
+    log.info("TreatmentConsentTelehealthInPersonTreatmentConsent form with id {} fetched successfully with response: {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitTreatmentConsentTelehealthInPersonTreatmentConsent(
       TreatmentConsentTelehealthInPersonTreatmentConsent request) {
-    return null;
+    log.info("Submitting TreatmentConsentTelehealthInPersonTreatment form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = tctInPersontcService.submit(request);
+    log.info("TreatmentConsentTelehealthInPersonTreatment form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 }
