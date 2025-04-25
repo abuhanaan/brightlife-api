@@ -37,6 +37,7 @@ import com.fronteers.services.PatientInfoConsentAndFinPolicyService;
 import com.fronteers.services.PatientService;
 import com.fronteers.services.ReleaseReceiveService;
 import com.fronteers.services.ScreeningService;
+import com.fronteers.services.SelfPayService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,7 @@ public class PatientsController implements PatientsApi {
   private final PatientInfoConsentAndFinPolicyService patientInfoConsentAndFinPolicyService;
   private final ReleaseReceiveService releaseReceiveService;
   private final ScreeningService screeningService;
+  private final SelfPayService selfPayService;
 
   //  ADHD
   @Override
@@ -314,12 +316,18 @@ public class PatientsController implements PatientsApi {
   //  SelfPay
   @Override
   public ResponseEntity<SelfPayForm> getSelfPay(Long id) {
-    return null;
+    log.info("Fetching Self Pay form with id {}", id);
+    SelfPayForm response = selfPayService.getSelfPay(id);
+    log.info("Self Pay form with id {} fetched successfully with response: {}", id, response);
+    return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitSelfPay(SelfPayForm request) {
-    return null;
+    log.info("Submitting Self Pay form for patient {} with request payload {}", request.getPatientId(), request);
+    Success response = selfPayService.submitSelfPay(request);
+    log.info("Self Pay form submitted successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
   }
 
   //  TerminationPolicy
