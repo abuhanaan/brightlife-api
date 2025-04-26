@@ -6,10 +6,13 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.TerminationPolicyFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.TerminationPolicyRepository;
 import com.fronteers.utils.PatientUtils;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,8 +32,10 @@ public class TerminationPolicyService {
         .patient(patient)
         .patientId(patient.getPatientId())
         .witnessName(request.getWitnessName())
-        .witnessSignDate(Date.valueOf(request.getWitnessSignDate()))
-        .patientSignDate(Date.valueOf(request.getPatientSignDate()))
+        .witnessSignDate(request.getWitnessSignDate() != null ?
+            Timestamp.from(request.getWitnessSignDate().toInstant()) : null)
+        .patientSignDate(request.getPatientSignDate() != null ?
+            Timestamp.from(request.getPatientSignDate().toInstant()) : null)
         .build();
     patient.setTerminationPolicyForm(entity);
     patientRepository.save(patient);
@@ -38,15 +43,7 @@ public class TerminationPolicyService {
   }
 
   public TerminationPolicyForm getTp(Long id) {
-    TerminationPolicyFormEntity entity = checkIfTpExists(id);
-    TerminationPolicyForm dto = new TerminationPolicyForm();
-    dto.setId(id);
-    dto.setPatientId(UUID.fromString(entity.getPatientId()));
-    dto.setWitnessName(entity.getWitnessName());
-    dto.setWitnessSignDate(entity.getWitnessSignDate().toLocalDate());
-    dto.setPatientSignDate(entity.getPatientSignDate().toLocalDate());
-    dto.setFile(entity.getTerminationPolicyFile());
-    return dto;
+    return PatientDtoMapper.mapTerminationPolicyEntityToDto(checkIfTpExists(id));
   }
 
   private void checkForTpUniqueness(String patientId) {

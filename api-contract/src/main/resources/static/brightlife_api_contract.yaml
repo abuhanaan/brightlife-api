@@ -604,7 +604,7 @@ components:
         patientId:
           $ref: "#/components/schemas/PatientId"
         patientSignDate:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         isMinor:
           type: boolean
         guardianName:
@@ -612,7 +612,7 @@ components:
         patientGuardianRelationship:
           type: string
         guardianSignDate:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         medicationConsent:
           type: string
         file:
@@ -1071,10 +1071,12 @@ components:
               - Other
         guardianName:
           type: string
+        guardianSignDate:
+          $ref: "#/components/schemas/DateTime"
         relationship:
           type: string
-        date:
-          $ref: "#/components/schemas/Date"
+        patientSignDate:
+          $ref: "#/components/schemas/DateTime"
         releaseReceive:
           type: string
         file:
@@ -1157,7 +1159,7 @@ components:
         patientId:
           $ref: "#/components/schemas/PatientId"
         date:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         selfPay:
           type: string
         file:
@@ -1172,11 +1174,11 @@ components:
         patientId:
           $ref: "#/components/schemas/PatientId"
         patientSignDate:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         witnessName:
           type: string
         witnessSignDate:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         terminationPolicy:
           type: string
         file:
@@ -1191,13 +1193,13 @@ components:
         patientId:
           $ref: "#/components/schemas/PatientId"
         patientSignDate:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         isMinor:
           type: boolean
         guardianName:
           type: string
         guardianSignDate:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         treatmentConsentTelehealthInPerson:
           type: string
         file:

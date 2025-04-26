@@ -6,11 +6,11 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.TreatmentConsentTelehealthInPersonTreatmentConsentEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.TreatmentConsentTelehealthInPersonTreatmentConsentRepository;
 import com.fronteers.utils.PatientUtils;
-import java.sql.Date;
-import java.util.UUID;
+import java.sql.Timestamp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +31,10 @@ public class TreatmentConsentTelehealthInPersonTreatmentConsentService {
             .patientId(patient.getPatientId())
             .isMinor(request.getIsMinor())
             .guardianName(request.getGuardianName())
-            .guardianSignDate(Date.valueOf(request.getGuardianSignDate()))
-            .patientSignDate(Date.valueOf(request.getPatientSignDate()))
+            .guardianSignDate(request.getGuardianSignDate() != null ?
+                Timestamp.from(request.getGuardianSignDate().toInstant()) : null)
+            .patientSignDate(request.getPatientSignDate() != null ?
+                Timestamp.from(request.getPatientSignDate().toInstant()) : null)
             .build();
     patient.setTreatmentConsentTelehealth(entity);
     patientRepository.save(patient);
@@ -42,14 +44,7 @@ public class TreatmentConsentTelehealthInPersonTreatmentConsentService {
 
   public TreatmentConsentTelehealthInPersonTreatmentConsent fetch(Long id) {
     TreatmentConsentTelehealthInPersonTreatmentConsentEntity entity = checkIfEntityExists(id);
-    TreatmentConsentTelehealthInPersonTreatmentConsent dto = new TreatmentConsentTelehealthInPersonTreatmentConsent();
-    dto.setId(entity.getId());
-    dto.setPatientId(UUID.fromString(entity.getPatientId()));
-    dto.setGuardianName(entity.getGuardianName());
-    dto.setGuardianSignDate(entity.getGuardianSignDate().toLocalDate());
-    dto.setPatientSignDate(entity.getPatientSignDate().toLocalDate());
-    dto.setFile(entity.getTreatmentConsentTelehealthInPersonFile());
-    return dto;
+    return PatientDtoMapper.mapTreatmentConsentTelehealthEntityToDto(entity);
   }
 
   private TreatmentConsentTelehealthInPersonTreatmentConsentEntity checkIfEntityExists(Long id) {

@@ -3,6 +3,7 @@ package com.fronteers.services;
 import com.fronteers.brightlife.model.Party;
 import com.fronteers.brightlife.model.ReleaseReceiveForm;
 import com.fronteers.brightlife.model.Success;
+import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PartyEntity;
@@ -14,6 +15,8 @@ import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.ReleaseReceiveRepository;
 import com.fronteers.utils.PatientUtils;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +34,7 @@ public class ReleaseReceiveService {
   private final PartyRepository partyRepository;
 
   public Success submitReleaseReceive(ReleaseReceiveForm request) {
+    validateMinorPatient(request);
     PatientEntity patient = patientUtils.checkIfPatientExists(request.getPatientId().toString());
     checkForReleaseReceiveUniqueness(patient.getPatientId());
     ReleaseReceiveFormEntity form = ReleaseReceiveFormEntity.builder()
@@ -46,7 +50,10 @@ public class ReleaseReceiveService {
             new HashSet<>(request.getInfoTypeToRelease()) : new HashSet<>())
         .guardianName(request.getGuardianName())
         .relationship(request.getRelationship())
-        .date(request.getDate() != null ? Date.valueOf(request.getDate()) : null)
+        .guardianSignDate(request.getGuardianSignDate() != null ?
+            Timestamp.from(request.getGuardianSignDate().toInstant()) : null)
+        .patientSignDate(request.getPatientSignDate() != null ?
+            Timestamp.from(request.getPatientSignDate().toInstant()) : null)
         .releaseReceiveFile(request.getFile())
         .build();
     setParties(form, request.getParty());
@@ -55,34 +62,16 @@ public class ReleaseReceiveService {
     return new Success(true, "Form Submitted Successfully", "Release Receive Form Submitted");
   }
 
+  private void validateMinorPatient(ReleaseReceiveForm request) {
+    if(request.getIsMinor() && request.getGuardianSignDate() == null){
+      throw new BadRequestException("Guardian signature and date of their signature cannot be null"
+          + " because patient is a minor");
+    }
+  }
+
   public ReleaseReceiveForm getReleaseReceive(Long id) {
     ReleaseReceiveFormEntity entity = checkIfReleaseReceiveExists(id);
-    ReleaseReceiveForm dto = new ReleaseReceiveForm();
-    dto.setId(entity.getId());
-    dto.setPatientId(UUID.fromString(entity.getPatientId()));
-    dto.setIsMinor(entity.getIsMinor());
-    dto.setReceiveHealthInfo(entity.getReceiveHealthInfo());
-    dto.setReceiveHealthInfo(entity.getReceiveHealthInfo());
-    dto.setExchangeHealthInfo(entity.getExchangeHealthInfo());
-    dto.setParty(entity.getParties() != null ? entity.getParties().stream().map(partyEntity -> {
-      Party partyDto = new Party();
-      partyDto.setId(partyEntity.getId());
-      partyDto.setIsReceive(partyEntity.getIsReceive());
-      partyDto.setName(partyEntity.getName());
-      partyDto.setPhoneNumber(partyEntity.getPhoneNumber());
-      partyDto.setFax(partyEntity.getFax());
-      partyDto.setAddress(PatientDtoMapper.mapAddressEntityToAddressDto(partyEntity.getAddress()));
-      return partyDto;
-    }).toList() : null);
-    dto.setDisclosurePurpose(entity.getDisclosurePurposes() != null ?
-        entity.getDisclosurePurposes().stream().toList() : null);
-    dto.setInfoTypeToRelease(entity.getInfoTypeToRelease() != null ?
-        entity.getInfoTypeToRelease().stream().toList() : null);
-    dto.setGuardianName(entity.getGuardianName());
-    dto.setReleaseReceive(entity.getReleaseReceiveFile());
-    dto.setDate(entity.getDate().toLocalDate());
-    dto.setFile(entity.getReleaseReceiveFile());
-    return dto;
+    return PatientDtoMapper.mapReleaseReceiveEntityToDto(entity);
   }
 
   private void setParties(ReleaseReceiveFormEntity form, List<Party> parties) {

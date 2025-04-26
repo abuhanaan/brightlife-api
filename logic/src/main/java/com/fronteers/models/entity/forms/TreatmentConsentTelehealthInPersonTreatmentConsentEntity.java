@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Date;
+import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,7 +32,7 @@ public class TreatmentConsentTelehealthInPersonTreatmentConsentEntity extends Ba
   private PatientEntity patient;
 
   @Column(name = "patient_sign_date")
-  private Date patientSignDate;
+  private Timestamp patientSignDate;
 
   @Column(name = "is_minor")
   private Boolean isMinor;
@@ -40,7 +41,7 @@ public class TreatmentConsentTelehealthInPersonTreatmentConsentEntity extends Ba
   private String guardianName;
 
   @Column(name = "guardian_sign_date")
-  private Date guardianSignDate;
+  private Timestamp guardianSignDate;
 
   @Column(name = "treatment_consent_telehealth_file")
   private String treatmentConsentTelehealthInPersonFile;

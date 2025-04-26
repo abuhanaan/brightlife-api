@@ -13,6 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -64,11 +65,14 @@ public class ReleaseReceiveFormEntity extends BaseEntity {
   @Column(name = "guardian_name")
   private String guardianName;
 
+  @Column(name = "guardian_sign_date")
+  private Timestamp guardianSignDate;
+
   @Column(name = "relationship")
   private String relationship;
 
-  @Column(name = "date")
-  private Date date;
+  @Column(name = "patient_sign_date")
+  private Timestamp patientSignDate;
 
   @Column(name = "release_receive_file")
   private String releaseReceiveFile;

@@ -6,10 +6,13 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.MedicationConsentFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.MedicationConsentRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,19 +26,7 @@ public class MedicationConsentService {
   private final MedicationConsentRepository medicationConsentRepository;
 
   public MedicationConsentForm getMedConsent(Long id) {
-    MedicationConsentFormEntity medConsentEntity = checkIfMedConsentFormExists(id);
-    MedicationConsentForm dto = new MedicationConsentForm();
-    dto.setId(medConsentEntity.getId());
-    dto.setPatientId(UUID.fromString(medConsentEntity.getPatientId()));
-    dto.setIsMinor(medConsentEntity.getIsMinor());
-    dto.setPatientSignDate(medConsentEntity.getPatientSignDate() != null ?
-        medConsentEntity.getPatientSignDate().toLocalDate() : null);
-    dto.setGuardianName(medConsentEntity.getGuardianName());
-    dto.setPatientGuardianRelationship(medConsentEntity.getPatientGuardianRelationship());
-    dto.setGuardianSignDate(medConsentEntity.getGuardianSignDate() != null ?
-        medConsentEntity.getGuardianSignDate().toLocalDate() : null);
-    dto.setFile(medConsentEntity.getMedicationConsentFile());
-    return dto;
+    return PatientDtoMapper.mapMedConsentEntityToDto(checkIfMedConsentFormExists(id));
   }
 
   public Success medConsent(MedicationConsentForm request) {
@@ -45,10 +36,12 @@ public class MedicationConsentService {
     medConsentEntity.setPatient(patient);
     medConsentEntity.setPatientId(patient.getPatientId());
     medConsentEntity.setIsMinor(request.getIsMinor());
-    medConsentEntity.setPatientSignDate(Date.valueOf(request.getPatientSignDate()));
+    medConsentEntity.setPatientSignDate(request.getPatientSignDate() != null ?
+        Timestamp.from(request.getPatientSignDate().toInstant()) : null);
     medConsentEntity.setGuardianName(request.getGuardianName());
     medConsentEntity.setPatientGuardianRelationship(request.getPatientGuardianRelationship());
-    medConsentEntity.setGuardianSignDate(Date.valueOf(request.getGuardianSignDate()));
+    medConsentEntity.setGuardianSignDate(request.getGuardianSignDate() != null ?
+        Timestamp.from(request.getGuardianSignDate().toInstant()) : null);
     medConsentEntity.setMedicationConsentFile(request.getFile());
     patient.setMedicationConsentForm(medConsentEntity);
     patientRepository.save(patient);

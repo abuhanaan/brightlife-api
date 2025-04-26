@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Date;
+import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,13 +32,13 @@ public class TerminationPolicyFormEntity extends BaseEntity {
   private PatientEntity patient;
 
   @Column(name = "patient_sign_date")
-  private Date patientSignDate;
+  private Timestamp patientSignDate;
 
   @Column(name = "witness_name")
   private String witnessName;
 
   @Column(name = "witness_sign_date")
-  private Date witnessSignDate;
+  private Timestamp witnessSignDate;
 
   @Column(name = "termination_policy_file")
   private String terminationPolicyFile;

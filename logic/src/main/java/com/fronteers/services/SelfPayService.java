@@ -6,11 +6,11 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.SelfPayFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.SelfPayRepository;
 import com.fronteers.utils.PatientUtils;
-import java.sql.Date;
-import java.util.UUID;
+import java.sql.Timestamp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,8 @@ public class SelfPayService {
     SelfPayFormEntity entity = SelfPayFormEntity.builder()
         .patient(patient)
         .patientId(patient.getPatientId())
-        .date(Date.valueOf(request.getDate()))
+        .date(request.getDate() != null ?
+            Timestamp.from(request.getDate().toInstant()) : null)
         .selfPayFile(request.getFile())
         .build();
     patient.setSelfPayForm(entity);
@@ -37,13 +38,7 @@ public class SelfPayService {
   }
 
   public SelfPayForm getSelfPay(Long id) {
-    SelfPayFormEntity entity = checkIfSelfPayExists(id);
-    SelfPayForm dto = new SelfPayForm();
-    dto.setId(entity.getId());
-    dto.setPatientId(UUID.fromString(entity.getPatientId()));
-    dto.setDate(entity.getDate().toLocalDate());
-    dto.setFile(entity.getSelfPayFile());
-    return dto;
+    return PatientDtoMapper.mapSelfPayEntityToDto(checkIfSelfPayExists(id));
   }
 
   private SelfPayFormEntity checkIfSelfPayExists(Long id) {
