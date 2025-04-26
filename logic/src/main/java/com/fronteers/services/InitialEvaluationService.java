@@ -18,11 +18,8 @@ import com.fronteers.repositories.PharmacyRepository;
 import com.fronteers.repositories.PrimaryCarePhysicianRepository;
 import com.fronteers.utils.PatientUtils;
 import jakarta.transaction.Transactional;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +43,8 @@ public class InitialEvaluationService {
     newForm.setPharmacy(mapPharmacyEntity(request.getPharmacy(), newForm));
     newForm.setPrimaryCarePhysician(
         mapPrimaryCarePhysicianEmtity(request.getPrimaryCarePhysician(), newForm));
-    newForm.setDate(request.getDate() != null ? Timestamp.from(request.getDate().toInstant()) : null);
+    newForm.setDate(
+        request.getDate() != null ? Timestamp.from(request.getDate().toInstant()) : null);
     newForm.setInitialEvaluationFile(request.getFile());
     patient.setInitialEvaluationForm(newForm);
     patientRepository.save(patient);

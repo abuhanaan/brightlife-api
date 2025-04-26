@@ -22,7 +22,6 @@ import com.fronteers.brightlife.model.ReleaseReceiveForm;
 import com.fronteers.brightlife.model.SelfPayForm;
 import com.fronteers.brightlife.model.TerminationPolicyForm;
 import com.fronteers.brightlife.model.TreatmentConsentTelehealthInPersonTreatmentConsent;
-import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.models.entity.AddressEntity;
 import com.fronteers.models.entity.EmergencyContactEntity;
 import com.fronteers.models.entity.GuarantorEntity;
@@ -294,11 +293,12 @@ public class PatientDtoMapper {
 
   public static PatientInformationConsentAndFinancialPolicyForm
   mapPatientInfoConsentAndFinPolicyFormEntityToDto(
-      PatientInformationConsentAndFinancialPolicyFormEntity entity){
+      PatientInformationConsentAndFinancialPolicyFormEntity entity) {
     PatientInformationConsentAndFinancialPolicyForm dto = new PatientInformationConsentAndFinancialPolicyForm();
     dto.setId(entity.getId());
     dto.setPatientId(UUID.fromString(entity.getPatientId()));
-    dto.setDate(entity.getDate() != null ? entity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
+    dto.setDate(
+        entity.getDate() != null ? entity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
     dto.setFile(entity.getPatientInfoFinFile());
     return dto;
   }
@@ -308,7 +308,8 @@ public class PatientDtoMapper {
     NoticeOfPrivacyPracticesForm dto = new NoticeOfPrivacyPracticesForm();
     dto.setId(entity.getId());
     dto.setPatientId(UUID.fromString(entity.getPatientId()));
-    dto.setDate(entity.getDate() != null ? entity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
+    dto.setDate(
+        entity.getDate() != null ? entity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
     dto.setNoticeEffectDate(entity.getNoticeEffectDate().toLocalDate());
     dto.setFile(entity.getNoticeOfPrivacyPractices());
     return dto;
@@ -339,7 +340,8 @@ public class PatientDtoMapper {
     return pharmacyDto;
   }
 
-  private static PrimaryCarePhysician mapPrimaryCarePhysician(PrimaryCarePhysicianEntity pcpEntity) {
+  private static PrimaryCarePhysician mapPrimaryCarePhysician(
+      PrimaryCarePhysicianEntity pcpEntity) {
     PrimaryCarePhysician pcpDto = new PrimaryCarePhysician();
     pcpDto.setHavePcp(pcpEntity.getHavePcp());
     pcpDto.setId(pcpEntity.getId());

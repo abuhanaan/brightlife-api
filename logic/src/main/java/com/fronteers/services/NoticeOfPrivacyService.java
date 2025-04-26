@@ -12,8 +12,6 @@ import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.ZoneOffset;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
