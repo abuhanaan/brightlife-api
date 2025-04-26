@@ -6,10 +6,13 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.PatientInformationConsentAndFinancialPolicyFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.PatientInfoConsentAndFinPolicyRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +33,7 @@ public class PatientInfoConsentAndFinPolicyService {
         PatientInformationConsentAndFinancialPolicyFormEntity.builder()
             .patient(patient)
             .patientId(patient.getPatientId())
-            .date(Date.valueOf(request.getDate()))
+            .date(request.getDate() != null ? Timestamp.from(request.getDate().toInstant()) : null)
             .patientInfoFinFile(request.getFile())
             .build();
     patient.setPatientInformationConsentAndFinancialPolicyForm(form);
@@ -40,14 +43,7 @@ public class PatientInfoConsentAndFinPolicyService {
   }
 
   public PatientInformationConsentAndFinancialPolicyForm getNoticeOfPrivacy(Long id) {
-    PatientInformationConsentAndFinancialPolicyFormEntity entity = checkIfPatientInfoConsentExists(
-        id);
-    PatientInformationConsentAndFinancialPolicyForm dto = new PatientInformationConsentAndFinancialPolicyForm();
-    dto.setId(entity.getId());
-    dto.setPatientId(UUID.fromString(entity.getPatientId()));
-    dto.setDate(entity.getDate().toLocalDate());
-    dto.setFile(entity.getPatientInfoFinFile());
-    return dto;
+    return PatientDtoMapper.mapPatientInfoConsentAndFinPolicyFormEntityToDto(checkIfPatientInfoConsentExists(id));
   }
 
   private PatientInformationConsentAndFinancialPolicyFormEntity checkIfPatientInfoConsentExists(

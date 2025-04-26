@@ -3,26 +3,37 @@ package com.fronteers.models.mappers;
 import com.fronteers.brightlife.model.Address;
 import com.fronteers.brightlife.model.EmergencyContact;
 import com.fronteers.brightlife.model.Guarantor;
+import com.fronteers.brightlife.model.InitialEvaluationForm;
 import com.fronteers.brightlife.model.Insurance;
 import com.fronteers.brightlife.model.InsuranceProvider;
 import com.fronteers.brightlife.model.MedicationConsentForm;
+import com.fronteers.brightlife.model.NoticeOfPrivacyPracticesForm;
 import com.fronteers.brightlife.model.ParentGuardian;
 import com.fronteers.brightlife.model.Party;
+import com.fronteers.brightlife.model.PatientInformationConsentAndFinancialPolicyForm;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PaymentModeEnum;
 import com.fronteers.brightlife.model.PaymentStructure;
 import com.fronteers.brightlife.model.PersonalInfo;
+import com.fronteers.brightlife.model.Pharmacy;
 import com.fronteers.brightlife.model.PolicyHolder;
+import com.fronteers.brightlife.model.PrimaryCarePhysician;
 import com.fronteers.brightlife.model.ReleaseReceiveForm;
 import com.fronteers.brightlife.model.SelfPayForm;
 import com.fronteers.brightlife.model.TerminationPolicyForm;
 import com.fronteers.brightlife.model.TreatmentConsentTelehealthInPersonTreatmentConsent;
+import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.models.entity.AddressEntity;
 import com.fronteers.models.entity.EmergencyContactEntity;
 import com.fronteers.models.entity.GuarantorEntity;
 import com.fronteers.models.entity.InsuranceEntity;
 import com.fronteers.models.entity.ParentGuardianEntity;
+import com.fronteers.models.entity.PharmacyEntity;
+import com.fronteers.models.entity.PrimaryCarePhysicianEntity;
+import com.fronteers.models.entity.forms.InitialEvaluationFormEntity;
 import com.fronteers.models.entity.forms.MedicationConsentFormEntity;
+import com.fronteers.models.entity.forms.NoticeOfPrivacyPracticesFormEntity;
+import com.fronteers.models.entity.forms.PatientInformationConsentAndFinancialPolicyFormEntity;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
 import com.fronteers.models.entity.forms.ReleaseReceiveFormEntity;
 import com.fronteers.models.entity.forms.SelfPayFormEntity;
@@ -279,5 +290,63 @@ public class PatientDtoMapper {
         entity.getGuardianSignDate().toInstant().atOffset(ZoneOffset.UTC) : null);
     dto.setFile(entity.getMedicationConsentFile());
     return dto;
+  }
+
+  public static PatientInformationConsentAndFinancialPolicyForm
+  mapPatientInfoConsentAndFinPolicyFormEntityToDto(
+      PatientInformationConsentAndFinancialPolicyFormEntity entity){
+    PatientInformationConsentAndFinancialPolicyForm dto = new PatientInformationConsentAndFinancialPolicyForm();
+    dto.setId(entity.getId());
+    dto.setPatientId(UUID.fromString(entity.getPatientId()));
+    dto.setDate(entity.getDate() != null ? entity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
+    dto.setFile(entity.getPatientInfoFinFile());
+    return dto;
+  }
+
+  public static NoticeOfPrivacyPracticesForm mapNoticeOfPrivacyEntityToDto(
+      NoticeOfPrivacyPracticesFormEntity entity) {
+    NoticeOfPrivacyPracticesForm dto = new NoticeOfPrivacyPracticesForm();
+    dto.setId(entity.getId());
+    dto.setPatientId(UUID.fromString(entity.getPatientId()));
+    dto.setDate(entity.getDate() != null ? entity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
+    dto.setNoticeEffectDate(entity.getNoticeEffectDate().toLocalDate());
+    dto.setFile(entity.getNoticeOfPrivacyPractices());
+    return dto;
+  }
+
+  public static InitialEvaluationForm mapInitialEvaluationEntityToDto(
+      InitialEvaluationFormEntity initialEvaluationEntity) {
+    InitialEvaluationForm initialEvaluationFormDto = new InitialEvaluationForm();
+    initialEvaluationFormDto.setId(initialEvaluationEntity.getId());
+    initialEvaluationFormDto.setPatientId(UUID.fromString(initialEvaluationEntity.getPatientId()));
+    initialEvaluationFormDto.setDate(initialEvaluationEntity.getDate() != null ?
+        initialEvaluationEntity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
+    initialEvaluationFormDto.setFile(initialEvaluationEntity.getInitialEvaluationFile());
+    initialEvaluationFormDto.setPharmacy(
+        mapPharmacyEntityToDto(initialEvaluationEntity.getPharmacy()));
+    initialEvaluationFormDto.setPrimaryCarePhysician(
+        mapPrimaryCarePhysician(initialEvaluationEntity.getPrimaryCarePhysician()));
+    return initialEvaluationFormDto;
+  }
+
+  private static Pharmacy mapPharmacyEntityToDto(PharmacyEntity pharmacyEntity) {
+    Pharmacy pharmacyDto = new Pharmacy();
+    pharmacyDto.setId(pharmacyEntity.getId());
+    pharmacyDto.setName(pharmacyEntity.getName());
+    pharmacyDto.setPhone(pharmacyEntity.getPhone());
+    pharmacyDto.setAddress(
+        PatientDtoMapper.mapAddressEntityToAddressDto(pharmacyEntity.getAddress()));
+    return pharmacyDto;
+  }
+
+  private static PrimaryCarePhysician mapPrimaryCarePhysician(PrimaryCarePhysicianEntity pcpEntity) {
+    PrimaryCarePhysician pcpDto = new PrimaryCarePhysician();
+    pcpDto.setHavePcp(pcpEntity.getHavePcp());
+    pcpDto.setId(pcpEntity.getId());
+    pcpDto.setFax(pcpEntity.getFax());
+    pcpDto.setName(pcpEntity.getName());
+    pcpDto.setPhone(pcpEntity.getPhone());
+    pcpDto.setAddress(PatientDtoMapper.mapAddressEntityToAddressDto(pcpEntity.getAddress()));
+    return pcpDto;
   }
 }

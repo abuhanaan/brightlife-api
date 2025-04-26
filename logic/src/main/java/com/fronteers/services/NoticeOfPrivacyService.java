@@ -6,10 +6,13 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.NoticeOfPrivacyPracticesFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.NoticeOfPrivacyRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +32,7 @@ public class NoticeOfPrivacyService {
     NoticeOfPrivacyPracticesFormEntity newNotice = NoticeOfPrivacyPracticesFormEntity.builder()
         .patient(patient)
         .patientId(patient.getPatientId())
-        .date(Date.valueOf(request.getDate()))
+        .date(request.getDate() != null ? Timestamp.from(request.getDate().toInstant()) : null)
         .noticeEffectDate(Date.valueOf(request.getNoticeEffectDate()))
         .noticeOfPrivacyPractices(request.getFile())
         .build();
@@ -40,14 +43,7 @@ public class NoticeOfPrivacyService {
   }
 
   public NoticeOfPrivacyPracticesForm getNoticeOfPrivacy(Long id) {
-    NoticeOfPrivacyPracticesFormEntity notice = checkIfNoticeOfPrivacyExists(id);
-    NoticeOfPrivacyPracticesForm dto = new NoticeOfPrivacyPracticesForm();
-    dto.setId(notice.getId());
-    dto.setPatientId(UUID.fromString(notice.getPatientId()));
-    dto.setDate(notice.getDate().toLocalDate());
-    dto.setNoticeEffectDate(notice.getNoticeEffectDate().toLocalDate());
-    dto.setFile(notice.getNoticeOfPrivacyPractices());
-    return dto;
+    return PatientDtoMapper.mapNoticeOfPrivacyEntityToDto(checkIfNoticeOfPrivacyExists(id));
   }
 
   private NoticeOfPrivacyPracticesFormEntity checkIfNoticeOfPrivacyExists(Long id) {

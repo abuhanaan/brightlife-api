@@ -27,6 +27,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -176,5 +177,5 @@ public class PatientRegistrationFormEntity extends BaseEntity {
   private String patientRegFormFile;
 
   @Column(name = "date")
-  private Date date;
+  private Timestamp date;
 }

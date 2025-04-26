@@ -20,6 +20,7 @@ import com.fronteers.repositories.ParentGuardianRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +69,7 @@ public class PatientEntityMapper {
         .race(request.getPersonalInfo().getRace())
         .preferredLanguage(request.getPersonalInfo().getPreferredLanguage())
         .paymentMode(request.getPaymentStructure().getPaymentMode())
-        .date(Date.valueOf(request.getDate()))
+        .date(request.getDate() != null ? Timestamp.from(request.getDate().toInstant()) : null)
         .build();
     patientEntity = patientRepository.save(patientEntity);
     patientRegistrationFormEntity.setPatient(patientEntity);

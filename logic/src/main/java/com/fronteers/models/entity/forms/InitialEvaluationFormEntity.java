@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Date;
+import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,7 +43,7 @@ public class InitialEvaluationFormEntity extends BaseEntity {
   private PrimaryCarePhysicianEntity primaryCarePhysician;
 
   @Column(name = "date")
-  private Date date;
+  private Timestamp date;
 
   @Column(name = "initial_evaluation_file")
   private String initialEvaluationFile;

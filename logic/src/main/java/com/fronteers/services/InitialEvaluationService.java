@@ -19,6 +19,8 @@ import com.fronteers.repositories.PrimaryCarePhysicianRepository;
 import com.fronteers.utils.PatientUtils;
 import jakarta.transaction.Transactional;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +46,7 @@ public class InitialEvaluationService {
     newForm.setPharmacy(mapPharmacyEntity(request.getPharmacy(), newForm));
     newForm.setPrimaryCarePhysician(
         mapPrimaryCarePhysicianEmtity(request.getPrimaryCarePhysician(), newForm));
-    newForm.setDate(Date.valueOf(request.getDate()));
+    newForm.setDate(request.getDate() != null ? Timestamp.from(request.getDate().toInstant()) : null);
     newForm.setInitialEvaluationFile(request.getFile());
     patient.setInitialEvaluationForm(newForm);
     patientRepository.save(patient);
@@ -52,8 +54,7 @@ public class InitialEvaluationService {
   }
 
   public InitialEvaluationForm getInitialEvaluation(Long id) {
-    InitialEvaluationFormEntity initialEvaluationForm = checkIfInitialEvaluationFormExists(id);
-    return mapInitialEvaluationEntityToDto(initialEvaluationForm);
+    return PatientDtoMapper.mapInitialEvaluationEntityToDto(checkIfInitialEvaluationFormExists(id));
   }
 
   private PrimaryCarePhysicianEntity mapPrimaryCarePhysicianEmtity(PrimaryCarePhysician pcpDto,
@@ -105,41 +106,6 @@ public class InitialEvaluationService {
           String.format("Initial Evaluation form has already been filled for patient %s",
               patientId));
     }
-  }
-
-  private InitialEvaluationForm mapInitialEvaluationEntityToDto(
-      InitialEvaluationFormEntity initialEvaluationEntity) {
-    InitialEvaluationForm initialEvaluationFormDto = new InitialEvaluationForm();
-    initialEvaluationFormDto.setId(initialEvaluationEntity.getId());
-    initialEvaluationFormDto.setPatientId(UUID.fromString(initialEvaluationEntity.getPatientId()));
-    initialEvaluationFormDto.setDate(initialEvaluationEntity.getDate().toLocalDate());
-    initialEvaluationFormDto.setFile(initialEvaluationEntity.getInitialEvaluationFile());
-    initialEvaluationFormDto.setPharmacy(
-        mapPharmacyEntityToDto(initialEvaluationEntity.getPharmacy()));
-    initialEvaluationFormDto.setPrimaryCarePhysician(
-        mapPrimaryCarePhysician(initialEvaluationEntity.getPrimaryCarePhysician()));
-    return initialEvaluationFormDto;
-  }
-
-  private PrimaryCarePhysician mapPrimaryCarePhysician(PrimaryCarePhysicianEntity pcpEntity) {
-    PrimaryCarePhysician pcpDto = new PrimaryCarePhysician();
-    pcpDto.setHavePcp(pcpEntity.getHavePcp());
-    pcpDto.setId(pcpEntity.getId());
-    pcpDto.setFax(pcpEntity.getFax());
-    pcpDto.setName(pcpEntity.getName());
-    pcpDto.setPhone(pcpEntity.getPhone());
-    pcpDto.setAddress(PatientDtoMapper.mapAddressEntityToAddressDto(pcpEntity.getAddress()));
-    return pcpDto;
-  }
-
-  private Pharmacy mapPharmacyEntityToDto(PharmacyEntity pharmacyEntity) {
-    Pharmacy pharmacyDto = new Pharmacy();
-    pharmacyDto.setId(pharmacyEntity.getId());
-    pharmacyDto.setName(pharmacyEntity.getName());
-    pharmacyDto.setPhone(pharmacyEntity.getPhone());
-    pharmacyDto.setAddress(
-        PatientDtoMapper.mapAddressEntityToAddressDto(pharmacyEntity.getAddress()));
-    return pharmacyDto;
   }
 
   private InitialEvaluationFormEntity checkIfInitialEvaluationFormExists(Long id) {

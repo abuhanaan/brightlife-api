@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Date;
+import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,7 +32,7 @@ public class PatientInformationConsentAndFinancialPolicyFormEntity extends BaseE
   private PatientEntity patient;
 
   @Column(name = "date")
-  private Date date;
+  private Timestamp date;
 
   @Column(name = "patient_info_fin_file")
   private String patientInfoFinFile;

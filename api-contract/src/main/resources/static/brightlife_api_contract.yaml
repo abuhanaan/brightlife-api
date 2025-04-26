@@ -270,7 +270,7 @@ components:
         patientId:
           $ref: "#/components/schemas/PatientId"
         date:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         patientInformationConsentAndFinancialPolicy:
           type: string
         file:
@@ -344,7 +344,7 @@ components:
         infoToRelease:
           type: string
         date:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         initialEvaluation:
           type: string
         file:
@@ -986,7 +986,7 @@ components:
         paymentStructure:
           $ref: '#/components/schemas/PaymentStructure'
         date:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         patientRegForm:
           type: string
     #        file:
@@ -1003,7 +1003,7 @@ components:
         noticeEffectDate:
           $ref: "#/components/schemas/Date"
         date:
-          $ref: "#/components/schemas/Date"
+          $ref: "#/components/schemas/DateTime"
         noticeOfPrivacyPractices:
           type: string
         file:

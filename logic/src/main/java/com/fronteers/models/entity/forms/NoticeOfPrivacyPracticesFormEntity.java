@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Date;
+import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +35,7 @@ public class NoticeOfPrivacyPracticesFormEntity extends BaseEntity {
   private Date noticeEffectDate;
 
   @Column(name = "date")
-  private Date date;
+  private Timestamp date;
 
   @Column(name = "notice_of_privacy_practices")
   private String noticeOfPrivacyPractices;
