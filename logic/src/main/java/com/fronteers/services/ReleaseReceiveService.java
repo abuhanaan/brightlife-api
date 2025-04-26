@@ -14,13 +14,10 @@ import com.fronteers.repositories.PartyRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.ReleaseReceiveRepository;
 import com.fronteers.utils.PatientUtils;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +60,7 @@ public class ReleaseReceiveService {
   }
 
   private void validateMinorPatient(ReleaseReceiveForm request) {
-    if(request.getIsMinor() && request.getGuardianSignDate() == null){
+    if (request.getIsMinor() && request.getGuardianSignDate() == null) {
       throw new BadRequestException("Guardian signature and date of their signature cannot be null"
           + " because patient is a minor");
     }

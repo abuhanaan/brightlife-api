@@ -210,7 +210,7 @@ public class PatientDtoMapper {
     return dto;
   }
 
-  public static ReleaseReceiveForm mapReleaseReceiveEntityToDto(ReleaseReceiveFormEntity entity){
+  public static ReleaseReceiveForm mapReleaseReceiveEntityToDto(ReleaseReceiveFormEntity entity) {
     ReleaseReceiveForm dto = new ReleaseReceiveForm();
     dto.setId(entity.getId());
     dto.setPatientId(UUID.fromString(entity.getPatientId()));
@@ -242,16 +242,18 @@ public class PatientDtoMapper {
     return dto;
   }
 
-  public static SelfPayForm mapSelfPayEntityToDto(SelfPayFormEntity entity){
+  public static SelfPayForm mapSelfPayEntityToDto(SelfPayFormEntity entity) {
     SelfPayForm dto = new SelfPayForm();
     dto.setId(entity.getId());
     dto.setPatientId(UUID.fromString(entity.getPatientId()));
-    dto.setDate(entity.getDate() != null ? entity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
+    dto.setDate(
+        entity.getDate() != null ? entity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
     dto.setFile(entity.getSelfPayFile());
     return dto;
   }
 
-  public static TerminationPolicyForm mapTerminationPolicyEntityToDto(TerminationPolicyFormEntity entity){
+  public static TerminationPolicyForm mapTerminationPolicyEntityToDto(
+      TerminationPolicyFormEntity entity) {
     TerminationPolicyForm dto = new TerminationPolicyForm();
     dto.setId(entity.getId());
     dto.setPatientId(UUID.fromString(entity.getPatientId()));

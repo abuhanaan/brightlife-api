@@ -10,10 +10,7 @@ import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.MedicationConsentRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.ZoneOffset;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
