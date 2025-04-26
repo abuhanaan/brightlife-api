@@ -86,9 +86,9 @@ public class ReleaseReceiveService {
   }
 
   private void setParties(ReleaseReceiveFormEntity form, List<Party> parties) {
-    if (parties != null){
+    if (parties != null) {
       List<PartyEntity> partyEntities = new ArrayList<>();
-      for (Party partyDto: parties){
+      for (Party partyDto : parties) {
         PartyEntity partyEntity = PartyEntity.builder()
             .name(partyDto.getName())
             .phoneNumber(partyDto.getPhoneNumber())
@@ -107,10 +107,12 @@ public class ReleaseReceiveService {
         new NotFoundException(String.format("Release Receive form with id %s does not exist", id)));
   }
 
-  private void checkForReleaseReceiveUniqueness(String patientId){
+  private void checkForReleaseReceiveUniqueness(String patientId) {
     ReleaseReceiveFormEntity entity = releaseReceiveRepository.findOneByPatientId(patientId);
-    if (entity != null){
-      throw new ConflictException(String.format("Release Receive Has Already Been filled for patient with id %s", patientId));
+    if (entity != null) {
+      throw new ConflictException(
+          String.format("Release Receive Has Already Been filled for patient with id %s",
+              patientId));
     }
   }
 }

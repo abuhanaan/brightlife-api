@@ -5,7 +5,6 @@ import com.fronteers.brightlife.model.Success;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
-import com.fronteers.models.entity.forms.ControlledSubstanceFormEntity;
 import com.fronteers.models.entity.forms.DepressionAssessmentFormEntity;
 import com.fronteers.repositories.DepressionAssessmentRepository;
 import com.fronteers.repositories.PatientRepository;
@@ -22,7 +21,7 @@ public class DepressionAssessmentService {
   private final PatientUtils patientUtils;
   private final DepressionAssessmentRepository depressionAssessmentRepository;
 
-  public Success submitDepressionAssessment(DepressionAssessmentForm request){
+  public Success submitDepressionAssessment(DepressionAssessmentForm request) {
     PatientEntity patient = patientUtils.checkIfPatientExists(request.getPatientId().toString());
     checkForDepressionAssessmentUniqueness(request.getPatientId().toString());
     DepressionAssessmentFormEntity depAssessmentFormEntity = new DepressionAssessmentFormEntity();
@@ -43,8 +42,9 @@ public class DepressionAssessmentService {
     return new Success(true, "Form Submitted Successfully", "Depression Assessment Form Submitted");
   }
 
-  public DepressionAssessmentForm getDepAssessment(Long id){
-    DepressionAssessmentFormEntity depAssessmentFormEntity = checkIfControlledSubstanceFormExists(id);
+  public DepressionAssessmentForm getDepAssessment(Long id) {
+    DepressionAssessmentFormEntity depAssessmentFormEntity = checkIfControlledSubstanceFormExists(
+        id);
     DepressionAssessmentForm depAssessmentDto = new DepressionAssessmentForm();
     depAssessmentDto.setId(id);
     depAssessmentDto.setPatientId(UUID.fromString(depAssessmentFormEntity.getPatientId()));
@@ -62,13 +62,17 @@ public class DepressionAssessmentService {
 
   private DepressionAssessmentFormEntity checkIfControlledSubstanceFormExists(Long id) {
     return depressionAssessmentRepository.findOneById(id).orElseThrow(() ->
-        new NotFoundException(String.format("Depression Assessment form with id %s does not exist", id)));
+        new NotFoundException(
+            String.format("Depression Assessment form with id %s does not exist", id)));
   }
 
-  private void checkForDepressionAssessmentUniqueness(String patientId){
-    DepressionAssessmentFormEntity depAssessmentEntity = depressionAssessmentRepository.findOneByPatientId(patientId);
-    if (depAssessmentEntity != null){
-      throw new ConflictException(String.format("Depression Assessment form has already been filled for patient %s", patientId));
+  private void checkForDepressionAssessmentUniqueness(String patientId) {
+    DepressionAssessmentFormEntity depAssessmentEntity = depressionAssessmentRepository.findOneByPatientId(
+        patientId);
+    if (depAssessmentEntity != null) {
+      throw new ConflictException(
+          String.format("Depression Assessment form has already been filled for patient %s",
+              patientId));
     }
 
   }

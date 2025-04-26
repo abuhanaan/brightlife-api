@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface ReleaseReceiveRepository extends JpaRepository<ReleaseReceiveFormEntity, Long> {
 
   Optional<ReleaseReceiveFormEntity> findOneById(Long id);
+
   ReleaseReceiveFormEntity findOneByPatientId(String patientId);
 }

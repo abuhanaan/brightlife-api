@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface ScreeningRepository extends JpaRepository<ScreeningFormEntity, Long> {
 
   Optional<ScreeningFormEntity> findOneById(Long id);
+
   ScreeningFormEntity findOneByPatientId(String patientId);
 }

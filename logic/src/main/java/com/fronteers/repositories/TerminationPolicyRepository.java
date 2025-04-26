@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TerminationPolicyRepository extends JpaRepository<TerminationPolicyFormEntity, Long> {
+public interface TerminationPolicyRepository extends
+    JpaRepository<TerminationPolicyFormEntity, Long> {
 
   Optional<TerminationPolicyFormEntity> findOneById(Long id);
+
   TerminationPolicyFormEntity findOneByPatientId(String patientId);
 }

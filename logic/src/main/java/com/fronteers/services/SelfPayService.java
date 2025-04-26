@@ -46,15 +46,16 @@ public class SelfPayService {
     return dto;
   }
 
-  private SelfPayFormEntity checkIfSelfPayExists(Long id){
+  private SelfPayFormEntity checkIfSelfPayExists(Long id) {
     return selfPayRepository.findOneById(id).orElseThrow(() -> new NotFoundException(
         String.format("SelfPay form with id %s does not exist", id)));
   }
 
-  private void checkForSelfPayUniqueness(String patientId){
+  private void checkForSelfPayUniqueness(String patientId) {
     SelfPayFormEntity entity = selfPayRepository.findOneByPatientId(patientId);
-    if (entity != null){
-      throw new ConflictException(String.format("Selfpay form has already been filled for patient with id %s", patientId));
+    if (entity != null) {
+      throw new ConflictException(
+          String.format("Selfpay form has already been filled for patient with id %s", patientId));
     }
   }
 }

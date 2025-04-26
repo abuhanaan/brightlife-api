@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AlcoholDrugHistoryRepository extends JpaRepository<AlcoholDrugHistoryEntity, Long> {
+public interface AlcoholDrugHistoryRepository extends
+    JpaRepository<AlcoholDrugHistoryEntity, Long> {
 
 }

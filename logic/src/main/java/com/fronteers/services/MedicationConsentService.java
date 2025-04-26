@@ -58,7 +58,7 @@ public class MedicationConsentService {
   private void checkForAdhDUniqueness(String patientId) {
     MedicationConsentFormEntity medConsentEntity = medicationConsentRepository.findOneByPatientId(
         patientId);
-    if (medConsentEntity != null){
+    if (medConsentEntity != null) {
       throw new ConflictException(String.format(
           "Medication Consent form has already been filled for patient %s", patientId));
     }

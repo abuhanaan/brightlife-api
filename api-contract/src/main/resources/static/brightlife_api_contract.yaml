@@ -2927,6 +2927,7 @@ paths:
   /api/v1/appointments/slots:
     get:
       summary: Fetches Three Months Already Picked Appointment Slots From the Current Day
+      security: [ ]
       tags:
         - Appointment
       operationId: getAppointmentSlots

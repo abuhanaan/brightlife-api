@@ -56,11 +56,10 @@ public class IntakeService {
   private final PastTreatmentRepository pastTreatmentRepository;
   private final RelativeWithMentalIllnessOrSuicideRepository relWithMentalIllnessOrSuicideRepository;
 
-
 //  TODO: Do null checks on arrays as oppose to empty checks
 
   @Transactional
-  public Success submitIntake(IntakeForm request){
+  public Success submitIntake(IntakeForm request) {
     PatientEntity patient = patientUtils.checkIfPatientExists(request.getPatientId().toString());
     checkForIntakeUniqueness(request.getPatientId().toString());
     IntakeFormEntity newIntakeForm = IntakeFormEntity.builder()
@@ -77,20 +76,23 @@ public class IntakeService {
         .isPsychHospitalized(request.getIsPsychHospitalized())
         .build();
     newIntakeForm.setPastMarriagesInfo(!request.getPastMarriagesInfo().isEmpty() ?
-          mapPastMarriagesDtoToEntities(request.getPastMarriagesInfo(), newIntakeForm): null);
-      newIntakeForm.setPastProviders(!request.getPastProviders().isEmpty() ?
-          mapPastProviderDtosToEntities(request.getPastProviders(), newIntakeForm) : null);
-    newIntakeForm.setMedications(mapMedicationDtosToEntites(request.getPastMedications(), request.getCurrentMedications(), newIntakeForm));
-    newIntakeForm.setAlcoholDrugHistory(request.getAlcoholDrugHistory() !=null ?
+        mapPastMarriagesDtoToEntities(request.getPastMarriagesInfo(), newIntakeForm) : null);
+    newIntakeForm.setPastProviders(!request.getPastProviders().isEmpty() ?
+        mapPastProviderDtosToEntities(request.getPastProviders(), newIntakeForm) : null);
+    newIntakeForm.setMedications(
+        mapMedicationDtosToEntites(request.getPastMedications(), request.getCurrentMedications(),
+            newIntakeForm));
+    newIntakeForm.setAlcoholDrugHistory(request.getAlcoholDrugHistory() != null ?
         processAlcoholDrugHistory(request.getAlcoholDrugHistory(), newIntakeForm) : null);
     patient.setIntakeForm(newIntakeForm);
     patientRepository.save(patient);
     return new Success(true, "Form Submitted Successfully", "Intake Form Submitted");
   }
 
-  public IntakeForm getIntake(Long id){
-    IntakeFormEntity intakeFormEntity = intakeRepository.findOneById(id).orElseThrow(() -> new NotFoundException(
-        String.format("Intake form with id %s does not exist", id)));
+  public IntakeForm getIntake(Long id) {
+    IntakeFormEntity intakeFormEntity = intakeRepository.findOneById(id)
+        .orElseThrow(() -> new NotFoundException(
+            String.format("Intake form with id %s does not exist", id)));
     return mapIntakeEntityToDto(intakeFormEntity);
   }
 
@@ -107,13 +109,13 @@ public class IntakeService {
     dto.setMarriageCount(intakeFormEntity.getMarriageCount());
     dto.setPastMarriagesInfo(!intakeFormEntity.getPastMarriagesInfo().isEmpty() ?
         intakeFormEntity.getPastMarriagesInfo().stream().map(pastMarriageEntity -> {
-      PastMarriagesInfo infoDto = new PastMarriagesInfo();
-      infoDto.setId(pastMarriageEntity.getId());
-      infoDto.setDuration(pastMarriageEntity.getDuration());
-      infoDto.setDivorceReason(pastMarriageEntity.getDivorceReason());
-      infoDto.setMarriageDescription(pastMarriageEntity.getDescription());
-      return infoDto;
-    }).toList() : null);
+          PastMarriagesInfo infoDto = new PastMarriagesInfo();
+          infoDto.setId(pastMarriageEntity.getId());
+          infoDto.setDuration(pastMarriageEntity.getDuration());
+          infoDto.setDivorceReason(pastMarriageEntity.getDivorceReason());
+          infoDto.setMarriageDescription(pastMarriageEntity.getDescription());
+          return infoDto;
+        }).toList() : null);
     dto.setPastProviders(intakeFormEntity.getPastProviders().stream().map(pastProviderEntity -> {
       PastProviders providerDto = new PastProviders();
       providerDto.setId(pastProviderEntity.getId());
@@ -135,29 +137,33 @@ public class IntakeService {
     alcoholDrugHistoryDto.setUsageFrequency(adhEntity.getUsageFrequency());
     alcoholDrugHistoryDto.setBrand(adhEntity.getBrand());
     alcoholDrugHistoryDto.setLastUsed(adhEntity.getLastUsed());
-    mapDrinkGuiltCheck(adhEntity,alcoholDrugHistoryDto);
-    alcoholDrugHistoryDto.setSubstanceUsages(adhEntity.getSubstanceUsages().stream().map(substanceUsageEntity -> {
-      SubstanceUsage substanceUsage = new SubstanceUsage();
-      substanceUsage.setId(substanceUsageEntity.getId());
-      substanceUsage.setSubstanceName(substanceUsageEntity.getName());
-      substanceUsage.setAgeAtFirstUse(substanceUsageEntity.getAgeAtFirstUse());
-      substanceUsage.setQtyUse(substanceUsageEntity.getQtyUse());
-      substanceUsage.setUsageFrequency(substanceUsageEntity.getFrequentUsage());
-      substanceUsage.setLastUsed(substanceUsageEntity.getLastUsed());
-      return substanceUsage;
-    }).toList());
+    mapDrinkGuiltCheck(adhEntity, alcoholDrugHistoryDto);
+    alcoholDrugHistoryDto.setSubstanceUsages(
+        adhEntity.getSubstanceUsages().stream().map(substanceUsageEntity -> {
+          SubstanceUsage substanceUsage = new SubstanceUsage();
+          substanceUsage.setId(substanceUsageEntity.getId());
+          substanceUsage.setSubstanceName(substanceUsageEntity.getName());
+          substanceUsage.setAgeAtFirstUse(substanceUsageEntity.getAgeAtFirstUse());
+          substanceUsage.setQtyUse(substanceUsageEntity.getQtyUse());
+          substanceUsage.setUsageFrequency(substanceUsageEntity.getFrequentUsage());
+          substanceUsage.setLastUsed(substanceUsageEntity.getLastUsed());
+          return substanceUsage;
+        }).toList());
     alcoholDrugHistoryDto.setWeeklyAverageSpending(adhEntity.getWeeklyAverageSpending());
-    alcoholDrugHistoryDto.setPastTreatmentInfo(adhEntity.getPastTreatments().stream().map(pastTreatmentEntity -> {
-      PastTreatmentInfo pastTreatment = new PastTreatmentInfo();
-      pastTreatment.setId(pastTreatmentEntity.getId());
-      pastTreatment.setDate(pastTreatmentEntity.getDate().toLocalDate());
-      pastTreatment.setDrugTreated(pastTreatmentEntity.getDrugTreated());
-      pastTreatment.setIsTreatmentCompleted(pastTreatmentEntity.getIsTreatmentCompleted());
-      pastTreatment.setFacility(pastTreatmentEntity.getFacility());
-      return pastTreatment;
-    }).toList());
-    alcoholDrugHistoryDto.setIsPastStepRecoveryParticipant(adhEntity.getIsPastStepRecoveryParticipant());
-    alcoholDrugHistoryDto.setIsCurrentStepRecoveryParticipant(adhEntity.getIsCurrentStepRecoveryParticipant());
+    alcoholDrugHistoryDto.setPastTreatmentInfo(
+        adhEntity.getPastTreatments().stream().map(pastTreatmentEntity -> {
+          PastTreatmentInfo pastTreatment = new PastTreatmentInfo();
+          pastTreatment.setId(pastTreatmentEntity.getId());
+          pastTreatment.setDate(pastTreatmentEntity.getDate().toLocalDate());
+          pastTreatment.setDrugTreated(pastTreatmentEntity.getDrugTreated());
+          pastTreatment.setIsTreatmentCompleted(pastTreatmentEntity.getIsTreatmentCompleted());
+          pastTreatment.setFacility(pastTreatmentEntity.getFacility());
+          return pastTreatment;
+        }).toList());
+    alcoholDrugHistoryDto.setIsPastStepRecoveryParticipant(
+        adhEntity.getIsPastStepRecoveryParticipant());
+    alcoholDrugHistoryDto.setIsCurrentStepRecoveryParticipant(
+        adhEntity.getIsCurrentStepRecoveryParticipant());
     alcoholDrugHistoryDto.setBirthPlace(adhEntity.getBirthPlace());
     alcoholDrugHistoryDto.growthPlace(adhEntity.getGrowthPlace());
     alcoholDrugHistoryDto.setRaisedBy(adhEntity.getRaisedBy());
@@ -176,17 +182,18 @@ public class IntakeService {
     alcoholDrugHistoryDto.setRelativesWithMentalIllnessOrSuicide(
         adhEntity.getRelativesWithMentalIllnessOrSuicide() != null ?
             adhEntity.getRelativesWithMentalIllnessOrSuicide().stream().map(sickRelEntity -> {
-          RelativeWithMentalIllnessOrSuicide sickRelDto = new RelativeWithMentalIllnessOrSuicide();
-          sickRelDto.setId(sickRelEntity.getId());
-          sickRelDto.setRelative(sickRelEntity.getRelative());
-          sickRelDto.setIllness(sickRelDto.getIllness());
-          return sickRelDto;
-        }).toList() : null);
+              RelativeWithMentalIllnessOrSuicide sickRelDto = new RelativeWithMentalIllnessOrSuicide();
+              sickRelDto.setId(sickRelEntity.getId());
+              sickRelDto.setRelative(sickRelEntity.getRelative());
+              sickRelDto.setIllness(sickRelDto.getIllness());
+              return sickRelDto;
+            }).toList() : null);
     alcoholDrugHistoryDto.setOtherUsefulInfo(adhEntity.getOtherUsefulInfo());
     intakeFormDto.setAlcoholDrugHistory(alcoholDrugHistoryDto);
   }
 
-  private void mapDrinkGuiltCheck(AlcoholDrugHistoryEntity adhEntity, AlcoholDrugHistory alcoholDrugHistoryDto) {
+  private void mapDrinkGuiltCheck(AlcoholDrugHistoryEntity adhEntity,
+      AlcoholDrugHistory alcoholDrugHistoryDto) {
     DrinkGuiltCheck drinkGuiltCheck = new DrinkGuiltCheck();
     drinkGuiltCheck.setFeelGuilt(adhEntity.getFeelGuilt());
     drinkGuiltCheck.setUpWithDrink(adhEntity.getUpWithDrink());
@@ -198,10 +205,10 @@ public class IntakeService {
   private void processDtoMedications(IntakeForm dto, List<MedicationEntity> medications) {
     List<Medication> currentMedicationDtos = new ArrayList<>();
     List<Medication> pastMedicationDtos = new ArrayList<>();
-    for (MedicationEntity medicationEntity: medications){
+    for (MedicationEntity medicationEntity : medications) {
       Medication medicationDto = new Medication();
       setMedicationDtoProps(medicationDto, medicationEntity);
-      if (medicationEntity.getIsCurrent()){
+      if (medicationEntity.getIsCurrent()) {
         currentMedicationDtos.add(medicationDto);
       } else {
         pastMedicationDtos.add(medicationDto);
@@ -214,13 +221,15 @@ public class IntakeService {
   private void setMedicationDtoProps(Medication medicationDto, MedicationEntity medicationEntity) {
     medicationDto.setMedication(medicationEntity.getMedication());
     medicationDto.setId(medicationEntity.getId());
-    medicationDto.setCategory(medicationEntity.getIsCurrent() ? CategoryEnum.CURRENT : CategoryEnum.PAST);
+    medicationDto.setCategory(
+        medicationEntity.getIsCurrent() ? CategoryEnum.CURRENT : CategoryEnum.PAST);
     medicationDto.setPrescription(medicationEntity.getPrescription());
     medicationDto.setConditionTreated(medicationEntity.getConditionTreated());
     medicationDto.setUsageInstruction(medicationEntity.getInstruction());
   }
 
-  private AlcoholDrugHistoryEntity processAlcoholDrugHistory(AlcoholDrugHistory alcoholDrugHistory, IntakeFormEntity intakeForm) {
+  private AlcoholDrugHistoryEntity processAlcoholDrugHistory(AlcoholDrugHistory alcoholDrugHistory,
+      IntakeFormEntity intakeForm) {
     AlcoholDrugHistoryEntity alcoholDrugHistoryEntity = AlcoholDrugHistoryEntity.builder()
         .usageFrequency(alcoholDrugHistory.getUsageFrequency())
         .brand(alcoholDrugHistory.getBrand())
@@ -242,7 +251,7 @@ public class IntakeService {
         .wasSexuallyAbused(alcoholDrugHistory.getWasSexuallyAbused())
         .hasMedicalDisability(alcoholDrugHistory.getHasMedicalDisability())
         .pastMedicalHistory(!alcoholDrugHistory.getPastMedicalHistory().isEmpty() ?
-            new HashSet<>(alcoholDrugHistory.getPastMedicalHistory()): new HashSet<>())
+            new HashSet<>(alcoholDrugHistory.getPastMedicalHistory()) : new HashSet<>())
         .pastSurgicalHistory(!alcoholDrugHistory.getPastSurgicalHistory().isEmpty() ?
             new HashSet<>(alcoholDrugHistory.getPastSurgicalHistory()) : new HashSet<>())
         .allergies(!alcoholDrugHistory.getAllergies().isEmpty() ?
@@ -252,7 +261,8 @@ public class IntakeService {
         .build();
     setSubstanceUsages(alcoholDrugHistory.getSubstanceUsages(), alcoholDrugHistoryEntity);
     setPastTreatments(alcoholDrugHistory.getPastTreatmentInfo(), alcoholDrugHistoryEntity);
-    setRelativesWithMentalIllnessOrSuicide(alcoholDrugHistory.getRelativesWithMentalIllnessOrSuicide(), alcoholDrugHistoryEntity);
+    setRelativesWithMentalIllnessOrSuicide(
+        alcoholDrugHistory.getRelativesWithMentalIllnessOrSuicide(), alcoholDrugHistoryEntity);
     alcoholDrugHistoryEntity.setIntakeForm(intakeForm);
     return alcoholDrugHistoryRepository.save(alcoholDrugHistoryEntity);
   }
@@ -260,13 +270,13 @@ public class IntakeService {
   private void setRelativesWithMentalIllnessOrSuicide(
       List<RelativeWithMentalIllnessOrSuicide> relativesWithMentalIllnessOrSuicide,
       AlcoholDrugHistoryEntity alcoholDrugHistoryEntity) {
-    if (!relativesWithMentalIllnessOrSuicide.isEmpty()){
+    if (!relativesWithMentalIllnessOrSuicide.isEmpty()) {
       List<RelativesWithMentalIllnessOrSuicideEntity> sickRelativeEntities = new ArrayList<>();
-      for (RelativeWithMentalIllnessOrSuicide sickRelative: relativesWithMentalIllnessOrSuicide){
+      for (RelativeWithMentalIllnessOrSuicide sickRelative : relativesWithMentalIllnessOrSuicide) {
         sickRelativeEntities.add(RelativesWithMentalIllnessOrSuicideEntity.builder()
-                .relative(sickRelative.getRelative())
-                .illness(sickRelative.getIllness())
-                .alcoholDrugHistory(alcoholDrugHistoryEntity)
+            .relative(sickRelative.getRelative())
+            .illness(sickRelative.getIllness())
+            .alcoholDrugHistory(alcoholDrugHistoryEntity)
             .build());
       }
       alcoholDrugHistoryEntity.setRelativesWithMentalIllnessOrSuicide(
@@ -274,19 +284,22 @@ public class IntakeService {
     }
   }
 
-  private void setPastTreatments(List<PastTreatmentInfo> pastTreatmentInfos, AlcoholDrugHistoryEntity alcoholDrugHistoryEntity) {
-    if (!pastTreatmentInfos.isEmpty()){
+  private void setPastTreatments(List<PastTreatmentInfo> pastTreatmentInfos,
+      AlcoholDrugHistoryEntity alcoholDrugHistoryEntity) {
+    if (!pastTreatmentInfos.isEmpty()) {
       List<PastTreatmentEntity> pastTreatmentEntities = new ArrayList<>();
-      for (PastTreatmentInfo pastTreatmentInfo: pastTreatmentInfos){
+      for (PastTreatmentInfo pastTreatmentInfo : pastTreatmentInfos) {
         pastTreatmentEntities.add(PastTreatmentEntity.builder()
-                .facility(pastTreatmentInfo.getFacility())
-                .date(pastTreatmentInfo.getDate() != null ? Date.valueOf(pastTreatmentInfo.getDate()): null)
-                .drugTreated(pastTreatmentInfo.getDrugTreated())
-                .isTreatmentCompleted(pastTreatmentInfo.getIsTreatmentCompleted())
-                .alcoholDrugHistory(alcoholDrugHistoryEntity)
+            .facility(pastTreatmentInfo.getFacility())
+            .date(pastTreatmentInfo.getDate() != null ? Date.valueOf(pastTreatmentInfo.getDate())
+                : null)
+            .drugTreated(pastTreatmentInfo.getDrugTreated())
+            .isTreatmentCompleted(pastTreatmentInfo.getIsTreatmentCompleted())
+            .alcoholDrugHistory(alcoholDrugHistoryEntity)
             .build());
       }
-      alcoholDrugHistoryEntity.setPastTreatments(pastTreatmentRepository.saveAll(pastTreatmentEntities));
+      alcoholDrugHistoryEntity.setPastTreatments(
+          pastTreatmentRepository.saveAll(pastTreatmentEntities));
     }
   }
 
@@ -318,15 +331,15 @@ public class IntakeService {
     if (!currentMedications.isEmpty()) {
       processMedications(medicationEntities, currentMedications, true, intakeForm);
     }
-    if (medicationEntities.isEmpty()){
+    if (medicationEntities.isEmpty()) {
       return medicationEntities;
     }
     return medicationRepository.saveAll(medicationEntities);
   }
 
   private void processMedications(List<MedicationEntity> medicationEntities,
-      List<Medication> medicationDtos, Boolean isCurrent, IntakeFormEntity intakeForm){
-    for (Medication medication: medicationDtos){
+      List<Medication> medicationDtos, Boolean isCurrent, IntakeFormEntity intakeForm) {
+    for (Medication medication : medicationDtos) {
       medicationEntities.add(MedicationEntity.builder()
           .medication(medication.getMedication())
           .conditionTreated(medication.getConditionTreated())
@@ -338,13 +351,14 @@ public class IntakeService {
     }
   }
 
-  private List<PastProviderEntity> mapPastProviderDtosToEntities(List<PastProviders> pastProviders, IntakeFormEntity intakeForm) {
+  private List<PastProviderEntity> mapPastProviderDtosToEntities(List<PastProviders> pastProviders,
+      IntakeFormEntity intakeForm) {
     List<PastProviderEntity> pastProviderEntities = new ArrayList<>();
-    for (PastProviders pastProvider: pastProviders){
+    for (PastProviders pastProvider : pastProviders) {
       pastProviderEntities.add(PastProviderEntity.builder()
-              .provider(pastProvider.getProvider())
-              .appointmentDate(Date.valueOf(pastProvider.getAppointmentDate()))
-              .intakeForm(intakeForm)
+          .provider(pastProvider.getProvider())
+          .appointmentDate(Date.valueOf(pastProvider.getAppointmentDate()))
+          .intakeForm(intakeForm)
           .build());
     }
     return pastProviderRepository.saveAll(pastProviderEntities);
@@ -353,21 +367,22 @@ public class IntakeService {
   private List<PastMarriageEntity> mapPastMarriagesDtoToEntities(
       List<PastMarriagesInfo> pastMarriagesInfo, IntakeFormEntity intakeForm) {
     List<PastMarriageEntity> pastMarriageEntities = new ArrayList<>();
-    for (PastMarriagesInfo pastMarriage: pastMarriagesInfo){
+    for (PastMarriagesInfo pastMarriage : pastMarriagesInfo) {
       pastMarriageEntities.add(PastMarriageEntity.builder()
           .description(pastMarriage.getMarriageDescription())
-              .duration(pastMarriage.getDuration())
-              .divorceReason(pastMarriage.getDivorceReason())
-              .intakeForm(intakeForm)
+          .duration(pastMarriage.getDuration())
+          .divorceReason(pastMarriage.getDivorceReason())
+          .intakeForm(intakeForm)
           .build());
     }
-  return pastMarriageRepository.saveAll(pastMarriageEntities);
+    return pastMarriageRepository.saveAll(pastMarriageEntities);
   }
 
   private void checkForIntakeUniqueness(String patientId) {
     IntakeFormEntity intakeFormEntity = intakeRepository.findOneByPatientId(patientId);
-    if (intakeFormEntity != null){
-      throw new ConflictException(String.format("Intake form has already been filled for patient %s", patientId));
+    if (intakeFormEntity != null) {
+      throw new ConflictException(
+          String.format("Intake form has already been filled for patient %s", patientId));
     }
   }
 }

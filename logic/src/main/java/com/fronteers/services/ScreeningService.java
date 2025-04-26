@@ -81,7 +81,8 @@ public class ScreeningService {
     referralDto.setMiddleName(referralEntity.getMiddleName());
     referralDto.setLastName(referralEntity.getLastName());
     referralDto.setPhone(referralEntity.getPhone());
-    referralDto.setAddress(PatientDtoMapper.mapAddressEntityToAddressDto(referralEntity.getAddress()));
+    referralDto.setAddress(
+        PatientDtoMapper.mapAddressEntityToAddressDto(referralEntity.getAddress()));
     dto.setReferral(referralDto);
   }
 
@@ -101,12 +102,13 @@ public class ScreeningService {
 
   private void checkForScreeningUniqueness(String patientId) {
     ScreeningFormEntity entity = screeningRepository.findOneByPatientId(patientId);
-    if (entity != null){
-      throw new ConflictException(String.format("Screening form has already been filled for patient %s", patientId));
+    if (entity != null) {
+      throw new ConflictException(
+          String.format("Screening form has already been filled for patient %s", patientId));
     }
   }
 
-  private ScreeningFormEntity checkIfScreeningExists(Long id){
+  private ScreeningFormEntity checkIfScreeningExists(Long id) {
     return screeningRepository.findOneById(id).orElseThrow(() -> new NotFoundException(
         String.format("Screening form with id %s does not exist", id)));
   }

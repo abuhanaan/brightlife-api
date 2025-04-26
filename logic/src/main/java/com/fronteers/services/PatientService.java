@@ -14,11 +14,8 @@ import com.fronteers.models.mappers.PatientEntityMapper;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,7 +28,8 @@ public class PatientService {
   private final PatientUtils patientUtils;
 
   public Success submitRegistrationForm(PatientRegistrationForm request) {
-    PatientEntity existingPatient = patientUtils.checkIfPatientExists(request.getPatientId().toString());
+    PatientEntity existingPatient = patientUtils.checkIfPatientExists(
+        request.getPatientId().toString());
     String patientId = existingPatient.getPatientId();
     PatientRegistrationFormEntity patientRegistrationFormEntity = patientEntityMapper.mapRegFormToRegFormEntity(
         request, existingPatient);
@@ -66,7 +64,7 @@ public class PatientService {
     response.setMiddleName(patientRegFormEntity.getMiddleName());
     response.setGender(patientRegFormEntity.getGender());
     response.setDob(patientRegFormEntity.getDob() != null ?
-        patientRegFormEntity.getDob().toLocalDate(): null);
+        patientRegFormEntity.getDob().toLocalDate() : null);
     response.setPhone(patientRegFormEntity.getCellPhone());
     response.setEmail(patientRegFormEntity.getEmail());
     response.setAddress(patientRegFormEntity.getAddress() != null ?
@@ -91,7 +89,7 @@ public class PatientService {
 
   private void confirmPatientUniqueness(String email) {
     PatientEntity patientEntity = patientRepository.findOneByEmail(email);
-    if (patientEntity != null){
+    if (patientEntity != null) {
       throw new ConflictException(String.format("Patient with email %s already exist", email));
     }
   }

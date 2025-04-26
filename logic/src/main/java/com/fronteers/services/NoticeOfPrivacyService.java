@@ -35,7 +35,8 @@ public class NoticeOfPrivacyService {
         .build();
     patient.setNoticeOfPrivacyPracticesForm(newNotice);
     patientRepository.save(patient);
-    return new Success(true, "Form Submitted Successfully", "Notice of Privacy Practices Form Submitted");
+    return new Success(true, "Form Submitted Successfully",
+        "Notice of Privacy Practices Form Submitted");
   }
 
   public NoticeOfPrivacyPracticesForm getNoticeOfPrivacy(Long id) {
@@ -51,11 +52,13 @@ public class NoticeOfPrivacyService {
 
   private NoticeOfPrivacyPracticesFormEntity checkIfNoticeOfPrivacyExists(Long id) {
     return noticeOfPrivacyRepository.findOneById(id).orElseThrow(() ->
-        new NotFoundException(String.format("Notice Of Privacy Practices form with id %s does not exist", id)));
+        new NotFoundException(
+            String.format("Notice Of Privacy Practices form with id %s does not exist", id)));
   }
 
-  private void checkForNoticeFormUniqueness(String patientId){
-    NoticeOfPrivacyPracticesFormEntity notice = noticeOfPrivacyRepository.findOneByPatientId(patientId);
+  private void checkForNoticeFormUniqueness(String patientId) {
+    NoticeOfPrivacyPracticesFormEntity notice = noticeOfPrivacyRepository.findOneByPatientId(
+        patientId);
     if (notice != null) {
       throw new ConflictException(String.format(
           "Notice of Privacy Practices form has already been filled for patient %s", patientId));

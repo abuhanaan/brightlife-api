@@ -10,5 +10,6 @@ public interface PatientInfoConsentAndFinPolicyRepository extends
     JpaRepository<PatientInformationConsentAndFinancialPolicyFormEntity, Long> {
 
   Optional<PatientInformationConsentAndFinancialPolicyFormEntity> findOneById(Long id);
+
   PatientInformationConsentAndFinancialPolicyFormEntity findOneByPatientId(String patientId);
 }

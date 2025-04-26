@@ -49,16 +49,19 @@ public class TerminationPolicyService {
     return dto;
   }
 
-  private void checkForTpUniqueness(String patientId){
+  private void checkForTpUniqueness(String patientId) {
     TerminationPolicyFormEntity entity = terminationPolicyRepository.findOneByPatientId(patientId);
-    if (entity != null){
-      throw new ConflictException(String.format("Termination Policy form has already been filled for patient %s", patientId));
+    if (entity != null) {
+      throw new ConflictException(
+          String.format("Termination Policy form has already been filled for patient %s",
+              patientId));
     }
   }
 
-  private TerminationPolicyFormEntity checkIfTpExists(Long id){
+  private TerminationPolicyFormEntity checkIfTpExists(Long id) {
     return terminationPolicyRepository.findOneById(id).orElseThrow(() ->
-        new NotFoundException(String.format("Termination Policy form with id %s does not exist", id)));
+        new NotFoundException(
+            String.format("Termination Policy form with id %s does not exist", id)));
   }
 
 }

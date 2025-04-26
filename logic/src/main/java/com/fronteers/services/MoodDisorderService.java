@@ -47,7 +47,8 @@ public class MoodDisorderService {
         .build();
     patient.setMoodDisorderAssessmentForm(mdafEntity);
     patientRepository.save(patient);
-    return new Success(true, "Form Submitted Successfully", "Mood Disorder Assessment Form Submitted");
+    return new Success(true, "Form Submitted Successfully",
+        "Mood Disorder Assessment Form Submitted");
   }
 
   public MoodDisorderAssessmentForm getMoodDisorder(Long id) {
@@ -82,9 +83,12 @@ public class MoodDisorderService {
   }
 
   private void checkForMoodDisorderUniqueness(String patientId) {
-    MoodDisorderAssessmentFormEntity mdafEntity = moodDisorderAssessmentRepository.findOneByPatientId(patientId);
-    if (mdafEntity != null){
-      throw new ConflictException(String.format("Mood Disorder Assessment form has already been filled for patient %s", patientId));
+    MoodDisorderAssessmentFormEntity mdafEntity = moodDisorderAssessmentRepository.findOneByPatientId(
+        patientId);
+    if (mdafEntity != null) {
+      throw new ConflictException(
+          String.format("Mood Disorder Assessment form has already been filled for patient %s",
+              patientId));
     }
   }
 }

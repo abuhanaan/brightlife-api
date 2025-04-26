@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface NoticeOfPrivacyRepository extends JpaRepository<NoticeOfPrivacyPracticesFormEntity, Long> {
+public interface NoticeOfPrivacyRepository extends
+    JpaRepository<NoticeOfPrivacyPracticesFormEntity, Long> {
 
   Optional<NoticeOfPrivacyPracticesFormEntity> findOneById(Long id);
+
   NoticeOfPrivacyPracticesFormEntity findOneByPatientId(String patientId);
 }

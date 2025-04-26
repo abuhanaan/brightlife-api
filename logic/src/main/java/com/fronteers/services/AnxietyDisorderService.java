@@ -5,7 +5,6 @@ import com.fronteers.brightlife.model.Success;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
-import com.fronteers.models.entity.forms.AdhdFormEntity;
 import com.fronteers.models.entity.forms.AnxietyDisorderFormEntity;
 import com.fronteers.repositories.AnxietyDisorderRepository;
 import com.fronteers.repositories.PatientRepository;
@@ -42,7 +41,7 @@ public class AnxietyDisorderService {
     return new Success(true, "Form Submitted Successfully", "Anxiety Disorder Form Submitted");
   }
 
-  public AnxietyDisorderForm getAnxietyDisorder(Long id){
+  public AnxietyDisorderForm getAnxietyDisorder(Long id) {
     AnxietyDisorderFormEntity anxietyDisorderFormEntity = checkIfAnxietyDisorderFormExists(id);
     AnxietyDisorderForm anxietyDisorderDto = new AnxietyDisorderForm();
     anxietyDisorderDto.setId(id);
@@ -60,13 +59,16 @@ public class AnxietyDisorderService {
 
   private AnxietyDisorderFormEntity checkIfAnxietyDisorderFormExists(Long id) {
     return anxietyDisorderRepository.findOneById(id).orElseThrow(() ->
-        new NotFoundException(String.format("Anxiety Disorder form with id %s does not exist", id)));
+        new NotFoundException(
+            String.format("Anxiety Disorder form with id %s does not exist", id)));
   }
 
-  private void checkForAnxietyDisorderUniqueness(String patientId){
-    AnxietyDisorderFormEntity anxietyDisorderFormEntity = anxietyDisorderRepository.findOneByPatientId(patientId);
+  private void checkForAnxietyDisorderUniqueness(String patientId) {
+    AnxietyDisorderFormEntity anxietyDisorderFormEntity = anxietyDisorderRepository.findOneByPatientId(
+        patientId);
     if (anxietyDisorderFormEntity != null) {
-      throw new ConflictException(String.format("Anxiety Disorder form has already been filled for patient %s", patientId));
+      throw new ConflictException(
+          String.format("Anxiety Disorder form has already been filled for patient %s", patientId));
     }
   }
 }

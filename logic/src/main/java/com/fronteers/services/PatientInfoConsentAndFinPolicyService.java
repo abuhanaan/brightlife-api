@@ -40,7 +40,8 @@ public class PatientInfoConsentAndFinPolicyService {
   }
 
   public PatientInformationConsentAndFinancialPolicyForm getNoticeOfPrivacy(Long id) {
-    PatientInformationConsentAndFinancialPolicyFormEntity entity = checkIfPatientInfoConsentExists(id);
+    PatientInformationConsentAndFinancialPolicyFormEntity entity = checkIfPatientInfoConsentExists(
+        id);
     PatientInformationConsentAndFinancialPolicyForm dto = new PatientInformationConsentAndFinancialPolicyForm();
     dto.setId(entity.getId());
     dto.setPatientId(UUID.fromString(entity.getPatientId()));
@@ -49,16 +50,21 @@ public class PatientInfoConsentAndFinPolicyService {
     return dto;
   }
 
-  private PatientInformationConsentAndFinancialPolicyFormEntity checkIfPatientInfoConsentExists(Long id) {
+  private PatientInformationConsentAndFinancialPolicyFormEntity checkIfPatientInfoConsentExists(
+      Long id) {
     return patientInfoConsentAndFinPolicyRepository.findOneById(id).orElseThrow(() ->
-        new NotFoundException(String.format("Patient Information Consent And Financial Policy form with id %s does not exist", id)));
+        new NotFoundException(String.format(
+            "Patient Information Consent And Financial Policy form with id %s does not exist",
+            id)));
   }
 
   private void checkForPatientInfoAndFinancialPolicyUniqueness(String patientId) {
     PatientInformationConsentAndFinancialPolicyFormEntity form =
         patientInfoConsentAndFinPolicyRepository.findOneByPatientId(patientId);
-    if (form != null){
-      throw new ConflictException(String.format("Patient Information Consent And Financial Policy form has already been filled for patient %s", patientId));
+    if (form != null) {
+      throw new ConflictException(String.format(
+          "Patient Information Consent And Financial Policy form has already been filled for patient %s",
+          patientId));
     }
   }
 }

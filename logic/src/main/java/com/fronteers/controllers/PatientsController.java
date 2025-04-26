@@ -76,7 +76,8 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitAdhd(ADHDForm request) {
-    log.info("Submitting Adhd form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Adhd form for patient {} with request payload {}", request.getPatientId(),
+        request);
     Success response = adhdService.submitAdhd(request);
     log.info("Adhd form submission response: {}", response);
     return ResponseEntity.ok(response);
@@ -93,7 +94,8 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitAnxietyDisorder(AnxietyDisorderForm request) {
-    log.info("Submitting Anxiety Disorder form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Anxiety Disorder form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = anxietyDisorderService.submitAnxietyDisorder(request);
     log.info("Anxiety Disorder form submission response: {}", response);
     return ResponseEntity.ok(response);
@@ -110,7 +112,8 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitControlledSubstance(ControlledSubstanceForm request) {
-    log.info("Submitting Controlled Substance form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Controlled Substance form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = controlledSubstanceService.submitControlled(request);
     log.info("Controlled Substance form submission response: {}", response);
     return ResponseEntity.ok(response);
@@ -127,7 +130,8 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitDepressionAssessment(DepressionAssessmentForm request) {
-    log.info("Submitting Depression Assessment form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Depression Assessment form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = depressionAssessmentService.submitDepressionAssessment(request);
     log.info("Depression Assessment form submission response: {}", response);
     return ResponseEntity.ok(response);
@@ -144,7 +148,8 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitInitialEvaluation(InitialEvaluationForm request) {
-    log.info("Submitting Initial Evaluation form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Initial Evaluation form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = initialEvaluationService.submitInitialEvaluation(request);
     log.info("Initial Evcaluation Form submitted successfully with response: {}", response);
     return ResponseEntity.ok(response);
@@ -161,7 +166,8 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitIntake(IntakeForm request) {
-    log.info("Submitting Intake form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Intake form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = intakeService.submitIntake(request);
     log.info("Intake form submitted successfully with response payload: {}", response);
     return ResponseEntity.ok(response);
@@ -178,7 +184,8 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitMedicationConsent(MedicationConsentForm request) {
-    log.info("Submitting Medication Consent form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Medication Consent form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = medConsentService.medConsent(request);
     log.info("Medication Consent form submitted successfully with response payload: {}", response);
     return ResponseEntity.ok(response);
@@ -189,15 +196,18 @@ public class PatientsController implements PatientsApi {
   public ResponseEntity<MoodDisorderAssessmentForm> getMoodDisorderAssessment(Long id) {
     log.info("Fetching Mood Disorder Assessment form with id {}", id);
     MoodDisorderAssessmentForm response = moodDisorderService.getMoodDisorder(id);
-    log.info("Mood Disorder Assessment with id {} fetched successfully with response: {}", id, response);
+    log.info("Mood Disorder Assessment with id {} fetched successfully with response: {}", id,
+        response);
     return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitMoodDisorderAssessment(MoodDisorderAssessmentForm request) {
-    log.info("Submitting Mood Disorder Assessment form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Mood Disorder Assessment form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = moodDisorderService.submitMoodDisorderAssessment(request);
-    log.info("Mood Disorder Assessment form submitted successfully with response payload: {}", response);
+    log.info("Mood Disorder Assessment form submitted successfully with response payload: {}",
+        response);
     return ResponseEntity.ok(response);
   }
 
@@ -206,16 +216,19 @@ public class PatientsController implements PatientsApi {
   public ResponseEntity<NoticeOfPrivacyPracticesForm> getNoticeOfPrivacyPractices(Long id) {
     log.info("Fetching Notice Of Privacy Practice form with id {}", id);
     NoticeOfPrivacyPracticesForm response = noticeOfPrivacyService.getNoticeOfPrivacy(id);
-    log.info("Notice Of Privacy Practice form with id {} fetched successfully with response: {}", id, response);
+    log.info("Notice Of Privacy Practice form with id {} fetched successfully with response: {}",
+        id, response);
     return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitNoticeOfPrivacyPractices(
       NoticeOfPrivacyPracticesForm request) {
-    log.info("Submitting Notice Of Privacy Practice form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Notice Of Privacy Practice form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = noticeOfPrivacyService.submitNoticeOfPrivacy(request);
-    log.info("Notice Of Privacy Practice form submitted successfully with response payload: {}", response);
+    log.info("Notice Of Privacy Practice form submitted successfully with response payload: {}",
+        response);
     return ResponseEntity.ok(response);
   }
 
@@ -232,7 +245,7 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<PatientIdValidationResponse> validatePatient(String patientId){
+  public ResponseEntity<PatientIdValidationResponse> validatePatient(String patientId) {
     log.info("Validating Patient with id: {}", patientId);
     PatientIdValidationResponse response = patientService.validatePatientId(patientId);
     log.info("Patient Validation Successful with response: {}", response);
@@ -240,7 +253,7 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<IdGenerationResponse> generateId(IdGenerationRequest request){
+  public ResponseEntity<IdGenerationResponse> generateId(IdGenerationRequest request) {
     log.info("Generating new patient id with request: {}", request);
     IdGenerationResponse response = patientService.generateId(request);
     log.info("Id generation succesful with response: {}", response);
@@ -269,17 +282,25 @@ public class PatientsController implements PatientsApi {
   public ResponseEntity<PatientInformationConsentAndFinancialPolicyForm> getPatientInformationConsentAndFinancialPolicy(
       Long id) {
     log.info("Patient Information Consent And Financial Policy form with id {}", id);
-    PatientInformationConsentAndFinancialPolicyForm response = patientInfoConsentAndFinPolicyService.getNoticeOfPrivacy(id);
-    log.info("Patient Information Consent And Financial Policy form with id {} fetched successfully with response: {}", id, response);
+    PatientInformationConsentAndFinancialPolicyForm response = patientInfoConsentAndFinPolicyService.getNoticeOfPrivacy(
+        id);
+    log.info(
+        "Patient Information Consent And Financial Policy form with id {} fetched successfully with response: {}",
+        id, response);
     return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitPatientInformationConsentAndFinancialPolicy(
       PatientInformationConsentAndFinancialPolicyForm request) {
-    log.info("Submitting Patient Information Consent And Financial Policy form for patient {} with request payload {}", request.getPatientId(), request);
-    Success response = patientInfoConsentAndFinPolicyService.submitPatientInfoAndConsentFinPolicy(request);
-    log.info("Patient Information Consent And Financial Policy form submitted successfully with response payload: {}", response);
+    log.info(
+        "Submitting Patient Information Consent And Financial Policy form for patient {} with request payload {}",
+        request.getPatientId(), request);
+    Success response = patientInfoConsentAndFinPolicyService.submitPatientInfoAndConsentFinPolicy(
+        request);
+    log.info(
+        "Patient Information Consent And Financial Policy form submitted successfully with response payload: {}",
+        response);
     return ResponseEntity.ok(response);
   }
 
@@ -288,13 +309,15 @@ public class PatientsController implements PatientsApi {
   public ResponseEntity<ReleaseReceiveForm> getReleaseReceive(Long id) {
     log.info("Fetching Release Receive form with id {}", id);
     ReleaseReceiveForm response = releaseReceiveService.getReleaseReceive(id);
-    log.info("Release Receive form with id {} fetched successfully with response: {}", id, response);
+    log.info("Release Receive form with id {} fetched successfully with response: {}", id,
+        response);
     return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitReleaseReceive(ReleaseReceiveForm request) {
-    log.info("Submitting Release Receive form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Release Receive form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = releaseReceiveService.submitReleaseReceive(request);
     log.info("Release Receive form submitted successfully with response payload: {}", response);
     return ResponseEntity.ok(response);
@@ -311,7 +334,8 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitScreening(ScreeningForm request) {
-    log.info("Submitting Screening form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Screening form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = screeningService.submitScreening(request);
     log.info("Screening form submitted successfully with response payload: {}", response);
     return ResponseEntity.ok(response);
@@ -328,7 +352,8 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> submitSelfPay(SelfPayForm request) {
-    log.info("Submitting Self Pay form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Self Pay form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = selfPayService.submitSelfPay(request);
     log.info("Self Pay form submitted successfully with response payload: {}", response);
     return ResponseEntity.ok(response);
@@ -339,13 +364,15 @@ public class PatientsController implements PatientsApi {
   public ResponseEntity<TerminationPolicyForm> getTerminationPolicy(Long id) {
     log.info("Fetching Termination Policy form with id {}", id);
     TerminationPolicyForm response = terminationPolicyService.getTp(id);
-    log.info("Termination Policy form with id {} fetched successfully with response: {}", id, response);
+    log.info("Termination Policy form with id {} fetched successfully with response: {}", id,
+        response);
     return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitTerminationPolicy(TerminationPolicyForm request) {
-    log.info("Submitting Termination Policy form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info("Submitting Termination Policy form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = terminationPolicyService.submit(request);
     log.info("Termination Policy form submitted successfully with response payload: {}", response);
     return ResponseEntity.ok(response);
@@ -357,16 +384,22 @@ public class PatientsController implements PatientsApi {
       Long id) {
     log.info("Fetching TreatmentConsentTelehealthInPersonTreatmentConsent form with id {}", id);
     TreatmentConsentTelehealthInPersonTreatmentConsent response = tctInPersontcService.fetch(id);
-    log.info("TreatmentConsentTelehealthInPersonTreatmentConsent form with id {} fetched successfully with response: {}", id, response);
+    log.info(
+        "TreatmentConsentTelehealthInPersonTreatmentConsent form with id {} fetched successfully with response: {}",
+        id, response);
     return ResponseEntity.ok(response);
   }
 
   @Override
   public ResponseEntity<Success> submitTreatmentConsentTelehealthInPersonTreatmentConsent(
       TreatmentConsentTelehealthInPersonTreatmentConsent request) {
-    log.info("Submitting TreatmentConsentTelehealthInPersonTreatment form for patient {} with request payload {}", request.getPatientId(), request);
+    log.info(
+        "Submitting TreatmentConsentTelehealthInPersonTreatment form for patient {} with request payload {}",
+        request.getPatientId(), request);
     Success response = tctInPersontcService.submit(request);
-    log.info("TreatmentConsentTelehealthInPersonTreatment form submitted successfully with response payload: {}", response);
+    log.info(
+        "TreatmentConsentTelehealthInPersonTreatment form submitted successfully with response payload: {}",
+        response);
     return ResponseEntity.ok(response);
   }
 }

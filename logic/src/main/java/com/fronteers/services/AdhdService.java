@@ -81,10 +81,11 @@ public class AdhdService {
         new NotFoundException(String.format("Adhd form with id %s does not exist", id)));
   }
 
-  private void checkForAdhDUniqueness(String patientId){
+  private void checkForAdhDUniqueness(String patientId) {
     AdhdFormEntity adhdFormEntity = adhdRepository.findOneByPatientId(patientId);
     if (adhdFormEntity != null) {
-        throw new ConflictException(String.format("Adhd form has already been filled for patient %s", patientId));
+      throw new ConflictException(
+          String.format("Adhd form has already been filled for patient %s", patientId));
     }
   }
 }

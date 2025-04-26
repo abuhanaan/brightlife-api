@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class InitialEvaluationService {
+
   private final PatientRepository patientRepository;
   private final PatientUtils patientUtils;
   private final InitialEvaluationRepository initialEvaluationRepository;
@@ -41,7 +42,8 @@ public class InitialEvaluationService {
     newForm.setPatient(patient);
     newForm.setPatientId(patient.getPatientId());
     newForm.setPharmacy(mapPharmacyEntity(request.getPharmacy(), newForm));
-    newForm.setPrimaryCarePhysician(mapPrimaryCarePhysicianEmtity(request.getPrimaryCarePhysician(), newForm));
+    newForm.setPrimaryCarePhysician(
+        mapPrimaryCarePhysicianEmtity(request.getPrimaryCarePhysician(), newForm));
     newForm.setDate(Date.valueOf(request.getDate()));
     newForm.setInitialEvaluationFile(request.getFile());
     patient.setInitialEvaluationForm(newForm);
@@ -54,12 +56,15 @@ public class InitialEvaluationService {
     return mapInitialEvaluationEntityToDto(initialEvaluationForm);
   }
 
-  private PrimaryCarePhysicianEntity mapPrimaryCarePhysicianEmtity(PrimaryCarePhysician pcpDto, InitialEvaluationFormEntity initialEvaluationForm) {
+  private PrimaryCarePhysicianEntity mapPrimaryCarePhysicianEmtity(PrimaryCarePhysician pcpDto,
+      InitialEvaluationFormEntity initialEvaluationForm) {
     if (pcpDto == null || pcpDto.getName() == null) {
       throw new BadRequestException("Primary Care Physician details are missing");
     }
-    PrimaryCarePhysicianEntity existingPcpEntity = primaryCarePhysicianRepository.findOneByName(pcpDto.getName());
-    if (existingPcpEntity != null && !existingPcpEntity.getInitialEvaluationForms().contains(initialEvaluationForm)){
+    PrimaryCarePhysicianEntity existingPcpEntity = primaryCarePhysicianRepository.findOneByName(
+        pcpDto.getName());
+    if (existingPcpEntity != null && !existingPcpEntity.getInitialEvaluationForms()
+        .contains(initialEvaluationForm)) {
       existingPcpEntity.getInitialEvaluationForms().add(initialEvaluationForm);
       return existingPcpEntity;
     }
@@ -73,12 +78,13 @@ public class InitialEvaluationService {
     return newPcpEntity;
   }
 
-  private PharmacyEntity mapPharmacyEntity(Pharmacy pharmacyDto, InitialEvaluationFormEntity initialEvaluationForm) {
+  private PharmacyEntity mapPharmacyEntity(Pharmacy pharmacyDto,
+      InitialEvaluationFormEntity initialEvaluationForm) {
     if (pharmacyDto == null || pharmacyDto.getName() == null) {
       throw new BadRequestException("Pharmacy details are missing");
     }
     PharmacyEntity existingPharmacyEntity = pharmacyRepository.findOneByName(pharmacyDto.getName());
-    if (existingPharmacyEntity != null){
+    if (existingPharmacyEntity != null) {
       existingPharmacyEntity.getInitialEvaluationForms().add(initialEvaluationForm);
       return existingPharmacyEntity;
     }
@@ -92,20 +98,26 @@ public class InitialEvaluationService {
   }
 
   private void checkForInitialEvaluationUniqueness(String patientId) {
-    InitialEvaluationFormEntity initialEvaluationForm = initialEvaluationRepository.findOneByPatientId(patientId);
-    if (initialEvaluationForm != null){
-      throw new ConflictException(String.format("Initial Evaluation form has already been filled for patient %s", patientId));
+    InitialEvaluationFormEntity initialEvaluationForm = initialEvaluationRepository.findOneByPatientId(
+        patientId);
+    if (initialEvaluationForm != null) {
+      throw new ConflictException(
+          String.format("Initial Evaluation form has already been filled for patient %s",
+              patientId));
     }
   }
 
-  private InitialEvaluationForm mapInitialEvaluationEntityToDto(InitialEvaluationFormEntity initialEvaluationEntity) {
+  private InitialEvaluationForm mapInitialEvaluationEntityToDto(
+      InitialEvaluationFormEntity initialEvaluationEntity) {
     InitialEvaluationForm initialEvaluationFormDto = new InitialEvaluationForm();
     initialEvaluationFormDto.setId(initialEvaluationEntity.getId());
     initialEvaluationFormDto.setPatientId(UUID.fromString(initialEvaluationEntity.getPatientId()));
     initialEvaluationFormDto.setDate(initialEvaluationEntity.getDate().toLocalDate());
     initialEvaluationFormDto.setFile(initialEvaluationEntity.getInitialEvaluationFile());
-    initialEvaluationFormDto.setPharmacy(mapPharmacyEntityToDto(initialEvaluationEntity.getPharmacy()));
-    initialEvaluationFormDto.setPrimaryCarePhysician(mapPrimaryCarePhysician(initialEvaluationEntity.getPrimaryCarePhysician()));
+    initialEvaluationFormDto.setPharmacy(
+        mapPharmacyEntityToDto(initialEvaluationEntity.getPharmacy()));
+    initialEvaluationFormDto.setPrimaryCarePhysician(
+        mapPrimaryCarePhysician(initialEvaluationEntity.getPrimaryCarePhysician()));
     return initialEvaluationFormDto;
   }
 
@@ -125,7 +137,8 @@ public class InitialEvaluationService {
     pharmacyDto.setId(pharmacyEntity.getId());
     pharmacyDto.setName(pharmacyEntity.getName());
     pharmacyDto.setPhone(pharmacyEntity.getPhone());
-    pharmacyDto.setAddress(PatientDtoMapper.mapAddressEntityToAddressDto(pharmacyEntity.getAddress()));
+    pharmacyDto.setAddress(
+        PatientDtoMapper.mapAddressEntityToAddressDto(pharmacyEntity.getAddress()));
     return pharmacyDto;
   }
 

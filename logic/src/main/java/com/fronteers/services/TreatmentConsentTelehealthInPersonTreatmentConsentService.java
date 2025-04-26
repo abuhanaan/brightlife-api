@@ -36,7 +36,8 @@ public class TreatmentConsentTelehealthInPersonTreatmentConsentService {
             .build();
     patient.setTreatmentConsentTelehealth(entity);
     patientRepository.save(patient);
-    return new Success(true, "Form Submitted Successfully", "TreatmentConsentTelehealthInPersonTreatmentConsent Form Submitted");
+    return new Success(true, "Form Submitted Successfully",
+        "TreatmentConsentTelehealthInPersonTreatmentConsent Form Submitted");
   }
 
   public TreatmentConsentTelehealthInPersonTreatmentConsent fetch(Long id) {
@@ -51,15 +52,20 @@ public class TreatmentConsentTelehealthInPersonTreatmentConsentService {
     return dto;
   }
 
-  private TreatmentConsentTelehealthInPersonTreatmentConsentEntity checkIfEntityExists(Long id){
+  private TreatmentConsentTelehealthInPersonTreatmentConsentEntity checkIfEntityExists(Long id) {
     return tctInPersonTcRepository.findOneById(id).orElseThrow(() -> new NotFoundException(
-        String.format("TreatmentConsentTelehealthInPersonTreatmentConsent form with id %s does not exist", id)));
+        String.format(
+            "TreatmentConsentTelehealthInPersonTreatmentConsent form with id %s does not exist",
+            id)));
   }
 
-  private void checkForEntityUniqueness(String patientId){
-    TreatmentConsentTelehealthInPersonTreatmentConsentEntity entity = tctInPersonTcRepository.findOneByPatientId(patientId);
-    if (entity != null){
-      throw new ConflictException(String.format("TreatmentConsentTelehealthInPersonTreatmentConsent form has already been filled for patient %s", patientId));
+  private void checkForEntityUniqueness(String patientId) {
+    TreatmentConsentTelehealthInPersonTreatmentConsentEntity entity = tctInPersonTcRepository.findOneByPatientId(
+        patientId);
+    if (entity != null) {
+      throw new ConflictException(String.format(
+          "TreatmentConsentTelehealthInPersonTreatmentConsent form has already been filled for patient %s",
+          patientId));
     }
   }
 }

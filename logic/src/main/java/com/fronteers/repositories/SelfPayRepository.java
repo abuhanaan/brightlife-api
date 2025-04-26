@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface SelfPayRepository extends JpaRepository<SelfPayFormEntity, Long> {
 
   Optional<SelfPayFormEntity> findOneById(Long id);
+
   SelfPayFormEntity findOneByPatientId(String patientId);
 }

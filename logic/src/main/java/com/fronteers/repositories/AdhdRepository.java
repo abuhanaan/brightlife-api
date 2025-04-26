@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AdhdRepository extends JpaRepository<AdhdFormEntity, Long> {
 
   Optional<AdhdFormEntity> findOneById(Long id);
+
   AdhdFormEntity findOneByPatientId(String id);
 }
