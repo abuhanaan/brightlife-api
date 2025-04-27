@@ -2,11 +2,14 @@ package com.fronteers.services;
 
 import com.fronteers.brightlife.model.Appointment;
 import com.fronteers.brightlife.model.AppointmentSearch;
+import com.fronteers.brightlife.model.AppointmentStatusEnum;
 import com.fronteers.brightlife.model.PaginatedAppointments;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.brightlife.model.TimeSlot;
 import com.fronteers.brightlife.model.TimeSlots;
+import com.fronteers.brightlife.model.UpdateAppointmentStatus;
 import com.fronteers.exceptions.BadRequestException;
+import com.fronteers.exceptions.ConflictException;
 import com.fronteers.models.entity.AppointmentEntity;
 import com.fronteers.models.entity.QAppointmentEntity;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
@@ -76,6 +79,7 @@ public class AppointmentService {
 
     // 5. Create new appointment entity
     AppointmentEntity appointmentEntity = new AppointmentEntity();
+    appointmentEntity.setStatus(AppointmentStatusEnum.UPCOMING);
     PatientRegistrationFormEntity patientRegistrationFormEntity = null;
 
     if (request.getPatientId() != null) {
@@ -93,6 +97,17 @@ public class AppointmentService {
     return new Success(true, "Appointment Submitted Successfully",
         String.format("Appointment id: %s, Appointment time: %s",
             appointmentEntity.getId(), appointmentEntity.getAppointmentDateTime()));
+  }
+
+  public Success changeAppointmentStatus(Long id, UpdateAppointmentStatus request){
+    AppointmentEntity appointmentEntity = checkIfAppointmentExists(id);
+    if (appointmentEntity.getStatus().equals(request.getStatus())){
+      throw new ConflictException("Appointment status is already set to " + request.getStatus());
+    }
+    appointmentEntity.setStatus(request.getStatus());
+    appointmentRepository.save(appointmentEntity);
+    return new Success(true, "Appointment Status Updated Successfully",
+        String.format("Appointment status has been successfully updated to %s successfully", request.getStatus()));
   }
 
   public TimeSlots getAppointmentTimeSlots() {

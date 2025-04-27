@@ -1205,6 +1205,28 @@ components:
         file:
           type: string
 
+    Dashboard:
+      type: object
+      properties:
+        recentPatients:
+          type: array
+          items:
+            $ref: "#/components/schemas/Patient"
+        upcomingAppointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Appointment"
+        recentReviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/Review"
+        patientCount:
+          type: integer
+        appointmentCount:
+          type: integer
+        reviewCount:
+          type: integer
+
     PaginatedReviews:
       type: object
       properties:
@@ -1392,6 +1414,8 @@ components:
             - Group Therapy
             - Case Management
             - Psychiatric Rehab.
+        status:
+          $ref: '#/components/schemas/AppointmentStatusEnum'
         appointmentDateTime:
           $ref: "#/components/schemas/DateTime"
         purpose:
@@ -1402,6 +1426,20 @@ components:
           $ref: '#/components/schemas/InsuranceNameEnum'
         insuranceNumber:
           type: string
+
+    AppointmentStatusEnum:
+      type: string
+      enum:
+        - ""
+        - Upcoming
+        - Missed
+        - Attended
+
+    UpdateAppointmentStatus:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/AppointmentStatusEnum'
 
     InsuranceNameEnum:
       type: string
@@ -1721,6 +1759,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FileUploadResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/admin/dashboard:
+    get:
+      summary: Fetches Metrics For Admin Dashboard
+      tags:
+        - Dashboard
+      operationId: getDashboard
+      responses:
+        "200":
+          description: Admin Dashboard Metrics Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -2995,6 +3057,40 @@ paths:
       responses:
         "201":
           description: Appointment Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/appointments/status/{idParam}:
+    put:
+      summary: Updates An Appointment's Status
+      security: [ ]
+      tags:
+        - Appointment
+      operationId: changeStatus
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        description: Updates the status of an appointment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAppointmentStatus"
+      responses:
+        "201":
+          description: Appointment Status Updated Successfully
           content:
             application/json:
               schema:

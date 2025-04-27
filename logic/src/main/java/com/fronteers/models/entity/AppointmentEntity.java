@@ -2,6 +2,7 @@ package com.fronteers.models.entity;
 
 import com.fronteers.brightlife.model.Appointment.AppointmentTypeEnum;
 import com.fronteers.brightlife.model.Appointment.ServiceEnum;
+import com.fronteers.brightlife.model.AppointmentStatusEnum;
 import com.fronteers.brightlife.model.GenderEnum;
 import com.fronteers.brightlife.model.InsuranceNameEnum;
 import com.fronteers.brightlife.model.PaymentModeEnum;
@@ -35,6 +36,9 @@ public class AppointmentEntity extends BaseEntity {
 
   @Column(name = "is_new")
   private Boolean isNew;
+
+  @Column(name = "status")
+  private AppointmentStatusEnum status;
 
   @Column(name = "verification_status")
   private String verificationStatus;
