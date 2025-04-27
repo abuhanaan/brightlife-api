@@ -1,15 +1,28 @@
 package com.fronteers.models.mappers;
 
+import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.Address;
+import com.fronteers.brightlife.model.AlcoholDrugHistory;
+import com.fronteers.brightlife.model.AnxietyDisorderForm;
+import com.fronteers.brightlife.model.ControlledSubstanceForm;
+import com.fronteers.brightlife.model.DepressionAssessmentForm;
+import com.fronteers.brightlife.model.DrinkGuiltCheck;
 import com.fronteers.brightlife.model.EmergencyContact;
 import com.fronteers.brightlife.model.Guarantor;
 import com.fronteers.brightlife.model.InitialEvaluationForm;
 import com.fronteers.brightlife.model.Insurance;
 import com.fronteers.brightlife.model.InsuranceProvider;
+import com.fronteers.brightlife.model.IntakeForm;
+import com.fronteers.brightlife.model.Medication;
+import com.fronteers.brightlife.model.Medication.CategoryEnum;
 import com.fronteers.brightlife.model.MedicationConsentForm;
+import com.fronteers.brightlife.model.MoodDisorderAssessmentForm;
 import com.fronteers.brightlife.model.NoticeOfPrivacyPracticesForm;
 import com.fronteers.brightlife.model.ParentGuardian;
 import com.fronteers.brightlife.model.Party;
+import com.fronteers.brightlife.model.PastMarriagesInfo;
+import com.fronteers.brightlife.model.PastProviders;
+import com.fronteers.brightlife.model.PastTreatmentInfo;
 import com.fronteers.brightlife.model.PatientInformationConsentAndFinancialPolicyForm;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PaymentModeEnum;
@@ -18,23 +31,37 @@ import com.fronteers.brightlife.model.PersonalInfo;
 import com.fronteers.brightlife.model.Pharmacy;
 import com.fronteers.brightlife.model.PolicyHolder;
 import com.fronteers.brightlife.model.PrimaryCarePhysician;
+import com.fronteers.brightlife.model.Referral;
+import com.fronteers.brightlife.model.RelativeWithMentalIllnessOrSuicide;
 import com.fronteers.brightlife.model.ReleaseReceiveForm;
+import com.fronteers.brightlife.model.ScreeningForm;
 import com.fronteers.brightlife.model.SelfPayForm;
+import com.fronteers.brightlife.model.SubstanceUsage;
 import com.fronteers.brightlife.model.TerminationPolicyForm;
 import com.fronteers.brightlife.model.TreatmentConsentTelehealthInPersonTreatmentConsent;
 import com.fronteers.models.entity.AddressEntity;
+import com.fronteers.models.entity.AlcoholDrugHistoryEntity;
 import com.fronteers.models.entity.EmergencyContactEntity;
 import com.fronteers.models.entity.GuarantorEntity;
 import com.fronteers.models.entity.InsuranceEntity;
+import com.fronteers.models.entity.MedicationEntity;
 import com.fronteers.models.entity.ParentGuardianEntity;
 import com.fronteers.models.entity.PharmacyEntity;
 import com.fronteers.models.entity.PrimaryCarePhysicianEntity;
+import com.fronteers.models.entity.ReferralEntity;
+import com.fronteers.models.entity.forms.AdhdFormEntity;
+import com.fronteers.models.entity.forms.AnxietyDisorderFormEntity;
+import com.fronteers.models.entity.forms.ControlledSubstanceFormEntity;
+import com.fronteers.models.entity.forms.DepressionAssessmentFormEntity;
 import com.fronteers.models.entity.forms.InitialEvaluationFormEntity;
+import com.fronteers.models.entity.forms.IntakeFormEntity;
 import com.fronteers.models.entity.forms.MedicationConsentFormEntity;
+import com.fronteers.models.entity.forms.MoodDisorderAssessmentFormEntity;
 import com.fronteers.models.entity.forms.NoticeOfPrivacyPracticesFormEntity;
 import com.fronteers.models.entity.forms.PatientInformationConsentAndFinancialPolicyFormEntity;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
 import com.fronteers.models.entity.forms.ReleaseReceiveFormEntity;
+import com.fronteers.models.entity.forms.ScreeningFormEntity;
 import com.fronteers.models.entity.forms.SelfPayFormEntity;
 import com.fronteers.models.entity.forms.TerminationPolicyFormEntity;
 import com.fronteers.models.entity.forms.TreatmentConsentTelehealthInPersonTreatmentConsentEntity;
@@ -328,6 +355,270 @@ public class PatientDtoMapper {
     initialEvaluationFormDto.setPrimaryCarePhysician(
         mapPrimaryCarePhysician(initialEvaluationEntity.getPrimaryCarePhysician()));
     return initialEvaluationFormDto;
+  }
+
+  public static ADHDForm mapAdhdEntityToDto(AdhdFormEntity adhdFormEntity){
+    ADHDForm adhdFormDto = new ADHDForm();
+    adhdFormDto.setId(adhdFormEntity.getId());
+    adhdFormDto.setPatientId(UUID.fromString(adhdFormEntity.getPatientId()));
+    adhdFormDto.setProjectCompletionProblem(adhdFormEntity.getProjectCompletionProblem());
+    adhdFormDto.setOrganizationRate(adhdFormEntity.getOrganizationRate());
+    adhdFormDto.setMemoryRate(adhdFormEntity.getMemoryRate());
+    adhdFormDto.setAttitudeToChallenge(adhdFormEntity.getAttitudeToChallenge());
+    adhdFormDto.setFidgetRateOnsit(adhdFormEntity.getFidgetRateOnsit());
+    adhdFormDto.setActiveToWork(adhdFormEntity.getActiveToWork());
+    adhdFormDto.setCarelessMistakes(adhdFormEntity.getCarelessMistakes());
+    adhdFormDto.setAttentionToBoringWork(adhdFormEntity.getAttentionToBoringWork());
+    adhdFormDto.setConcentrationRate(adhdFormEntity.getConcentrationRate());
+    adhdFormDto.setMisplaceRate(adhdFormEntity.getMisplaceRate());
+    adhdFormDto.setDistractionRate(adhdFormEntity.getDistractionRate());
+    adhdFormDto.setExcuseRate(adhdFormEntity.getExcuseRate());
+    adhdFormDto.setRestlessRate(adhdFormEntity.getRestlessRate());
+    adhdFormDto.setTroubleRelaxing(adhdFormEntity.getTroubleRelaxing());
+    adhdFormDto.setExcessiveTalks(adhdFormEntity.getExcessiveTalks());
+    adhdFormDto.setPeopleSentenceCompletion(adhdFormEntity.getPeopleSentenceCompletion());
+    adhdFormDto.setPatienceOnQueue(adhdFormEntity.getPatienceOnQueue());
+    adhdFormDto.setInterruptOthers(adhdFormEntity.getInterruptOthers());
+    return adhdFormDto;
+  }
+
+  public static AnxietyDisorderForm mapAnxietyDisorderEntityToDto(AnxietyDisorderFormEntity entity){
+    AnxietyDisorderForm anxietyDisorderDto = new AnxietyDisorderForm();
+    anxietyDisorderDto.setId(entity.getId());
+    anxietyDisorderDto.setPatientId(UUID.fromString(entity.getPatientId()));
+    anxietyDisorderDto.setNervousRate(entity.getNervousRate());
+    anxietyDisorderDto.setControlOverWorry(entity.getControlOverWorry());
+    anxietyDisorderDto.setExcessiveWorry(entity.getExcessiveWorry());
+    anxietyDisorderDto.setRelaxTrouble(entity.getRelaxTrouble());
+    anxietyDisorderDto.setRestlessness(entity.getRestlessness());
+    anxietyDisorderDto.setAnnoyanceRate(entity.getAnnoyanceRate());
+    anxietyDisorderDto.setFrightRate(entity.getFrightRate());
+    anxietyDisorderDto.setLifeInfluenceSummary(anxietyDisorderDto.getLifeInfluenceSummary());
+    return anxietyDisorderDto;
+  }
+
+  public static ControlledSubstanceForm mapControlledSubstanceEntityToDto(
+      ControlledSubstanceFormEntity controlledSubstanceFormEntity){
+    ControlledSubstanceForm controlledSubstanceDto = new ControlledSubstanceForm();
+    controlledSubstanceDto.setId(controlledSubstanceFormEntity.getId());
+    controlledSubstanceDto.setPatientId(
+        UUID.fromString(controlledSubstanceFormEntity.getPatientId()));
+    controlledSubstanceDto.setIsMinor(controlledSubstanceFormEntity.getIsMinor());
+    controlledSubstanceDto.setPatientSignDate(
+        controlledSubstanceFormEntity.getPatientSignDate().toInstant().atOffset(ZoneOffset.UTC));
+    controlledSubstanceDto.setGuardianName(controlledSubstanceFormEntity.getGuardianName());
+    controlledSubstanceDto.setPatientGuardianRelationship(
+        controlledSubstanceFormEntity.getPatientGuardianRelationship());
+    controlledSubstanceDto.setGuardianSignDate(
+        controlledSubstanceFormEntity.getGuardianSignDate().toInstant().atOffset(ZoneOffset.UTC));
+    controlledSubstanceDto.setFile(controlledSubstanceFormEntity.getControlledSubstanceFile());
+    return controlledSubstanceDto;
+  }
+
+  public static DepressionAssessmentForm mapDepressionAssessmentEntityToDto(
+      DepressionAssessmentFormEntity depAssessmentFormEntity){
+    DepressionAssessmentForm depAssessmentDto = new DepressionAssessmentForm();
+    depAssessmentDto.setId(depAssessmentFormEntity.getId());
+    depAssessmentDto.setPatientId(UUID.fromString(depAssessmentFormEntity.getPatientId()));
+    depAssessmentDto.setPleasureInterest(depAssessmentFormEntity.getPleasureInterest());
+    depAssessmentDto.setDepressionRate(depAssessmentFormEntity.getDepressionRate());
+    depAssessmentDto.setSleepRate(depAssessmentFormEntity.getSleepRate());
+    depAssessmentDto.setFatigueRate(depAssessmentFormEntity.getFatigueRate());
+    depAssessmentDto.setAppetiteRate(depAssessmentFormEntity.getAppetiteRate());
+    depAssessmentDto.setFailureRate(depAssessmentFormEntity.getFailureRate());
+    depAssessmentDto.setConcentrationRate(depAssessmentFormEntity.getConcentrationRate());
+    depAssessmentDto.setRestlessnessRate(depAssessmentFormEntity.getRestlessnessRate());
+    depAssessmentDto.setSuicideThought(depAssessmentFormEntity.getSuicideThought());
+    return depAssessmentDto;
+  }
+
+  public static IntakeForm mapIntakeEntityToDto(IntakeFormEntity intakeFormEntity) {
+    IntakeForm dto = new IntakeForm();
+    dto.setId(intakeFormEntity.getId());
+    dto.setPatientId(UUID.fromString(intakeFormEntity.getPatientId()));
+    dto.setDoYouShareHome(intakeFormEntity.getDoYouShareHome());
+    dto.setComplaints(intakeFormEntity.getComplaints());
+    dto.setSexPreference(intakeFormEntity.getSexPreference());
+    dto.setOnProbation(intakeFormEntity.getOnProbation());
+    dto.setInLawsuit(intakeFormEntity.getInLawsuit());
+    dto.setChildrenCount(intakeFormEntity.getChildrenCount());
+    dto.setMarriageCount(intakeFormEntity.getMarriageCount());
+    dto.setPastMarriagesInfo(!intakeFormEntity.getPastMarriagesInfo().isEmpty() ?
+        intakeFormEntity.getPastMarriagesInfo().stream().map(pastMarriageEntity -> {
+          PastMarriagesInfo infoDto = new PastMarriagesInfo();
+          infoDto.setId(pastMarriageEntity.getId());
+          infoDto.setDuration(pastMarriageEntity.getDuration());
+          infoDto.setDivorceReason(pastMarriageEntity.getDivorceReason());
+          infoDto.setMarriageDescription(pastMarriageEntity.getDescription());
+          return infoDto;
+        }).toList() : null);
+    dto.setPastProviders(intakeFormEntity.getPastProviders().stream().map(pastProviderEntity -> {
+      PastProviders providerDto = new PastProviders();
+      providerDto.setId(pastProviderEntity.getId());
+      providerDto.setProvider(pastProviderEntity.getProvider());
+      providerDto.setAppointmentDate(pastProviderEntity.getAppointmentDate() != null ?
+          pastProviderEntity.getAppointmentDate().toLocalDate() : null);
+      return providerDto;
+    }).toList());
+    processDtoMedications(dto, intakeFormEntity.getMedications());
+    dto.setHasAttemptedSuicide(intakeFormEntity.getHasAttemptedSuicide());
+    dto.setIsPsychHospitalized(intakeFormEntity.getIsPsychHospitalized());
+    setAlcoholDrugHistory(intakeFormEntity.getAlcoholDrugHistory(), dto);
+    return dto;
+  }
+
+  public static MoodDisorderAssessmentForm mapMoodDisorderEntityToDto(
+      MoodDisorderAssessmentFormEntity mdafEntity){
+    MoodDisorderAssessmentForm dto = new MoodDisorderAssessmentForm();
+    dto.setId(mdafEntity.getId());
+    dto.setPatientId(UUID.fromString(mdafEntity.getPatientId()));
+    dto.setHyperFeeling(mdafEntity.getHyperFeeling());
+    dto.setIsIrritable(mdafEntity.getIsIrritable());
+    dto.setIsOverConfident(mdafEntity.getIsOverConfident());
+    dto.setLessSleep(mdafEntity.getLessSleep());
+    dto.setTalkMore(mdafEntity.getTalkMore());
+    dto.setPacedThoughts(mdafEntity.getPacedThoughts());
+    dto.setEasyDistraction(mdafEntity.getEasyDistraction());
+    dto.setOverEnergetic(mdafEntity.getOverEnergetic());
+    dto.setOverActive(mdafEntity.getOverActive());
+    dto.setOverSocial(mdafEntity.getOverSocial());
+    dto.setSexaholic(mdafEntity.getSexaholic());
+    dto.setOverFoolish(mdafEntity.getOverFoolish());
+    dto.setOverSpending(mdafEntity.getOverSpending());
+    dto.setSameTimeOccurrence(mdafEntity.getSameTimeOccurrence());
+    dto.setInfluenceOnLife(mdafEntity.getInfluenceOnLife());
+    dto.setIsRelativeWithBipolar(mdafEntity.getIsRelativeWithBipolar());
+    dto.setIsBipolarDiagnosed(mdafEntity.getIsBipolarDiagnosed());
+    return dto;
+  }
+
+  public static ScreeningForm mapScreeningEntityToDto(ScreeningFormEntity entity){
+    ScreeningForm dto = new ScreeningForm();
+    dto.setId(entity.getId());
+    dto.setPatientId(UUID.fromString(entity.getPatientId()));
+    dto.setMhBhPhone(entity.getMhBhPhone());
+    dto.setHelpNeeds(entity.getHelpNeeds());
+    dto.setInCrisis(entity.getInCrisis());
+    dto.setCurrentlyOnPsychMed(entity.getCurrentlyOnPsychMed());
+    dto.setStableOnMed(entity.getStableOnMed());
+    dto.setIsPsychiatristConsult(entity.getIsPsychiatristConsult());
+    dto.setIsTherapistConsult(entity.getIsTherapistConsult());
+    dto.setAnyMentalHealthTreatment(entity.getAnyMentalHealthTreatment());
+    dto.setSuicideAttemptHistory(entity.getSuicideAttemptHistory());
+    dto.setHarmToSelfOrOthers(entity.getHarmToSelfOrOthers());
+    setReferralToDto(dto, entity.getReferral());
+    return dto;
+  }
+
+  private static void setReferralToDto(ScreeningForm dto, ReferralEntity referralEntity) {
+    Referral referralDto = new Referral();
+    referralDto.setId(referralEntity.getId());
+    referralEntity.setSource(referralEntity.getSource());
+    referralDto.setTherapist(referralEntity.getTherapist());
+    referralDto.setFirstName(referralEntity.getFirstName());
+    referralDto.setMiddleName(referralEntity.getMiddleName());
+    referralDto.setLastName(referralEntity.getLastName());
+    referralDto.setPhone(referralEntity.getPhone());
+    referralDto.setAddress(
+        PatientDtoMapper.mapAddressEntityToAddressDto(referralEntity.getAddress()));
+    dto.setReferral(referralDto);
+  }
+
+  private static void setAlcoholDrugHistory(AlcoholDrugHistoryEntity adhEntity, IntakeForm intakeFormDto) {
+    AlcoholDrugHistory alcoholDrugHistoryDto = new AlcoholDrugHistory();
+    alcoholDrugHistoryDto.setId(adhEntity.getId());
+    alcoholDrugHistoryDto.setUsageFrequency(adhEntity.getUsageFrequency());
+    alcoholDrugHistoryDto.setBrand(adhEntity.getBrand());
+    alcoholDrugHistoryDto.setLastUsed(adhEntity.getLastUsed());
+    mapDrinkGuiltCheck(adhEntity, alcoholDrugHistoryDto);
+    alcoholDrugHistoryDto.setSubstanceUsages(
+        adhEntity.getSubstanceUsages().stream().map(substanceUsageEntity -> {
+          SubstanceUsage substanceUsage = new SubstanceUsage();
+          substanceUsage.setId(substanceUsageEntity.getId());
+          substanceUsage.setSubstanceName(substanceUsageEntity.getName());
+          substanceUsage.setAgeAtFirstUse(substanceUsageEntity.getAgeAtFirstUse());
+          substanceUsage.setQtyUse(substanceUsageEntity.getQtyUse());
+          substanceUsage.setUsageFrequency(substanceUsageEntity.getFrequentUsage());
+          substanceUsage.setLastUsed(substanceUsageEntity.getLastUsed());
+          return substanceUsage;
+        }).toList());
+    alcoholDrugHistoryDto.setWeeklyAverageSpending(adhEntity.getWeeklyAverageSpending());
+    alcoholDrugHistoryDto.setPastTreatmentInfo(
+        adhEntity.getPastTreatments().stream().map(pastTreatmentEntity -> {
+          PastTreatmentInfo pastTreatment = new PastTreatmentInfo();
+          pastTreatment.setId(pastTreatmentEntity.getId());
+          pastTreatment.setDate(pastTreatmentEntity.getDate().toLocalDate());
+          pastTreatment.setDrugTreated(pastTreatmentEntity.getDrugTreated());
+          pastTreatment.setIsTreatmentCompleted(pastTreatmentEntity.getIsTreatmentCompleted());
+          pastTreatment.setFacility(pastTreatmentEntity.getFacility());
+          return pastTreatment;
+        }).toList());
+    alcoholDrugHistoryDto.setIsPastStepRecoveryParticipant(
+        adhEntity.getIsPastStepRecoveryParticipant());
+    alcoholDrugHistoryDto.setIsCurrentStepRecoveryParticipant(
+        adhEntity.getIsCurrentStepRecoveryParticipant());
+    alcoholDrugHistoryDto.setBirthPlace(adhEntity.getBirthPlace());
+    alcoholDrugHistoryDto.growthPlace(adhEntity.getGrowthPlace());
+    alcoholDrugHistoryDto.setRaisedBy(adhEntity.getRaisedBy());
+    alcoholDrugHistoryDto.setSiblingsCount(adhEntity.getSiblingsCount());
+    alcoholDrugHistoryDto.setChildhoodInfo(adhEntity.getChildhoodInfo());
+    alcoholDrugHistoryDto.setWasPhysicallyAbused(adhEntity.getWasPhysicallyAbused());
+    alcoholDrugHistoryDto.setWasEmotionallyAbused(adhEntity.getWasEmotionallyAbused());
+    alcoholDrugHistoryDto.setWasSexuallyAbused(adhEntity.getWasSexuallyAbused());
+    alcoholDrugHistoryDto.setHasMedicalDisability(adhEntity.getHasMedicalDisability());
+    alcoholDrugHistoryDto.setPastMedicalHistory(adhEntity.getPastMedicalHistory() != null ?
+        adhEntity.getPastMedicalHistory().stream().toList() : null);
+    alcoholDrugHistoryDto.setPastSurgicalHistory(adhEntity.getPastSurgicalHistory() != null ?
+        adhEntity.getPastSurgicalHistory().stream().toList() : null);
+    alcoholDrugHistoryDto.setAllergies(adhEntity.getAllergies() != null ?
+        adhEntity.getAllergies().stream().toList() : null);
+    alcoholDrugHistoryDto.setRelativesWithMentalIllnessOrSuicide(
+        adhEntity.getRelativesWithMentalIllnessOrSuicide() != null ?
+            adhEntity.getRelativesWithMentalIllnessOrSuicide().stream().map(sickRelEntity -> {
+              RelativeWithMentalIllnessOrSuicide sickRelDto = new RelativeWithMentalIllnessOrSuicide();
+              sickRelDto.setId(sickRelEntity.getId());
+              sickRelDto.setRelative(sickRelEntity.getRelative());
+              sickRelDto.setIllness(sickRelDto.getIllness());
+              return sickRelDto;
+            }).toList() : null);
+    alcoholDrugHistoryDto.setOtherUsefulInfo(adhEntity.getOtherUsefulInfo());
+    intakeFormDto.setAlcoholDrugHistory(alcoholDrugHistoryDto);
+  }
+
+  private static void mapDrinkGuiltCheck(AlcoholDrugHistoryEntity adhEntity,
+      AlcoholDrugHistory alcoholDrugHistoryDto) {
+    DrinkGuiltCheck drinkGuiltCheck = new DrinkGuiltCheck();
+    drinkGuiltCheck.setFeelGuilt(adhEntity.getFeelGuilt());
+    drinkGuiltCheck.setUpWithDrink(adhEntity.getUpWithDrink());
+    drinkGuiltCheck.setAngeredByCritics(adhEntity.getAngeredByCritics());
+    drinkGuiltCheck.setHaveCutBack(adhEntity.getHaveCutBack());
+    alcoholDrugHistoryDto.setDrinkGuiltCheck(drinkGuiltCheck);
+  }
+
+  private static void processDtoMedications(IntakeForm dto, List<MedicationEntity> medications) {
+    List<Medication> currentMedicationDtos = new ArrayList<>();
+    List<Medication> pastMedicationDtos = new ArrayList<>();
+    for (MedicationEntity medicationEntity : medications) {
+      Medication medicationDto = new Medication();
+      setMedicationDtoProps(medicationDto, medicationEntity);
+      if (medicationEntity.getIsCurrent()) {
+        currentMedicationDtos.add(medicationDto);
+      } else {
+        pastMedicationDtos.add(medicationDto);
+      }
+    }
+    dto.setCurrentMedications(currentMedicationDtos);
+    dto.setPastMedications(pastMedicationDtos);
+  }
+
+  private static void setMedicationDtoProps(Medication medicationDto, MedicationEntity medicationEntity) {
+    medicationDto.setMedication(medicationEntity.getMedication());
+    medicationDto.setId(medicationEntity.getId());
+    medicationDto.setCategory(
+        medicationEntity.getIsCurrent() ? CategoryEnum.CURRENT : CategoryEnum.PAST);
+    medicationDto.setPrescription(medicationEntity.getPrescription());
+    medicationDto.setConditionTreated(medicationEntity.getConditionTreated());
+    medicationDto.setUsageInstruction(medicationEntity.getInstruction());
   }
 
   private static Pharmacy mapPharmacyEntityToDto(PharmacyEntity pharmacyEntity) {

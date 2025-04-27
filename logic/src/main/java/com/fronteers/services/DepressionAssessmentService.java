@@ -6,6 +6,7 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.DepressionAssessmentFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.DepressionAssessmentRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
@@ -43,24 +44,10 @@ public class DepressionAssessmentService {
   }
 
   public DepressionAssessmentForm getDepAssessment(Long id) {
-    DepressionAssessmentFormEntity depAssessmentFormEntity = checkIfControlledSubstanceFormExists(
-        id);
-    DepressionAssessmentForm depAssessmentDto = new DepressionAssessmentForm();
-    depAssessmentDto.setId(id);
-    depAssessmentDto.setPatientId(UUID.fromString(depAssessmentFormEntity.getPatientId()));
-    depAssessmentDto.setPleasureInterest(depAssessmentFormEntity.getPleasureInterest());
-    depAssessmentDto.setDepressionRate(depAssessmentFormEntity.getDepressionRate());
-    depAssessmentDto.setSleepRate(depAssessmentFormEntity.getSleepRate());
-    depAssessmentDto.setFatigueRate(depAssessmentFormEntity.getFatigueRate());
-    depAssessmentDto.setAppetiteRate(depAssessmentFormEntity.getAppetiteRate());
-    depAssessmentDto.setFailureRate(depAssessmentFormEntity.getFailureRate());
-    depAssessmentDto.setConcentrationRate(depAssessmentFormEntity.getConcentrationRate());
-    depAssessmentDto.setRestlessnessRate(depAssessmentFormEntity.getRestlessnessRate());
-    depAssessmentDto.setSuicideThought(depAssessmentFormEntity.getSuicideThought());
-    return depAssessmentDto;
+    return PatientDtoMapper.mapDepressionAssessmentEntityToDto(checkIfDepressionAssessmentFormExists(id));
   }
 
-  private DepressionAssessmentFormEntity checkIfControlledSubstanceFormExists(Long id) {
+  private DepressionAssessmentFormEntity checkIfDepressionAssessmentFormExists(Long id) {
     return depressionAssessmentRepository.findOneById(id).orElseThrow(() ->
         new NotFoundException(
             String.format("Depression Assessment form with id %s does not exist", id)));

@@ -6,6 +6,7 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.MoodDisorderAssessmentFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.MoodDisorderAssessmentRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
@@ -52,28 +53,7 @@ public class MoodDisorderService {
   }
 
   public MoodDisorderAssessmentForm getMoodDisorder(Long id) {
-    MoodDisorderAssessmentFormEntity mdafEntity = checkIfMoodAssesmentExists(id);
-    MoodDisorderAssessmentForm dto = new MoodDisorderAssessmentForm();
-    dto.setId(mdafEntity.getId());
-    dto.setPatientId(UUID.fromString(mdafEntity.getPatientId()));
-    dto.setHyperFeeling(mdafEntity.getHyperFeeling());
-    dto.setIsIrritable(mdafEntity.getIsIrritable());
-    dto.setIsOverConfident(mdafEntity.getIsOverConfident());
-    dto.setLessSleep(mdafEntity.getLessSleep());
-    dto.setTalkMore(mdafEntity.getTalkMore());
-    dto.setPacedThoughts(mdafEntity.getPacedThoughts());
-    dto.setEasyDistraction(mdafEntity.getEasyDistraction());
-    dto.setOverEnergetic(mdafEntity.getOverEnergetic());
-    dto.setOverActive(mdafEntity.getOverActive());
-    dto.setOverSocial(mdafEntity.getOverSocial());
-    dto.setSexaholic(mdafEntity.getSexaholic());
-    dto.setOverFoolish(mdafEntity.getOverFoolish());
-    dto.setOverSpending(mdafEntity.getOverSpending());
-    dto.setSameTimeOccurrence(mdafEntity.getSameTimeOccurrence());
-    dto.setInfluenceOnLife(mdafEntity.getInfluenceOnLife());
-    dto.setIsRelativeWithBipolar(mdafEntity.getIsRelativeWithBipolar());
-    dto.setIsBipolarDiagnosed(mdafEntity.getIsBipolarDiagnosed());
-    return dto;
+    return PatientDtoMapper.mapMoodDisorderEntityToDto(checkIfMoodAssesmentExists(id));
   }
 
   private MoodDisorderAssessmentFormEntity checkIfMoodAssesmentExists(Long id) {

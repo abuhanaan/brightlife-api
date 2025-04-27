@@ -54,36 +54,7 @@ public class ScreeningService {
   }
 
   public ScreeningForm getScreening(Long id) {
-    ScreeningFormEntity entity = checkIfScreeningExists(id);
-    ScreeningForm dto = new ScreeningForm();
-    dto.setId(entity.getId());
-    dto.setPatientId(UUID.fromString(entity.getPatientId()));
-    dto.setMhBhPhone(entity.getMhBhPhone());
-    dto.setHelpNeeds(entity.getHelpNeeds());
-    dto.setInCrisis(entity.getInCrisis());
-    dto.setCurrentlyOnPsychMed(entity.getCurrentlyOnPsychMed());
-    dto.setStableOnMed(entity.getStableOnMed());
-    dto.setIsPsychiatristConsult(entity.getIsPsychiatristConsult());
-    dto.setIsTherapistConsult(entity.getIsTherapistConsult());
-    dto.setAnyMentalHealthTreatment(entity.getAnyMentalHealthTreatment());
-    dto.setSuicideAttemptHistory(entity.getSuicideAttemptHistory());
-    dto.setHarmToSelfOrOthers(entity.getHarmToSelfOrOthers());
-    setReferralToDto(dto, entity.getReferral());
-    return dto;
-  }
-
-  private void setReferralToDto(ScreeningForm dto, ReferralEntity referralEntity) {
-    Referral referralDto = new Referral();
-    referralDto.setId(referralEntity.getId());
-    referralEntity.setSource(referralEntity.getSource());
-    referralDto.setTherapist(referralEntity.getTherapist());
-    referralDto.setFirstName(referralEntity.getFirstName());
-    referralDto.setMiddleName(referralEntity.getMiddleName());
-    referralDto.setLastName(referralEntity.getLastName());
-    referralDto.setPhone(referralEntity.getPhone());
-    referralDto.setAddress(
-        PatientDtoMapper.mapAddressEntityToAddressDto(referralEntity.getAddress()));
-    dto.setReferral(referralDto);
+    return PatientDtoMapper.mapScreeningEntityToDto(checkIfScreeningExists(id));
   }
 
   private void setRefferal(ScreeningFormEntity screeningFormEntity, Referral referral) {

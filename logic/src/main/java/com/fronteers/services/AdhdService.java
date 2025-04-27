@@ -6,6 +6,7 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.AdhdFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.AdhdRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
@@ -51,29 +52,7 @@ public class AdhdService {
   }
 
   public ADHDForm getAdhd(Long id) {
-    AdhdFormEntity adhdFormEntity = checkIfAdhdFormExists(id);
-    ADHDForm adhdFormDto = new ADHDForm();
-    adhdFormDto.setId(adhdFormEntity.getId());
-    adhdFormDto.setPatientId(UUID.fromString(adhdFormEntity.getPatientId()));
-    adhdFormDto.setProjectCompletionProblem(adhdFormEntity.getProjectCompletionProblem());
-    adhdFormDto.setOrganizationRate(adhdFormEntity.getOrganizationRate());
-    adhdFormDto.setMemoryRate(adhdFormEntity.getMemoryRate());
-    adhdFormDto.setAttitudeToChallenge(adhdFormEntity.getAttitudeToChallenge());
-    adhdFormDto.setFidgetRateOnsit(adhdFormEntity.getFidgetRateOnsit());
-    adhdFormDto.setActiveToWork(adhdFormEntity.getActiveToWork());
-    adhdFormDto.setCarelessMistakes(adhdFormEntity.getCarelessMistakes());
-    adhdFormDto.setAttentionToBoringWork(adhdFormEntity.getAttentionToBoringWork());
-    adhdFormDto.setConcentrationRate(adhdFormEntity.getConcentrationRate());
-    adhdFormDto.setMisplaceRate(adhdFormEntity.getMisplaceRate());
-    adhdFormDto.setDistractionRate(adhdFormEntity.getDistractionRate());
-    adhdFormDto.setExcuseRate(adhdFormEntity.getExcuseRate());
-    adhdFormDto.setRestlessRate(adhdFormEntity.getRestlessRate());
-    adhdFormDto.setTroubleRelaxing(adhdFormEntity.getTroubleRelaxing());
-    adhdFormDto.setExcessiveTalks(adhdFormEntity.getExcessiveTalks());
-    adhdFormDto.setPeopleSentenceCompletion(adhdFormEntity.getPeopleSentenceCompletion());
-    adhdFormDto.setPatienceOnQueue(adhdFormEntity.getPatienceOnQueue());
-    adhdFormDto.setInterruptOthers(adhdFormEntity.getInterruptOthers());
-    return adhdFormDto;
+    return PatientDtoMapper.mapAdhdEntityToDto(checkIfAdhdFormExists(id));
   }
 
   private AdhdFormEntity checkIfAdhdFormExists(Long id) {

@@ -151,7 +151,7 @@ public class PatientsController implements PatientsApi {
     log.info("Submitting Initial Evaluation form for patient {} with request payload {}",
         request.getPatientId(), request);
     Success response = initialEvaluationService.submitInitialEvaluation(request);
-    log.info("Initial Evcaluation Form submitted successfully with response: {}", response);
+    log.info("Initial Evaluation Form submitted successfully with response: {}", response);
     return ResponseEntity.ok(response);
   }
 
@@ -235,7 +235,10 @@ public class PatientsController implements PatientsApi {
   //  Patient
   @Override
   public ResponseEntity<Patient> getPatient(String patientId) {
-    return null;
+    log.info("Fetching patient with id {}", patientId);
+    Patient response = patientService.fetchPatient(patientId);
+    log.info("Patient Fetched Successfully");
+    return ResponseEntity.ok(response);
   }
 
   @Override

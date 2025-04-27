@@ -22,6 +22,7 @@ import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.RelativesWithMentalIllnessOrSuicideEntity;
 import com.fronteers.models.entity.SubstanceUsageEntity;
 import com.fronteers.models.entity.forms.IntakeFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.AlcoholDrugHistoryRepository;
 import com.fronteers.repositories.IntakeRepository;
 import com.fronteers.repositories.MedicationRepository;
@@ -90,142 +91,7 @@ public class IntakeService {
   }
 
   public IntakeForm getIntake(Long id) {
-    IntakeFormEntity intakeFormEntity = intakeRepository.findOneById(id)
-        .orElseThrow(() -> new NotFoundException(
-            String.format("Intake form with id %s does not exist", id)));
-    return mapIntakeEntityToDto(intakeFormEntity);
-  }
-
-  private IntakeForm mapIntakeEntityToDto(IntakeFormEntity intakeFormEntity) {
-    IntakeForm dto = new IntakeForm();
-    dto.setId(intakeFormEntity.getId());
-    dto.setPatientId(UUID.fromString(intakeFormEntity.getPatientId()));
-    dto.setDoYouShareHome(intakeFormEntity.getDoYouShareHome());
-    dto.setComplaints(intakeFormEntity.getComplaints());
-    dto.setSexPreference(intakeFormEntity.getSexPreference());
-    dto.setOnProbation(intakeFormEntity.getOnProbation());
-    dto.setInLawsuit(intakeFormEntity.getInLawsuit());
-    dto.setChildrenCount(intakeFormEntity.getChildrenCount());
-    dto.setMarriageCount(intakeFormEntity.getMarriageCount());
-    dto.setPastMarriagesInfo(!intakeFormEntity.getPastMarriagesInfo().isEmpty() ?
-        intakeFormEntity.getPastMarriagesInfo().stream().map(pastMarriageEntity -> {
-          PastMarriagesInfo infoDto = new PastMarriagesInfo();
-          infoDto.setId(pastMarriageEntity.getId());
-          infoDto.setDuration(pastMarriageEntity.getDuration());
-          infoDto.setDivorceReason(pastMarriageEntity.getDivorceReason());
-          infoDto.setMarriageDescription(pastMarriageEntity.getDescription());
-          return infoDto;
-        }).toList() : null);
-    dto.setPastProviders(intakeFormEntity.getPastProviders().stream().map(pastProviderEntity -> {
-      PastProviders providerDto = new PastProviders();
-      providerDto.setId(pastProviderEntity.getId());
-      providerDto.setProvider(pastProviderEntity.getProvider());
-      providerDto.setAppointmentDate(pastProviderEntity.getAppointmentDate() != null ?
-          pastProviderEntity.getAppointmentDate().toLocalDate() : null);
-      return providerDto;
-    }).toList());
-    processDtoMedications(dto, intakeFormEntity.getMedications());
-    dto.setHasAttemptedSuicide(intakeFormEntity.getHasAttemptedSuicide());
-    dto.setIsPsychHospitalized(intakeFormEntity.getIsPsychHospitalized());
-    setAlcoholDrugHistory(intakeFormEntity.getAlcoholDrugHistory(), dto);
-    return dto;
-  }
-
-  private void setAlcoholDrugHistory(AlcoholDrugHistoryEntity adhEntity, IntakeForm intakeFormDto) {
-    AlcoholDrugHistory alcoholDrugHistoryDto = new AlcoholDrugHistory();
-    alcoholDrugHistoryDto.setId(adhEntity.getId());
-    alcoholDrugHistoryDto.setUsageFrequency(adhEntity.getUsageFrequency());
-    alcoholDrugHistoryDto.setBrand(adhEntity.getBrand());
-    alcoholDrugHistoryDto.setLastUsed(adhEntity.getLastUsed());
-    mapDrinkGuiltCheck(adhEntity, alcoholDrugHistoryDto);
-    alcoholDrugHistoryDto.setSubstanceUsages(
-        adhEntity.getSubstanceUsages().stream().map(substanceUsageEntity -> {
-          SubstanceUsage substanceUsage = new SubstanceUsage();
-          substanceUsage.setId(substanceUsageEntity.getId());
-          substanceUsage.setSubstanceName(substanceUsageEntity.getName());
-          substanceUsage.setAgeAtFirstUse(substanceUsageEntity.getAgeAtFirstUse());
-          substanceUsage.setQtyUse(substanceUsageEntity.getQtyUse());
-          substanceUsage.setUsageFrequency(substanceUsageEntity.getFrequentUsage());
-          substanceUsage.setLastUsed(substanceUsageEntity.getLastUsed());
-          return substanceUsage;
-        }).toList());
-    alcoholDrugHistoryDto.setWeeklyAverageSpending(adhEntity.getWeeklyAverageSpending());
-    alcoholDrugHistoryDto.setPastTreatmentInfo(
-        adhEntity.getPastTreatments().stream().map(pastTreatmentEntity -> {
-          PastTreatmentInfo pastTreatment = new PastTreatmentInfo();
-          pastTreatment.setId(pastTreatmentEntity.getId());
-          pastTreatment.setDate(pastTreatmentEntity.getDate().toLocalDate());
-          pastTreatment.setDrugTreated(pastTreatmentEntity.getDrugTreated());
-          pastTreatment.setIsTreatmentCompleted(pastTreatmentEntity.getIsTreatmentCompleted());
-          pastTreatment.setFacility(pastTreatmentEntity.getFacility());
-          return pastTreatment;
-        }).toList());
-    alcoholDrugHistoryDto.setIsPastStepRecoveryParticipant(
-        adhEntity.getIsPastStepRecoveryParticipant());
-    alcoholDrugHistoryDto.setIsCurrentStepRecoveryParticipant(
-        adhEntity.getIsCurrentStepRecoveryParticipant());
-    alcoholDrugHistoryDto.setBirthPlace(adhEntity.getBirthPlace());
-    alcoholDrugHistoryDto.growthPlace(adhEntity.getGrowthPlace());
-    alcoholDrugHistoryDto.setRaisedBy(adhEntity.getRaisedBy());
-    alcoholDrugHistoryDto.setSiblingsCount(adhEntity.getSiblingsCount());
-    alcoholDrugHistoryDto.setChildhoodInfo(adhEntity.getChildhoodInfo());
-    alcoholDrugHistoryDto.setWasPhysicallyAbused(adhEntity.getWasPhysicallyAbused());
-    alcoholDrugHistoryDto.setWasEmotionallyAbused(adhEntity.getWasEmotionallyAbused());
-    alcoholDrugHistoryDto.setWasSexuallyAbused(adhEntity.getWasSexuallyAbused());
-    alcoholDrugHistoryDto.setHasMedicalDisability(adhEntity.getHasMedicalDisability());
-    alcoholDrugHistoryDto.setPastMedicalHistory(adhEntity.getPastMedicalHistory() != null ?
-        adhEntity.getPastMedicalHistory().stream().toList() : null);
-    alcoholDrugHistoryDto.setPastSurgicalHistory(adhEntity.getPastSurgicalHistory() != null ?
-        adhEntity.getPastSurgicalHistory().stream().toList() : null);
-    alcoholDrugHistoryDto.setAllergies(adhEntity.getAllergies() != null ?
-        adhEntity.getAllergies().stream().toList() : null);
-    alcoholDrugHistoryDto.setRelativesWithMentalIllnessOrSuicide(
-        adhEntity.getRelativesWithMentalIllnessOrSuicide() != null ?
-            adhEntity.getRelativesWithMentalIllnessOrSuicide().stream().map(sickRelEntity -> {
-              RelativeWithMentalIllnessOrSuicide sickRelDto = new RelativeWithMentalIllnessOrSuicide();
-              sickRelDto.setId(sickRelEntity.getId());
-              sickRelDto.setRelative(sickRelEntity.getRelative());
-              sickRelDto.setIllness(sickRelDto.getIllness());
-              return sickRelDto;
-            }).toList() : null);
-    alcoholDrugHistoryDto.setOtherUsefulInfo(adhEntity.getOtherUsefulInfo());
-    intakeFormDto.setAlcoholDrugHistory(alcoholDrugHistoryDto);
-  }
-
-  private void mapDrinkGuiltCheck(AlcoholDrugHistoryEntity adhEntity,
-      AlcoholDrugHistory alcoholDrugHistoryDto) {
-    DrinkGuiltCheck drinkGuiltCheck = new DrinkGuiltCheck();
-    drinkGuiltCheck.setFeelGuilt(adhEntity.getFeelGuilt());
-    drinkGuiltCheck.setUpWithDrink(adhEntity.getUpWithDrink());
-    drinkGuiltCheck.setAngeredByCritics(adhEntity.getAngeredByCritics());
-    drinkGuiltCheck.setHaveCutBack(adhEntity.getHaveCutBack());
-    alcoholDrugHistoryDto.setDrinkGuiltCheck(drinkGuiltCheck);
-  }
-
-  private void processDtoMedications(IntakeForm dto, List<MedicationEntity> medications) {
-    List<Medication> currentMedicationDtos = new ArrayList<>();
-    List<Medication> pastMedicationDtos = new ArrayList<>();
-    for (MedicationEntity medicationEntity : medications) {
-      Medication medicationDto = new Medication();
-      setMedicationDtoProps(medicationDto, medicationEntity);
-      if (medicationEntity.getIsCurrent()) {
-        currentMedicationDtos.add(medicationDto);
-      } else {
-        pastMedicationDtos.add(medicationDto);
-      }
-    }
-    dto.setCurrentMedications(currentMedicationDtos);
-    dto.setPastMedications(pastMedicationDtos);
-  }
-
-  private void setMedicationDtoProps(Medication medicationDto, MedicationEntity medicationEntity) {
-    medicationDto.setMedication(medicationEntity.getMedication());
-    medicationDto.setId(medicationEntity.getId());
-    medicationDto.setCategory(
-        medicationEntity.getIsCurrent() ? CategoryEnum.CURRENT : CategoryEnum.PAST);
-    medicationDto.setPrescription(medicationEntity.getPrescription());
-    medicationDto.setConditionTreated(medicationEntity.getConditionTreated());
-    medicationDto.setUsageInstruction(medicationEntity.getInstruction());
+    return PatientDtoMapper.mapIntakeEntityToDto(checkIfIntakeFormExists(id));
   }
 
   private AlcoholDrugHistoryEntity processAlcoholDrugHistory(AlcoholDrugHistory alcoholDrugHistory,
@@ -376,6 +242,12 @@ public class IntakeService {
           .build());
     }
     return pastMarriageRepository.saveAll(pastMarriageEntities);
+  }
+
+  private IntakeFormEntity checkIfIntakeFormExists(Long id) {
+    return intakeRepository.findOneById(id)
+        .orElseThrow(() -> new NotFoundException(
+            String.format("Intake form with id %s does not exist", id)));
   }
 
   private void checkForIntakeUniqueness(String patientId) {

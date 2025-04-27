@@ -6,6 +6,7 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.ControlledSubstanceFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.ControlledSubstanceRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
@@ -46,22 +47,7 @@ public class ControlledSubstanceService {
   }
 
   public ControlledSubstanceForm getControlledSubstance(Long id) {
-    ControlledSubstanceFormEntity controlledSubstanceFormEntity = checkIfControlledSubstanceFormExists(
-        id);
-    ControlledSubstanceForm controlledSubstanceDto = new ControlledSubstanceForm();
-    controlledSubstanceDto.setId(id);
-    controlledSubstanceDto.setPatientId(
-        UUID.fromString(controlledSubstanceFormEntity.getPatientId()));
-    controlledSubstanceDto.setIsMinor(controlledSubstanceFormEntity.getIsMinor());
-    controlledSubstanceDto.setPatientSignDate(
-        controlledSubstanceFormEntity.getPatientSignDate().toInstant().atOffset(ZoneOffset.UTC));
-    controlledSubstanceDto.setGuardianName(controlledSubstanceFormEntity.getGuardianName());
-    controlledSubstanceDto.setPatientGuardianRelationship(
-        controlledSubstanceFormEntity.getPatientGuardianRelationship());
-    controlledSubstanceDto.setGuardianSignDate(
-        controlledSubstanceFormEntity.getGuardianSignDate().toInstant().atOffset(ZoneOffset.UTC));
-    controlledSubstanceDto.setFile(controlledSubstanceFormEntity.getControlledSubstanceFile());
-    return controlledSubstanceDto;
+    return PatientDtoMapper.mapControlledSubstanceEntityToDto(checkIfControlledSubstanceFormExists(id));
   }
 
   private ControlledSubstanceFormEntity checkIfControlledSubstanceFormExists(Long id) {

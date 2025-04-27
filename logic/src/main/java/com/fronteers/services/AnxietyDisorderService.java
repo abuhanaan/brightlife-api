@@ -6,6 +6,7 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.forms.AnxietyDisorderFormEntity;
+import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.AnxietyDisorderRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
@@ -42,19 +43,7 @@ public class AnxietyDisorderService {
   }
 
   public AnxietyDisorderForm getAnxietyDisorder(Long id) {
-    AnxietyDisorderFormEntity anxietyDisorderFormEntity = checkIfAnxietyDisorderFormExists(id);
-    AnxietyDisorderForm anxietyDisorderDto = new AnxietyDisorderForm();
-    anxietyDisorderDto.setId(id);
-    anxietyDisorderDto.setPatientId(UUID.fromString(anxietyDisorderFormEntity.getPatientId()));
-    anxietyDisorderDto.setNervousRate(anxietyDisorderFormEntity.getNervousRate());
-    anxietyDisorderDto.setControlOverWorry(anxietyDisorderFormEntity.getControlOverWorry());
-    anxietyDisorderDto.setExcessiveWorry(anxietyDisorderFormEntity.getExcessiveWorry());
-    anxietyDisorderDto.setRelaxTrouble(anxietyDisorderFormEntity.getRelaxTrouble());
-    anxietyDisorderDto.setRestlessness(anxietyDisorderFormEntity.getRestlessness());
-    anxietyDisorderDto.setAnnoyanceRate(anxietyDisorderFormEntity.getAnnoyanceRate());
-    anxietyDisorderDto.setFrightRate(anxietyDisorderFormEntity.getFrightRate());
-    anxietyDisorderDto.setLifeInfluenceSummary(anxietyDisorderDto.getLifeInfluenceSummary());
-    return anxietyDisorderDto;
+    return PatientDtoMapper.mapAnxietyDisorderEntityToDto(checkIfAnxietyDisorderFormExists(id));
   }
 
   private AnxietyDisorderFormEntity checkIfAnxietyDisorderFormExists(Long id) {
