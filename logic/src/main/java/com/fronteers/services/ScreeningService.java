@@ -13,7 +13,6 @@ import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.ReferralRepository;
 import com.fronteers.repositories.ScreeningRepository;
 import com.fronteers.utils.PatientUtils;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

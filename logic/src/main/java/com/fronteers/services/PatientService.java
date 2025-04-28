@@ -120,23 +120,31 @@ public class PatientService {
     patientForms.setAnxietyDisorderForm(patient.getAnxietyDisorderForm() != null ?
         PatientDtoMapper.mapAnxietyDisorderEntityToDto(patient.getAnxietyDisorderForm()) : null);
     patientForms.setControlledSubstanceForm(patient.getControlledSubstanceForm() != null ?
-        PatientDtoMapper.mapControlledSubstanceEntityToDto(patient.getControlledSubstanceForm()) : null);
+        PatientDtoMapper.mapControlledSubstanceEntityToDto(patient.getControlledSubstanceForm())
+        : null);
     patientForms.setDepressionAssessmentForm(patient.getDepressionAssessmentForm() != null ?
-        PatientDtoMapper.mapDepressionAssessmentEntityToDto(patient.getDepressionAssessmentForm()) : null);
+        PatientDtoMapper.mapDepressionAssessmentEntityToDto(patient.getDepressionAssessmentForm())
+        : null);
     patientForms.setInitialEvaluationForm(patient.getInitialEvaluationForm() != null ?
-        PatientDtoMapper.mapInitialEvaluationEntityToDto(patient.getInitialEvaluationForm()) : null);
+        PatientDtoMapper.mapInitialEvaluationEntityToDto(patient.getInitialEvaluationForm())
+        : null);
     patientForms.setIntakeForm(patient.getIntakeForm() != null ?
         PatientDtoMapper.mapIntakeEntityToDto(patient.getIntakeForm()) : null);
     patientForms.setMedicationConsentForm(patient.getMedicationConsentForm() != null ?
         PatientDtoMapper.mapMedConsentEntityToDto(patient.getMedicationConsentForm()) : null);
     patientForms.setMoodDisorderAssessmentForm(patient.getMoodDisorderAssessmentForm() != null ?
-        PatientDtoMapper.mapMoodDisorderEntityToDto(patient.getMoodDisorderAssessmentForm()) : null);
+        PatientDtoMapper.mapMoodDisorderEntityToDto(patient.getMoodDisorderAssessmentForm())
+        : null);
     patientForms.setPatientRegistrationForm(patient.getPatientRegistrationForm() != null ?
-        PatientDtoMapper.mapPatientRegFormEntityToPatientRegFormDTO(patient.getPatientRegistrationForm()) : null);
+        PatientDtoMapper.mapPatientRegFormEntityToPatientRegFormDTO(
+            patient.getPatientRegistrationForm()) : null);
     patientForms.setNoticeOfPrivacyPracticesForm(patient.getNoticeOfPrivacyPracticesForm() != null ?
-        PatientDtoMapper.mapNoticeOfPrivacyEntityToDto(patient.getNoticeOfPrivacyPracticesForm()) : null);
-    patientForms.setPatientInformationConsentAndFinancialPolicyForm(patient.getPatientInformationConsentAndFinancialPolicyForm() != null ?
-        PatientDtoMapper.mapPatientInfoConsentAndFinPolicyFormEntityToDto(patient.getPatientInformationConsentAndFinancialPolicyForm()) : null);
+        PatientDtoMapper.mapNoticeOfPrivacyEntityToDto(patient.getNoticeOfPrivacyPracticesForm())
+        : null);
+    patientForms.setPatientInformationConsentAndFinancialPolicyForm(
+        patient.getPatientInformationConsentAndFinancialPolicyForm() != null ?
+            PatientDtoMapper.mapPatientInfoConsentAndFinPolicyFormEntityToDto(
+                patient.getPatientInformationConsentAndFinancialPolicyForm()) : null);
     patientForms.setReleaseReceiveForm(patient.getReleaseReceiveForm() != null ?
         PatientDtoMapper.mapReleaseReceiveEntityToDto(patient.getReleaseReceiveForm()) : null);
     patientForms.setScreeningForm(patient.getScreeningForm() != null ?
@@ -144,9 +152,12 @@ public class PatientService {
     patientForms.setSelfPayForm(patient.getSelfPayForm() != null ?
         PatientDtoMapper.mapSelfPayEntityToDto(patient.getSelfPayForm()) : null);
     patientForms.setTerminationPolicy(patient.getTerminationPolicyForm() != null ?
-        PatientDtoMapper.mapTerminationPolicyEntityToDto(patient.getTerminationPolicyForm()) : null);
-    patientForms.setTreatmentConsentTelehealthInPersonTreatmentConsent(patient.getTreatmentConsentTelehealth() != null ?
-        PatientDtoMapper.mapTreatmentConsentTelehealthEntityToDto(patient.getTreatmentConsentTelehealth()) : null);
+        PatientDtoMapper.mapTerminationPolicyEntityToDto(patient.getTerminationPolicyForm())
+        : null);
+    patientForms.setTreatmentConsentTelehealthInPersonTreatmentConsent(
+        patient.getTreatmentConsentTelehealth() != null ?
+            PatientDtoMapper.mapTreatmentConsentTelehealthEntityToDto(
+                patient.getTreatmentConsentTelehealth()) : null);
     return patientForms;
   }
 
@@ -157,7 +168,8 @@ public class PatientService {
     }
   }
 
-  public PaginatedPatients searchPatients(Integer pageNumber, Integer limit, PatientSearch searchCriteria) {
+  public PaginatedPatients searchPatients(Integer pageNumber, Integer limit,
+      PatientSearch searchCriteria) {
     int maxLimit = (limit == null || limit > 100) ? 100 : limit;
     int currentPage =
         (pageNumber == null || pageNumber < 1) ? 0 : pageNumber - 1; // Adjust for 0-based indexing
@@ -166,29 +178,30 @@ public class PatientService {
     BooleanBuilder predicate = new BooleanBuilder();
     QPatientEntity qPatient = QPatientEntity.patientEntity;
 
-    if(searchCriteria.getFirstName() != null){
+    if (searchCriteria.getFirstName() != null) {
       predicate.and(qPatient.patientRegistrationForm.firstName.eq(searchCriteria.getFirstName()));
     }
-    if (searchCriteria.getLastName() != null){
+    if (searchCriteria.getLastName() != null) {
       predicate.and(qPatient.patientRegistrationForm.firstName.eq(searchCriteria.getLastName()));
     }
-    if (searchCriteria.getMiddleName() != null){
+    if (searchCriteria.getMiddleName() != null) {
       predicate.and(qPatient.patientRegistrationForm.middleName.eq(searchCriteria.getMiddleName()));
     }
-    if (searchCriteria.getDob() != null){
+    if (searchCriteria.getDob() != null) {
       predicate.and(qPatient.patientRegistrationForm.dob.eq(Date.valueOf(searchCriteria.getDob())));
     }
-    if (searchCriteria.getPhone() != null){
+    if (searchCriteria.getPhone() != null) {
       predicate.and(qPatient.patientRegistrationForm.cellPhone.eq(searchCriteria.getPhone()));
     }
-    if (searchCriteria.getEmail() != null){
+    if (searchCriteria.getEmail() != null) {
       predicate.and(qPatient.email.eq(searchCriteria.getEmail()));
     }
-    if (searchCriteria.getGender() != null){
+    if (searchCriteria.getGender() != null) {
       predicate.and((qPatient.patientRegistrationForm.gender.eq(searchCriteria.getGender())));
     }
-    if (searchCriteria.getMaritalStatus() != null){
-      predicate.and(qPatient.patientRegistrationForm.maritalStatus.eq(searchCriteria.getMaritalStatus()));
+    if (searchCriteria.getMaritalStatus() != null) {
+      predicate.and(
+          qPatient.patientRegistrationForm.maritalStatus.eq(searchCriteria.getMaritalStatus()));
     }
     if (searchCriteria.getCity() != null) {
       predicate.and(qPatient.patientRegistrationForm.address.city.eq(searchCriteria.getCity()));
@@ -203,7 +216,8 @@ public class PatientService {
     Pageable pageable = PageRequest.of(currentPage, safeLimit);
     Page<PatientEntity> patientPage = patientRepository.findAll(predicate, pageable);
     List<PatientEntity> patientList = patientPage.getContent();
-    List<BasicPatientInfo> patientDtos = PatientDtoMapper.mapPatientListToBasicInfoDtos(patientList);
+    List<BasicPatientInfo> patientDtos = PatientDtoMapper.mapPatientListToBasicInfoDtos(
+        patientList);
 
     PaginatedPatients response = new PaginatedPatients();
     response.setPatients(patientDtos);

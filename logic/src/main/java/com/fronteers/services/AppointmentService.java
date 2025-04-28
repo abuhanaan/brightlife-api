@@ -65,16 +65,17 @@ public class AppointmentService {
             appointmentEntity.getId(), appointmentEntity.getAppointmentDateTime()));
   }
 
-  private void prepareAppointmentForSave(AppointmentEntity appointmentEntity, Appointment request){
+  private void prepareAppointmentForSave(AppointmentEntity appointmentEntity, Appointment request) {
     OffsetDateTime appointmentDateTime = request.getAppointmentDateTime();
     LocalDate appointmentDate = appointmentDateTime.toLocalDate();
     int appointmentHour = appointmentDateTime.getHour();
     validateAppointmentDateTime(appointmentDateTime, appointmentDate, appointmentHour);
     PatientRegistrationFormEntity patientRegistrationFormEntity = null;
     if (request.getPatientId() != null) {
-      patientRegistrationFormEntity = regRepository.findByPatientId(request.getPatientId().toString());
+      patientRegistrationFormEntity = regRepository.findByPatientId(
+          request.getPatientId().toString());
     }
-    if (request.getPatientId() == null && request.getEmail() != null){
+    if (request.getPatientId() == null && request.getEmail() != null) {
       patientRegistrationFormEntity = regRepository.findOneByEmail(request.getEmail());
     }
     if (patientRegistrationFormEntity != null) {
@@ -86,7 +87,7 @@ public class AppointmentService {
   }
 
   private void validateAppointmentDateTime(OffsetDateTime appointmentDateTime,
-      LocalDate appointmentDate, int appointmentHour){
+      LocalDate appointmentDate, int appointmentHour) {
     // 0. Check if the appointment date is in the past
     if (appointmentDate.isBefore(LocalDate.now())) {
       throw new BadRequestException("Appointments cannot be booked for past dates.");
@@ -109,15 +110,16 @@ public class AppointmentService {
     }
   }
 
-  public Success changeAppointmentStatus(Long id, UpdateAppointmentStatus request){
+  public Success changeAppointmentStatus(Long id, UpdateAppointmentStatus request) {
     AppointmentEntity appointmentEntity = checkIfAppointmentExists(id);
-    if (appointmentEntity.getStatus().equals(request.getStatus())){
+    if (appointmentEntity.getStatus().equals(request.getStatus())) {
       throw new ConflictException("Appointment status is already set to " + request.getStatus());
     }
     appointmentEntity.setStatus(request.getStatus());
     appointmentRepository.save(appointmentEntity);
     return new Success(true, "Appointment Status Updated Successfully",
-        String.format("Appointment status has been successfully updated to %s successfully", request.getStatus()));
+        String.format("Appointment status has been successfully updated to %s successfully",
+            request.getStatus()));
   }
 
   public TimeSlots getAppointmentTimeSlots() {
@@ -176,7 +178,8 @@ public class AppointmentService {
     setCommonAppointmentProperties(appointmentEntity, request);
   }
 
-  private void setCommonAppointmentProperties(AppointmentEntity appointmentEntity, Appointment request){
+  private void setCommonAppointmentProperties(AppointmentEntity appointmentEntity,
+      Appointment request) {
     appointmentEntity.setVerificationStatus(request.getVerificationStatus());
     appointmentEntity.setAppointmentType(request.getAppointmentType());
     appointmentEntity.setService(request.getService());
@@ -195,7 +198,9 @@ public class AppointmentService {
     appointmentEntity.setDob(request.getDob() != null ? Date.valueOf(request.getDob()) : null);
     appointmentEntity.setPhone(request.getPhone());
     appointmentEntity.setEmail(request.getEmail());
-    appointmentEntity.setAddress(request.getAddress() != null ? patientUtils.mapAddressProperties(request.getAddress()) : null);
+    appointmentEntity.setAddress(
+        request.getAddress() != null ? patientUtils.mapAddressProperties(request.getAddress())
+            : null);
     appointmentEntity.setAppointmentDateTime(appointmentDateTime);
     appointmentEntity.setPaymentMethod(request.getPaymentMethod());
   }

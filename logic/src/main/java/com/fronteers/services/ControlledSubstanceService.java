@@ -11,8 +11,6 @@ import com.fronteers.repositories.ControlledSubstanceRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
 import java.sql.Timestamp;
-import java.time.ZoneOffset;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +45,8 @@ public class ControlledSubstanceService {
   }
 
   public ControlledSubstanceForm getControlledSubstance(Long id) {
-    return PatientDtoMapper.mapControlledSubstanceEntityToDto(checkIfControlledSubstanceFormExists(id));
+    return PatientDtoMapper.mapControlledSubstanceEntityToDto(
+        checkIfControlledSubstanceFormExists(id));
   }
 
   private ControlledSubstanceFormEntity checkIfControlledSubstanceFormExists(Long id) {

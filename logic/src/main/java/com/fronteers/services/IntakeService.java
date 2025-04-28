@@ -1,10 +1,8 @@
 package com.fronteers.services;
 
 import com.fronteers.brightlife.model.AlcoholDrugHistory;
-import com.fronteers.brightlife.model.DrinkGuiltCheck;
 import com.fronteers.brightlife.model.IntakeForm;
 import com.fronteers.brightlife.model.Medication;
-import com.fronteers.brightlife.model.Medication.CategoryEnum;
 import com.fronteers.brightlife.model.PastMarriagesInfo;
 import com.fronteers.brightlife.model.PastProviders;
 import com.fronteers.brightlife.model.PastTreatmentInfo;
@@ -38,7 +36,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

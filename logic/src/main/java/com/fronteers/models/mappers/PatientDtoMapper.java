@@ -74,7 +74,8 @@ import java.util.UUID;
 
 public class PatientDtoMapper {
 
-  public static List<BasicPatientInfo> mapPatientListToBasicInfoDtos(List<PatientEntity> patientEntities){
+  public static List<BasicPatientInfo> mapPatientListToBasicInfoDtos(
+      List<PatientEntity> patientEntities) {
     return patientEntities.stream().map(patientEntity -> {
       BasicPatientInfo dto = new BasicPatientInfo();
       dto.setId(patientEntity.getId());
@@ -203,7 +204,8 @@ public class PatientDtoMapper {
     guarantorDTO.setId(guarantorEntity.getId());
     guarantorDTO.setFirstName(guarantorEntity.getFirstName());
     guarantorDTO.setLastName(guarantorEntity.getLastName());
-    guarantorDTO.setDob(guarantorEntity.getDob() != null ? guarantorEntity.getDob().toLocalDate() : null);
+    guarantorDTO.setDob(
+        guarantorEntity.getDob() != null ? guarantorEntity.getDob().toLocalDate() : null);
     guarantorDTO.setRelationship(guarantorEntity.getRelationship());
     guarantorDTO.setAddress(mapAddressEntityToAddressDto(guarantorEntity.getAddress()));
     guarantorDTO.setPhone(guarantorEntity.getPhone());
@@ -382,7 +384,7 @@ public class PatientDtoMapper {
     return initialEvaluationFormDto;
   }
 
-  public static ADHDForm mapAdhdEntityToDto(AdhdFormEntity adhdFormEntity){
+  public static ADHDForm mapAdhdEntityToDto(AdhdFormEntity adhdFormEntity) {
     ADHDForm adhdFormDto = new ADHDForm();
     adhdFormDto.setId(adhdFormEntity.getId());
     adhdFormDto.setPatientId(UUID.fromString(adhdFormEntity.getPatientId()));
@@ -407,7 +409,8 @@ public class PatientDtoMapper {
     return adhdFormDto;
   }
 
-  public static AnxietyDisorderForm mapAnxietyDisorderEntityToDto(AnxietyDisorderFormEntity entity){
+  public static AnxietyDisorderForm mapAnxietyDisorderEntityToDto(
+      AnxietyDisorderFormEntity entity) {
     AnxietyDisorderForm anxietyDisorderDto = new AnxietyDisorderForm();
     anxietyDisorderDto.setId(entity.getId());
     anxietyDisorderDto.setPatientId(UUID.fromString(entity.getPatientId()));
@@ -423,7 +426,7 @@ public class PatientDtoMapper {
   }
 
   public static ControlledSubstanceForm mapControlledSubstanceEntityToDto(
-      ControlledSubstanceFormEntity controlledSubstanceFormEntity){
+      ControlledSubstanceFormEntity controlledSubstanceFormEntity) {
     ControlledSubstanceForm controlledSubstanceDto = new ControlledSubstanceForm();
     controlledSubstanceDto.setId(controlledSubstanceFormEntity.getId());
     controlledSubstanceDto.setPatientId(
@@ -441,7 +444,7 @@ public class PatientDtoMapper {
   }
 
   public static DepressionAssessmentForm mapDepressionAssessmentEntityToDto(
-      DepressionAssessmentFormEntity depAssessmentFormEntity){
+      DepressionAssessmentFormEntity depAssessmentFormEntity) {
     DepressionAssessmentForm depAssessmentDto = new DepressionAssessmentForm();
     depAssessmentDto.setId(depAssessmentFormEntity.getId());
     depAssessmentDto.setPatientId(UUID.fromString(depAssessmentFormEntity.getPatientId()));
@@ -493,7 +496,7 @@ public class PatientDtoMapper {
   }
 
   public static MoodDisorderAssessmentForm mapMoodDisorderEntityToDto(
-      MoodDisorderAssessmentFormEntity mdafEntity){
+      MoodDisorderAssessmentFormEntity mdafEntity) {
     MoodDisorderAssessmentForm dto = new MoodDisorderAssessmentForm();
     dto.setId(mdafEntity.getId());
     dto.setPatientId(UUID.fromString(mdafEntity.getPatientId()));
@@ -517,7 +520,7 @@ public class PatientDtoMapper {
     return dto;
   }
 
-  public static ScreeningForm mapScreeningEntityToDto(ScreeningFormEntity entity){
+  public static ScreeningForm mapScreeningEntityToDto(ScreeningFormEntity entity) {
     ScreeningForm dto = new ScreeningForm();
     dto.setId(entity.getId());
     dto.setPatientId(UUID.fromString(entity.getPatientId()));
@@ -549,7 +552,8 @@ public class PatientDtoMapper {
     dto.setReferral(referralDto);
   }
 
-  private static void setAlcoholDrugHistory(AlcoholDrugHistoryEntity adhEntity, IntakeForm intakeFormDto) {
+  private static void setAlcoholDrugHistory(AlcoholDrugHistoryEntity adhEntity,
+      IntakeForm intakeFormDto) {
     AlcoholDrugHistory alcoholDrugHistoryDto = new AlcoholDrugHistory();
     alcoholDrugHistoryDto.setId(adhEntity.getId());
     alcoholDrugHistoryDto.setUsageFrequency(adhEntity.getUsageFrequency());
@@ -636,7 +640,8 @@ public class PatientDtoMapper {
     dto.setPastMedications(pastMedicationDtos);
   }
 
-  private static void setMedicationDtoProps(Medication medicationDto, MedicationEntity medicationEntity) {
+  private static void setMedicationDtoProps(Medication medicationDto,
+      MedicationEntity medicationEntity) {
     medicationDto.setMedication(medicationEntity.getMedication());
     medicationDto.setId(medicationEntity.getId());
     medicationDto.setCategory(

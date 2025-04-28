@@ -14,7 +14,7 @@ public class DashboardController implements DashboardApi {
   private final DashboardService dashboardService;
 
   @Override
-  public ResponseEntity<Dashboard> getDashboard(){
+  public ResponseEntity<Dashboard> getDashboard() {
     Dashboard response = dashboardService.getDashboard();
     return ResponseEntity.ok(response);
   }

@@ -10,7 +10,6 @@ import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.DepressionAssessmentRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +43,8 @@ public class DepressionAssessmentService {
   }
 
   public DepressionAssessmentForm getDepAssessment(Long id) {
-    return PatientDtoMapper.mapDepressionAssessmentEntityToDto(checkIfDepressionAssessmentFormExists(id));
+    return PatientDtoMapper.mapDepressionAssessmentEntityToDto(
+        checkIfDepressionAssessmentFormExists(id));
   }
 
   private DepressionAssessmentFormEntity checkIfDepressionAssessmentFormExists(Long id) {

@@ -31,7 +31,8 @@ public class DashboardService {
         AppointmentStatusEnum.UPCOMING);
     dashboard.setRecentPatients(PatientDtoMapper.mapPatientListToBasicInfoDtos(recentTenPatients));
     dashboard.setRecentReviews(ReviewMapper.mapReviewEntitiesToDtos(recentReviews));
-    dashboard.setUpcomingAppointments(AppointmentMapper.mapAppointmentEntitiesToDto(recentAppointments));
+    dashboard.setUpcomingAppointments(
+        AppointmentMapper.mapAppointmentEntitiesToDto(recentAppointments));
     dashboard.setAppointmentCount(appointmentRepository.count());
     dashboard.setPatientCount(patientRepository.count());
     dashboard.setReviewCount(reviewRepository.count());

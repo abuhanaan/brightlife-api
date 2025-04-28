@@ -1480,8 +1480,8 @@ components:
     PatientSearch:
       type: object
       properties:
-#        patientId:
-#          $ref: "#/components/schemas/PatientId"
+        #        patientId:
+        #          $ref: "#/components/schemas/PatientId"
         firstName:
           type: string
         lastName:
@@ -1502,8 +1502,8 @@ components:
           type: string
         state:
           type: string
-#        paymentMode:
-#          $ref: '#/components/schemas/PaymentModeEnum'
+    #        paymentMode:
+    #          $ref: '#/components/schemas/PaymentModeEnum'
 
     AppointmentSearch:
       type: object

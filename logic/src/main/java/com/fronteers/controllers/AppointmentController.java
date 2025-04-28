@@ -48,7 +48,7 @@ public class AppointmentController implements AppointmentApi {
   }
 
   @Override
-  public ResponseEntity<Success> changeStatus(Long id, UpdateAppointmentStatus request){
+  public ResponseEntity<Success> changeStatus(Long id, UpdateAppointmentStatus request) {
     log.info("Changing Appointment {} to status {}", id, request.getStatus());
     Success response = appointmentService.changeAppointmentStatus(id, request);
     log.info("Appointment status successfully changed to {}", request.getStatus());

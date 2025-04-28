@@ -5,6 +5,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
 public class CopyBeanUtil {
+
   public static void copyNonNullProperties(Object src, Object target) {
     BeanWrapper srcWrap = new BeanWrapperImpl(src);
     BeanWrapper targetWrap = new BeanWrapperImpl(target);

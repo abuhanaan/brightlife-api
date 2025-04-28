@@ -10,7 +10,6 @@ import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.repositories.AnxietyDisorderRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.utils.PatientUtils;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
