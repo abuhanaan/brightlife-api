@@ -39,6 +39,6 @@ public class ReviewEntity extends BaseEntity {
   @Column(name = "rating")
   private Integer rating;
 
-  @Column(name = "review_message")
+  @Column(name = "review_message", columnDefinition = "TEXT")
   private String reviewMessage;
 }
