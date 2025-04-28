@@ -10,6 +10,6 @@ public interface PatientRegistrationFormRepository extends
     JpaRepository<PatientRegistrationFormEntity, Long> {
 
   Optional<PatientRegistrationFormEntity> findOneByPatientId(String patientId);
-
+  PatientRegistrationFormEntity findByPatientId(String patientId);
   PatientRegistrationFormEntity findOneByEmail(String email);
 }

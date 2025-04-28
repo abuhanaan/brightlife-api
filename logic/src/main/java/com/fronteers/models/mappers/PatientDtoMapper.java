@@ -4,6 +4,7 @@ import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.Address;
 import com.fronteers.brightlife.model.AlcoholDrugHistory;
 import com.fronteers.brightlife.model.AnxietyDisorderForm;
+import com.fronteers.brightlife.model.BasicPatientInfo;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
 import com.fronteers.brightlife.model.DrinkGuiltCheck;
@@ -46,6 +47,7 @@ import com.fronteers.models.entity.GuarantorEntity;
 import com.fronteers.models.entity.InsuranceEntity;
 import com.fronteers.models.entity.MedicationEntity;
 import com.fronteers.models.entity.ParentGuardianEntity;
+import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.PharmacyEntity;
 import com.fronteers.models.entity.PrimaryCarePhysicianEntity;
 import com.fronteers.models.entity.ReferralEntity;
@@ -72,6 +74,27 @@ import java.util.UUID;
 
 public class PatientDtoMapper {
 
+  public static List<BasicPatientInfo> mapPatientListToBasicInfoDtos(List<PatientEntity> patientEntities){
+    return patientEntities.stream().map(patientEntity -> {
+      BasicPatientInfo dto = new BasicPatientInfo();
+      dto.setId(patientEntity.getId());
+      dto.setPatientId(UUID.fromString(patientEntity.getPatientId()));
+      dto.setEmail(patientEntity.getEmail());
+      PatientRegistrationFormEntity regForm = patientEntity.getPatientRegistrationForm();
+      if (regForm != null) {
+        dto.setDob(regForm.getDob() != null ? regForm.getDob().toLocalDate() : null);
+        dto.setGender(regForm.getGender());
+        dto.setPhone(regForm.getCellPhone());
+        dto.setFirstName(regForm.getFirstName());
+        dto.setLastName(regForm.getLastName());
+        return dto;
+      }
+      String[] names = patientEntity.getFullName().trim().split("\\s+");
+      dto.setFirstName(names.length > 0 ? names[0] : "");
+      dto.setLastName(names.length > 1 ? names[names.length - 1] : "");
+      return dto;
+    }).toList();
+  }
 
   public static PatientRegistrationForm mapPatientRegFormEntityToPatientRegFormDTO(
       PatientRegistrationFormEntity patientRegistrationFormEntity) {
@@ -118,7 +141,8 @@ public class PatientDtoMapper {
 
   private static PolicyHolder mapInsurancePolicyHolderDTO(InsuranceEntity insuranceEntity) {
     PolicyHolder policyHolder = new PolicyHolder();
-    policyHolder.setDob(insuranceEntity.getDob().toLocalDate());
+    policyHolder.setDob(insuranceEntity.getDob() != null ?
+        insuranceEntity.getDob().toLocalDate() : null);
     policyHolder.setFirstName(insuranceEntity.getFirstName());
     policyHolder.setLastName(insuranceEntity.getLastName());
     policyHolder.setPhone(insuranceEntity.getPhone());
@@ -179,7 +203,7 @@ public class PatientDtoMapper {
     guarantorDTO.setId(guarantorEntity.getId());
     guarantorDTO.setFirstName(guarantorEntity.getFirstName());
     guarantorDTO.setLastName(guarantorEntity.getLastName());
-    guarantorDTO.setDob(guarantorEntity.getDob().toLocalDate());
+    guarantorDTO.setDob(guarantorEntity.getDob() != null ? guarantorEntity.getDob().toLocalDate() : null);
     guarantorDTO.setRelationship(guarantorEntity.getRelationship());
     guarantorDTO.setAddress(mapAddressEntityToAddressDto(guarantorEntity.getAddress()));
     guarantorDTO.setPhone(guarantorEntity.getPhone());
@@ -196,7 +220,8 @@ public class PatientDtoMapper {
     personalInfo.setLastName(patientRegistrationFormEntity.getLastName());
     personalInfo.setMiddleName(patientRegistrationFormEntity.getMiddleName());
     personalInfo.setGender(patientRegistrationFormEntity.getGender());
-    personalInfo.setDob(patientRegistrationFormEntity.getDob().toLocalDate());
+    personalInfo.setDob(patientRegistrationFormEntity.getDob() != null ?
+        patientRegistrationFormEntity.getDob().toLocalDate() : null);
     personalInfo.maritalStatus(patientRegistrationFormEntity.getMaritalStatus());
     personalInfo.setSocialSecurityNumber(patientRegistrationFormEntity.getSocialSecurityNumber());
     personalInfo.setHomePhone(patientRegistrationFormEntity.getHomePhone());
