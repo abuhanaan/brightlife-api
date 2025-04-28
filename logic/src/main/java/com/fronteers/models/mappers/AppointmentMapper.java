@@ -19,8 +19,8 @@ public class AppointmentMapper {
     appointment.setMiddleName(appointmentEntity.getMiddleName());
     appointment.setLastName(appointmentEntity.getLastName());
     appointment.setGender(appointmentEntity.getGender());
-    appointment.setDob(
-        appointmentEntity.getDob().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    appointment.setDob(appointmentEntity.getDob() != null ?
+        appointmentEntity.getDob().toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null);
     appointment.setPhone(appointmentEntity.getPhone());
     appointment.setEmail(appointmentEntity.getEmail());
     appointment.setAddress(
@@ -32,6 +32,7 @@ public class AppointmentMapper {
     appointment.setPaymentMethod(appointmentEntity.getPaymentMethod());
     appointment.setInsuranceName(appointmentEntity.getInsuranceName());
     appointment.setInsuranceNumber(appointmentEntity.getInsuranceNumber());
+    appointment.setStatus(appointmentEntity.getStatus());
     return appointment;
   }
 

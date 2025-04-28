@@ -1,5 +1,6 @@
 package com.fronteers.repositories;
 
+import com.fronteers.brightlife.model.AppointmentStatusEnum;
 import com.fronteers.models.entity.AppointmentEntity;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -25,4 +26,6 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
   @Query("SELECT a FROM AppointmentEntity a WHERE a.appointmentDateTime BETWEEN :start AND :end")
   List<AppointmentEntity> findAppointmentsBetween(@Param("start") OffsetDateTime start,
       @Param("end") OffsetDateTime end);
+
+  List<AppointmentEntity> findTop10ByStatusOrderByCreatedAtDesc(AppointmentStatusEnum status);
 }

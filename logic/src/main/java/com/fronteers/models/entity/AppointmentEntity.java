@@ -37,6 +37,7 @@ public class AppointmentEntity extends BaseEntity {
   @Column(name = "is_new")
   private Boolean isNew;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "status")
   private AppointmentStatusEnum status;
 

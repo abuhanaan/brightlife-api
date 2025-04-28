@@ -1205,13 +1205,35 @@ components:
         file:
           type: string
 
+    BasicPatientInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        patientId:
+          $ref: "#/components/schemas/PatientId"
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dob:
+          $ref: "#/components/schemas/Date"
+        gender:
+          $ref: "#/components/schemas/GenderEnum"
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+
     Dashboard:
       type: object
       properties:
         recentPatients:
           type: array
           items:
-            $ref: "#/components/schemas/Patient"
+            $ref: "#/components/schemas/BasicPatientInfo"
         upcomingAppointments:
           type: array
           items:
@@ -1222,10 +1244,13 @@ components:
             $ref: "#/components/schemas/Review"
         patientCount:
           type: integer
+          format: int64
         appointmentCount:
           type: integer
+          format: int64
         reviewCount:
           type: integer
+          format: int64
 
     PaginatedReviews:
       type: object
@@ -1351,7 +1376,7 @@ components:
         patients:
           type: array
           items:
-            $ref: "#/components/schemas/Patient"
+            $ref: "#/components/schemas/BasicPatientInfo"
 
     PaginatedAppointments:
       type: object
@@ -1455,8 +1480,8 @@ components:
     PatientSearch:
       type: object
       properties:
-        patientId:
-          $ref: "#/components/schemas/PatientId"
+#        patientId:
+#          $ref: "#/components/schemas/PatientId"
         firstName:
           type: string
         lastName:
@@ -1477,8 +1502,8 @@ components:
           type: string
         state:
           type: string
-        paymentMode:
-          $ref: '#/components/schemas/PaymentModeEnum'
+#        paymentMode:
+#          $ref: '#/components/schemas/PaymentModeEnum'
 
     AppointmentSearch:
       type: object
@@ -3016,7 +3041,6 @@ paths:
   /api/v1/appointments/{idParam}:
     get:
       summary: Fetches An Appointment By ID
-      security: [ ]
       tags:
         - Appointment
       operationId: getAppointment
@@ -3043,7 +3067,6 @@ paths:
   /api/v1/appointments/update:
     put:
       summary: Updates An Appointment
-      security: [ ]
       tags:
         - Appointment
       operationId: updateAppointment
@@ -3075,7 +3098,6 @@ paths:
   /api/v1/appointments/status/{idParam}:
     put:
       summary: Updates An Appointment's Status
-      security: [ ]
       tags:
         - Appointment
       operationId: changeStatus

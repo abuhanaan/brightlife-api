@@ -15,6 +15,8 @@ import com.fronteers.models.entity.QAppointmentEntity;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
 import com.fronteers.models.mappers.AppointmentMapper;
 import com.fronteers.repositories.AppointmentRepository;
+import com.fronteers.repositories.PatientRegistrationFormRepository;
+import com.fronteers.utils.CopyBeanUtil;
 import com.fronteers.utils.PatientUtils;
 import com.querydsl.core.BooleanBuilder;
 import java.sql.Date;
@@ -51,40 +53,29 @@ public class AppointmentService {
   private final AppointmentRepository appointmentRepository;
   private final PatientService patientService;
   private final PatientUtils patientUtils;
+  private final PatientRegistrationFormRepository regRepository;
 
   public Success submit(Appointment request) {
+    AppointmentEntity appointmentEntity = new AppointmentEntity();
+    prepareAppointmentForSave(appointmentEntity, request);
+    appointmentEntity.setStatus(AppointmentStatusEnum.UPCOMING);
+    appointmentRepository.save(appointmentEntity);
+    return new Success(true, "Appointment Submitted Successfully",
+        String.format("Appointment id: %s, Appointment time: %s",
+            appointmentEntity.getId(), appointmentEntity.getAppointmentDateTime()));
+  }
+
+  private void prepareAppointmentForSave(AppointmentEntity appointmentEntity, Appointment request){
     OffsetDateTime appointmentDateTime = request.getAppointmentDateTime();
     LocalDate appointmentDate = appointmentDateTime.toLocalDate();
     int appointmentHour = appointmentDateTime.getHour();
-
-    // 1. Check if the appointment is on a weekend
-    if (isWeekend(appointmentDate)) {
-      throw new IllegalArgumentException("Appointments cannot be booked on weekends.");
-    }
-
-    // 2. Check if the appointment is on a public holiday
-    if (US_HOLIDAYS.contains(appointmentDate)) {
-      throw new IllegalArgumentException("Appointments cannot be booked on public holidays.");
-    }
-
-    // 3. Check if the appointment is within operating hours (9 AM - 5 PM)
-    if (appointmentHour < 9 || appointmentHour >= 17) {
-      throw new IllegalArgumentException("Appointments must be between 9 AM and 5 PM.");
-    }
-
-    // 4. Check if the appointment time slot is already taken
-    if (appointmentRepository.existsByAppointmentDateTime(appointmentDateTime)) {
-      throw new IllegalArgumentException("This appointment slot is already taken.");
-    }
-
-    // 5. Create new appointment entity
-    AppointmentEntity appointmentEntity = new AppointmentEntity();
-    appointmentEntity.setStatus(AppointmentStatusEnum.UPCOMING);
+    validateAppointmentDateTime(appointmentDateTime, appointmentDate, appointmentHour);
     PatientRegistrationFormEntity patientRegistrationFormEntity = null;
-
     if (request.getPatientId() != null) {
-      patientRegistrationFormEntity = patientService.checkIfPatientExist(
-          request.getPatientId().toString());
+      patientRegistrationFormEntity = regRepository.findByPatientId(request.getPatientId().toString());
+    }
+    if (request.getPatientId() == null && request.getEmail() != null){
+      patientRegistrationFormEntity = regRepository.findOneByEmail(request.getEmail());
     }
     if (patientRegistrationFormEntity != null) {
       mapOldPatientAppointmentDetails(appointmentEntity, request, patientRegistrationFormEntity,
@@ -92,11 +83,30 @@ public class AppointmentService {
     } else {
       mapNewPatientAppointmentDetails(appointmentEntity, request, appointmentDateTime);
     }
+  }
 
-    appointmentRepository.save(appointmentEntity);
-    return new Success(true, "Appointment Submitted Successfully",
-        String.format("Appointment id: %s, Appointment time: %s",
-            appointmentEntity.getId(), appointmentEntity.getAppointmentDateTime()));
+  private void validateAppointmentDateTime(OffsetDateTime appointmentDateTime,
+      LocalDate appointmentDate, int appointmentHour){
+    // 0. Check if the appointment date is in the past
+    if (appointmentDate.isBefore(LocalDate.now())) {
+      throw new BadRequestException("Appointments cannot be booked for past dates.");
+    }
+    // 1. Check if the appointment is on a weekend
+    if (isWeekend(appointmentDate)) {
+      throw new BadRequestException("Appointments cannot be booked on weekends.");
+    }
+    // 2. Check if the appointment is on a public holiday
+    if (US_HOLIDAYS.contains(appointmentDate)) {
+      throw new BadRequestException("Appointments cannot be booked on public holidays.");
+    }
+    // 3. Check if the appointment is within operating hours (9 AM - 5 PM)
+    if (appointmentHour < 9 || appointmentHour >= 17) {
+      throw new BadRequestException("Appointments must be between 9 AM and 5 PM.");
+    }
+    // 4. Check if the appointment time slot is already taken
+    if (appointmentRepository.existsByAppointmentDateTime(appointmentDateTime)) {
+      throw new IllegalArgumentException("This appointment slot is already taken.");
+    }
   }
 
   public Success changeAppointmentStatus(Long id, UpdateAppointmentStatus request){
@@ -154,19 +164,23 @@ public class AppointmentService {
       OffsetDateTime appointmentDateTime) {
     appointmentEntity.setPatient(patientRegFormEntity.getPatient());
     appointmentEntity.setIsNew(false);
-    appointmentEntity.setVerificationStatus(request.getVerificationStatus());
     appointmentEntity.setFirstName(patientRegFormEntity.getFirstName());
     appointmentEntity.setLastName(patientRegFormEntity.getLastName());
     appointmentEntity.setGender(patientRegFormEntity.getGender());
     appointmentEntity.setDob(patientRegFormEntity.getDob());
-    appointmentEntity.setPhone(request.getPhone());
+    appointmentEntity.setPhone(patientRegFormEntity.getCellPhone());
     appointmentEntity.setEmail(patientRegFormEntity.getEmail());
     appointmentEntity.setAddress(patientRegFormEntity.getAddress());
+    appointmentEntity.setAppointmentDateTime(appointmentDateTime);
+    appointmentEntity.setPaymentMethod(patientRegFormEntity.getPaymentMode());
+    setCommonAppointmentProperties(appointmentEntity, request);
+  }
+
+  private void setCommonAppointmentProperties(AppointmentEntity appointmentEntity, Appointment request){
+    appointmentEntity.setVerificationStatus(request.getVerificationStatus());
     appointmentEntity.setAppointmentType(request.getAppointmentType());
     appointmentEntity.setService(request.getService());
-    appointmentEntity.setAppointmentDateTime(appointmentDateTime);
     appointmentEntity.setPurpose(request.getPurpose());
-    appointmentEntity.setPaymentMethod(request.getPaymentMethod());
     appointmentEntity.setInsuranceName(request.getInsuranceName());
     appointmentEntity.setInsuranceNumber(request.getInsuranceNumber());
   }
@@ -174,21 +188,16 @@ public class AppointmentService {
   private void mapNewPatientAppointmentDetails(AppointmentEntity appointmentEntity,
       Appointment request, OffsetDateTime appointmentDateTime) {
     appointmentEntity.setIsNew(true);
-    appointmentEntity.setVerificationStatus(request.getVerificationStatus());
+    setCommonAppointmentProperties(appointmentEntity, request);
     appointmentEntity.setFirstName(request.getFirstName());
     appointmentEntity.setLastName(request.getLastName());
     appointmentEntity.setGender(request.getGender());
-    appointmentEntity.setDob(Date.valueOf(request.getDob()));
+    appointmentEntity.setDob(request.getDob() != null ? Date.valueOf(request.getDob()) : null);
     appointmentEntity.setPhone(request.getPhone());
     appointmentEntity.setEmail(request.getEmail());
-    appointmentEntity.setAddress(patientUtils.mapAddressProperties(request.getAddress()));
-    appointmentEntity.setAppointmentType(request.getAppointmentType());
-    appointmentEntity.setService(request.getService());
+    appointmentEntity.setAddress(request.getAddress() != null ? patientUtils.mapAddressProperties(request.getAddress()) : null);
     appointmentEntity.setAppointmentDateTime(appointmentDateTime);
-    appointmentEntity.setPurpose(request.getPurpose());
     appointmentEntity.setPaymentMethod(request.getPaymentMethod());
-    appointmentEntity.setInsuranceName(request.getInsuranceName());
-    appointmentEntity.setInsuranceNumber(request.getInsuranceNumber());
   }
 
   /**
@@ -275,5 +284,18 @@ public class AppointmentService {
     response.setItemsPerPage(appointmentPage.getSize());
     response.setTotalPages(appointmentPage.getTotalPages());
     return response;
+  }
+
+  public Success updateAppointment(Appointment request) {
+    AppointmentEntity existingAppointment = checkIfAppointmentExists(request.getId());
+    AppointmentEntity appointmentToUpdate = new AppointmentEntity();
+    prepareAppointmentForSave(appointmentToUpdate, request);
+    appointmentToUpdate.setId(null);
+    CopyBeanUtil.copyNonNullProperties(appointmentToUpdate, existingAppointment);
+    existingAppointment = appointmentRepository.save(existingAppointment);
+    return new Success(true, "Appointment Updated Successfully",
+        String.format("Appointment id: %s, Appointment time: %s",
+            existingAppointment.getId(), existingAppointment.getAppointmentDateTime()));
+
   }
 }

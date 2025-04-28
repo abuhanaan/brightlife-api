@@ -41,7 +41,10 @@ public class AppointmentController implements AppointmentApi {
 
   @Override
   public ResponseEntity<Success> updateAppointment(Appointment request) {
-    return null;
+    log.info("Updating Appointment {} with payload {}", request.getId(), request);
+    Success response = appointmentService.updateAppointment(request);
+    log.info("Appointment Updated Successfully");
+    return ResponseEntity.ok(response);
   }
 
   @Override
