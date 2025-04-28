@@ -34,3 +34,4 @@ build/
 
 ### Environment Properties ###
 .env
+/logic/src/main/java/com/fronteers/config/SeedDataConfig.java
