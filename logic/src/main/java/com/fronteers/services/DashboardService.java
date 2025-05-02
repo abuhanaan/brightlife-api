@@ -25,11 +25,11 @@ public class DashboardService {
 
   public Dashboard getDashboard() {
     Dashboard dashboard = new Dashboard();
-    List<PatientEntity> recentTenPatients = patientRepository.findTop10ByOrderByCreatedAtDesc();
-    List<ReviewEntity> recentReviews = reviewRepository.findTop10ByOrderByCreatedAtDesc();
-    List<AppointmentEntity> recentAppointments = appointmentRepository.findTop10ByStatusOrderByCreatedAtDesc(
+    List<PatientEntity> recentFivePatients = patientRepository.findTop5ByOrderByCreatedAtDesc();
+    List<ReviewEntity> recentReviews = reviewRepository.findTop5ByOrderByCreatedAtDesc();
+    List<AppointmentEntity> recentAppointments = appointmentRepository.findTop5ByStatusOrderByCreatedAtDesc(
         AppointmentStatusEnum.UPCOMING);
-    dashboard.setRecentPatients(PatientDtoMapper.mapPatientListToBasicInfoDtos(recentTenPatients));
+    dashboard.setRecentPatients(PatientDtoMapper.mapPatientListToBasicInfoDtos(recentFivePatients));
     dashboard.setRecentReviews(ReviewMapper.mapReviewEntitiesToDtos(recentReviews));
     dashboard.setUpcomingAppointments(
         AppointmentMapper.mapAppointmentEntitiesToDto(recentAppointments));

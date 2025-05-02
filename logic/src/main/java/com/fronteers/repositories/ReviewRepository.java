@@ -18,5 +18,5 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>,
 
   Page<ReviewEntity> findByPublishedFalse(Pageable pageable);
 
-  List<ReviewEntity> findTop10ByOrderByCreatedAtDesc();
+  List<ReviewEntity> findTop5ByOrderByCreatedAtDesc();
 }

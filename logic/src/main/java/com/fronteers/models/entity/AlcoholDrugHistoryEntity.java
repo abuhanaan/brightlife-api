@@ -39,17 +39,8 @@ public class AlcoholDrugHistoryEntity extends BaseEntity {
   @Column(name = "last_used")
   private String lastUsed;
 
-  @Column(name = "have_cut_back")
-  private Boolean haveCutBack;
-
-  @Column(name = "angered_by_critics")
-  private Boolean angeredByCritics;
-
-  @Column(name = "feel_guilt")
-  private Boolean feelGuilt;
-
-  @Column(name = "up_with_drink")
-  private Boolean upWithDrink;
+  @Column(name = "drink_guilt_check")
+  private String drinkGuiltCheck;
 
   @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL)
   @Fetch(value = FetchMode.SUBSELECT)

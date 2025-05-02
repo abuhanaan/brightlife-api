@@ -7,7 +7,6 @@ import com.fronteers.brightlife.model.AnxietyDisorderForm;
 import com.fronteers.brightlife.model.BasicPatientInfo;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
-import com.fronteers.brightlife.model.DrinkGuiltCheck;
 import com.fronteers.brightlife.model.EmergencyContact;
 import com.fronteers.brightlife.model.Guarantor;
 import com.fronteers.brightlife.model.InitialEvaluationForm;
@@ -81,18 +80,15 @@ public class PatientDtoMapper {
       dto.setId(patientEntity.getId());
       dto.setPatientId(UUID.fromString(patientEntity.getPatientId()));
       dto.setEmail(patientEntity.getEmail());
+      dto.setFirstName(patientEntity.getFirstName());
+      dto.setLastName(patientEntity.getLastName());
       PatientRegistrationFormEntity regForm = patientEntity.getPatientRegistrationForm();
       if (regForm != null) {
         dto.setDob(regForm.getDob() != null ? regForm.getDob().toLocalDate() : null);
         dto.setGender(regForm.getGender());
         dto.setPhone(regForm.getCellPhone());
-        dto.setFirstName(regForm.getFirstName());
-        dto.setLastName(regForm.getLastName());
         return dto;
       }
-      String[] names = patientEntity.getFullName().trim().split("\\s+");
-      dto.setFirstName(names.length > 0 ? names[0] : "");
-      dto.setLastName(names.length > 1 ? names[names.length - 1] : "");
       return dto;
     }).toList();
   }
@@ -559,7 +555,7 @@ public class PatientDtoMapper {
     alcoholDrugHistoryDto.setUsageFrequency(adhEntity.getUsageFrequency());
     alcoholDrugHistoryDto.setBrand(adhEntity.getBrand());
     alcoholDrugHistoryDto.setLastUsed(adhEntity.getLastUsed());
-    mapDrinkGuiltCheck(adhEntity, alcoholDrugHistoryDto);
+    alcoholDrugHistoryDto.setDrinkGuiltCheck(adhEntity.getDrinkGuiltCheck());
     alcoholDrugHistoryDto.setSubstanceUsages(
         adhEntity.getSubstanceUsages().stream().map(substanceUsageEntity -> {
           SubstanceUsage substanceUsage = new SubstanceUsage();
@@ -612,16 +608,6 @@ public class PatientDtoMapper {
             }).toList() : null);
     alcoholDrugHistoryDto.setOtherUsefulInfo(adhEntity.getOtherUsefulInfo());
     intakeFormDto.setAlcoholDrugHistory(alcoholDrugHistoryDto);
-  }
-
-  private static void mapDrinkGuiltCheck(AlcoholDrugHistoryEntity adhEntity,
-      AlcoholDrugHistory alcoholDrugHistoryDto) {
-    DrinkGuiltCheck drinkGuiltCheck = new DrinkGuiltCheck();
-    drinkGuiltCheck.setFeelGuilt(adhEntity.getFeelGuilt());
-    drinkGuiltCheck.setUpWithDrink(adhEntity.getUpWithDrink());
-    drinkGuiltCheck.setAngeredByCritics(adhEntity.getAngeredByCritics());
-    drinkGuiltCheck.setHaveCutBack(adhEntity.getHaveCutBack());
-    alcoholDrugHistoryDto.setDrinkGuiltCheck(drinkGuiltCheck);
   }
 
   private static void processDtoMedications(IntakeForm dto, List<MedicationEntity> medications) {

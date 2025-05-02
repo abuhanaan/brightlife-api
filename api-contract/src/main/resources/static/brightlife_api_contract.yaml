@@ -75,20 +75,6 @@ components:
         type: string
 
   schemas:
-    IdGenerationRequest:
-      type: object
-      required:
-        - firstName
-        - lastName
-        - email
-      properties:
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-          format: email
     IdGenerationResponse:
       type: object
       properties:
@@ -97,12 +83,12 @@ components:
         message:
           type: string
         patientId:
-          type: string
+          $ref: "#/components/schemas/PatientId"
     PatientIdValidationResponse:
       type: object
       properties:
         patientId:
-          type: string
+          $ref: "#/components/schemas/PatientId"
         firstName:
           type: string
         middleName:
@@ -406,18 +392,6 @@ components:
         - Sometimes
         - Often
 
-    DrinkGuiltCheck:
-      type: object
-      properties:
-        haveCutBack:
-          type: boolean
-        angeredByCritics:
-          type: boolean
-        feelGuilt:
-          type: boolean
-        upWithDrink:
-          type: boolean
-
     AlcoholDrugHistory:
       properties:
         id:
@@ -430,7 +404,7 @@ components:
         lastUsed:
           type: string
         drinkGuiltCheck:
-          $ref: '#/components/schemas/DrinkGuiltCheck'
+          type: string
         substanceUsages:
           type: array
           items:
@@ -1289,6 +1263,8 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/ReviewStatusEnum'
+        createdAt:
+          $ref: '#/components/schemas/DateTime'
 
     ReviewStatusEnum:
       type: string
@@ -1300,11 +1276,6 @@ components:
     Forms:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-        patientId:
-          $ref: "#/components/schemas/PatientId"
         adhdForm:
           $ref: '#/components/schemas/ADHDForm'
         anxietyDisorderForm:
@@ -1511,6 +1482,8 @@ components:
         id:
           type: integer
           format: int64
+        patientId:
+          $ref: "#/components/schemas/PatientId"
         firstName:
           type: string
         lastName:
@@ -1539,6 +1512,8 @@ components:
     ReviewSearch:
       type: object
       properties:
+        patientId:
+          $ref: "#/components/schemas/PatientId"
         nickName:
           type: string
         email:
@@ -1915,19 +1890,12 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
   /api/v1/patients/register/id:
-    post:
-      summary: Generates A New Patient Id
+    get:
+      summary: Generates A New Patient Id. A successful call returns a success response with a patient's id
       security: [ ]
       tags:
         - Patients
       operationId: generateId
-      requestBody:
-        description: This is used to register a new patient. A successful call returns a success response with a patient's basic details
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/IdGenerationRequest"
       responses:
         "201":
           description: Patient Id Generated Successfully

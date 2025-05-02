@@ -5,7 +5,6 @@ import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.AnxietyDisorderForm;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
-import com.fronteers.brightlife.model.IdGenerationRequest;
 import com.fronteers.brightlife.model.IdGenerationResponse;
 import com.fronteers.brightlife.model.InitialEvaluationForm;
 import com.fronteers.brightlife.model.IntakeForm;
@@ -259,9 +258,9 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<IdGenerationResponse> generateId(IdGenerationRequest request) {
-    log.info("Generating new patient id with request: {}", request);
-    IdGenerationResponse response = patientService.generateId(request);
+  public ResponseEntity<IdGenerationResponse> generateId() {
+    log.info("Generating new patient id with request");
+    IdGenerationResponse response = patientService.generateId();
     log.info("Id generation succesful with response: {}", response);
     return ResponseEntity.ok(response);
   }

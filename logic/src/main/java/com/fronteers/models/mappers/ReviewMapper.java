@@ -3,6 +3,7 @@ package com.fronteers.models.mappers;
 import com.fronteers.brightlife.model.Review;
 import com.fronteers.brightlife.model.ReviewStatusEnum;
 import com.fronteers.models.entity.ReviewEntity;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public class ReviewMapper {
@@ -18,6 +19,7 @@ public class ReviewMapper {
     reviewDto.setReviewMessage(reviewEntity.getReviewMessage());
     reviewDto.setStatus(
         reviewEntity.getPublished() ? ReviewStatusEnum.PUBLISHED : ReviewStatusEnum.DRAFT);
+    reviewDto.setCreatedAt(reviewEntity.getCreatedAt().toInstant().atOffset(ZoneOffset.UTC));
     return reviewDto;
   }
 

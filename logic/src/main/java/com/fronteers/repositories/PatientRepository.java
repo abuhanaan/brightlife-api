@@ -15,6 +15,8 @@ public interface PatientRepository extends JpaRepository<PatientEntity, String>,
 
   PatientEntity findOneByEmail(String email);
 
-  List<PatientEntity> findTop10ByOrderByCreatedAtDesc();
+  List<PatientEntity> findTop5ByOrderByCreatedAtDesc();
+
+  boolean existsByPatientId(String patientId);
 
 }

@@ -27,5 +27,5 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
   List<AppointmentEntity> findAppointmentsBetween(@Param("start") OffsetDateTime start,
       @Param("end") OffsetDateTime end);
 
-  List<AppointmentEntity> findTop10ByStatusOrderByCreatedAtDesc(AppointmentStatusEnum status);
+  List<AppointmentEntity> findTop5ByStatusOrderByCreatedAtDesc(AppointmentStatusEnum status);
 }

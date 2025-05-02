@@ -126,6 +126,9 @@ public class ReviewService {
     BooleanBuilder predicate = new BooleanBuilder();
     QReviewEntity qReview = QReviewEntity.reviewEntity;
 
+    if (searchCriteria.getPatientId() != null) {
+      predicate.and(qReview.patient.patientId.eq(searchCriteria.getPatientId().toString()));
+    }
     if (searchCriteria.getEmail() != null) {
       predicate.and(qReview.email.eq(searchCriteria.getEmail()));
     }

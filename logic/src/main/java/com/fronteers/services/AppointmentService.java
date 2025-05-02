@@ -126,7 +126,7 @@ public class AppointmentService {
     LocalDate today = LocalDate.now();
     LocalDate threeMonthsLater = today.plusMonths(3);
 
-    // Convert LocalDate to OffsetDateTime at start of the day (09:00 AM as per your conditions)
+    // Convert LocalDate to OffsetDateTime at start of the day (09:00 AM) and end of the day of the end Date
     OffsetDateTime startDateTime = today.atTime(9, 0).atOffset(ZoneOffset.UTC);
     OffsetDateTime endDateTime = threeMonthsLater.atTime(17, 0).atOffset(ZoneOffset.UTC);
 
@@ -239,6 +239,9 @@ public class AppointmentService {
     BooleanBuilder predicate = new BooleanBuilder();
     QAppointmentEntity qAppointment = QAppointmentEntity.appointmentEntity;
 
+    if (searchCriteria.getPatientId() != null) {
+      predicate.and(qAppointment.patient.patientId.eq(searchCriteria.getFirstName()));
+    }
     if (searchCriteria.getFirstName() != null) {
       predicate.and(qAppointment.firstName.eq(searchCriteria.getFirstName()));
     }
