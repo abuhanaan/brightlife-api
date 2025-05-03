@@ -25,7 +25,6 @@ import com.fronteers.brightlife.model.PastProviders;
 import com.fronteers.brightlife.model.PastTreatmentInfo;
 import com.fronteers.brightlife.model.PatientInformationConsentAndFinancialPolicyForm;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
-import com.fronteers.brightlife.model.PaymentModeEnum;
 import com.fronteers.brightlife.model.PaymentStructure;
 import com.fronteers.brightlife.model.PersonalInfo;
 import com.fronteers.brightlife.model.Pharmacy;
@@ -108,17 +107,21 @@ public class PatientDtoMapper {
         mapEmergencyDtoProps(patientRegistrationFormEntity.getEmergencyContact()));
     patientRegistrationForm.setPaymentStructure(
         mapPaymentStructureDtoProps(patientRegistrationFormEntity));
+    patientRegistrationForm.setDate(patientRegistrationFormEntity.getDate().toInstant().atOffset(ZoneOffset.UTC));
+    patientRegistrationForm.setPatientRegForm(patientRegistrationFormEntity.getPatientRegFormFile());
     return patientRegistrationForm;
   }
 
   private static PaymentStructure mapPaymentStructureDtoProps(
       PatientRegistrationFormEntity patientRegistrationFormEntity) {
     PaymentStructure paymentStructureDTO = new PaymentStructure();
-    paymentStructureDTO.setPaymentMode(paymentStructureDTO.getPaymentMode());
-    if (patientRegistrationFormEntity.getPaymentMode().equals(PaymentModeEnum.INSURANCE_CARD)) {
-      paymentStructureDTO.setInsurances(
-          mapInsuranceEntitiesToDTO(patientRegistrationFormEntity.getInsurances()));
-    }
+    paymentStructureDTO.setPaymentMode(patientRegistrationFormEntity.getPaymentMode());
+//    if (patientRegistrationFormEntity.getPaymentMode().equals(PaymentModeEnum.INSURANCE_CARD)) {
+//      paymentStructureDTO.setInsurances(
+//          mapInsuranceEntitiesToDTO(patientRegistrationFormEntity.getInsurances()));
+//    }
+    paymentStructureDTO.setInsurances(
+        mapInsuranceEntitiesToDTO(patientRegistrationFormEntity.getInsurances()));
     return paymentStructureDTO;
   }
 
@@ -153,7 +156,7 @@ public class PatientDtoMapper {
     insuranceProvider.setAddress(mapAddressEntityToAddressDto(insuranceEntity.getAddress()));
     insuranceProvider.setCoPay(insuranceEntity.getCoPay());
     insuranceProvider.setName(insuranceEntity.getProviderName());
-    insuranceProvider.setPhone(insuranceProvider.getPhone());
+    insuranceProvider.setPhone(insuranceEntity.getPhone());
     insuranceProvider.setAuthorizationId(insuranceEntity.getAuthorizationId());
     insuranceProvider.setCoverageEndDate(insuranceEntity.getCoverageEndDate().toLocalDate());
     insuranceProvider.setCoverageStartDate(insuranceEntity.getCoverageStartDate().toLocalDate());
@@ -166,7 +169,7 @@ public class PatientDtoMapper {
       EmergencyContactEntity emergencyContactEntity) {
     EmergencyContact emergencyContactDTO = new EmergencyContact();
     emergencyContactDTO.setId(emergencyContactEntity.getId());
-    emergencyContactDTO.setFirstName(emergencyContactDTO.getFirstName());
+    emergencyContactDTO.setFirstName(emergencyContactEntity.getFirstName());
     emergencyContactDTO.setLastName(emergencyContactEntity.getLastName());
     emergencyContactDTO.setEmail(emergencyContactEntity.getEmail());
     emergencyContactDTO.setCellPhone(emergencyContactEntity.getCellPhone());
@@ -181,7 +184,7 @@ public class PatientDtoMapper {
       ParentGuardianEntity parentGuardianEntity) {
     ParentGuardian parentGuardianDTO = new ParentGuardian();
     parentGuardianDTO.setId(parentGuardianEntity.getId());
-    parentGuardianEntity.setFirstName(parentGuardianEntity.getFirstName());
+    parentGuardianDTO.setFirstName(parentGuardianEntity.getFirstName());
     parentGuardianDTO.setLastName(parentGuardianEntity.getLastName());
     parentGuardianDTO.setGender(parentGuardianEntity.getGender());
     parentGuardianDTO.setMaritalStatus(parentGuardianEntity.getMaritalStatus());

@@ -39,6 +39,7 @@ import com.fronteers.services.ScreeningService;
 import com.fronteers.services.SelfPayService;
 import com.fronteers.services.TerminationPolicyService;
 import com.fronteers.services.TreatmentConsentTelehealthInPersonTreatmentConsentService;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -405,6 +406,14 @@ public class PatientsController implements PatientsApi {
     log.info(
         "TreatmentConsentTelehealthInPersonTreatment form submitted successfully with response payload: {}",
         response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<Success> updateRegistrationForm(String patientId, PatientRegistrationForm request){
+    log.info("Updating Patient record with id {}", request.getPatientId());
+    Success response = patientService.updateRegForm(patientId, request);
+    log.info("Patient Record Updated Successfully with response: {}", response);
     return ResponseEntity.ok(response);
   }
 }

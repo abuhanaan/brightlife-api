@@ -18,10 +18,13 @@ import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.models.mappers.PatientEntityMapper;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
+import com.fronteers.utils.CopyBeanUtil;
 import com.fronteers.utils.PatientUtils;
 import com.querydsl.core.BooleanBuilder;
+import jakarta.transaction.Transactional;
 import java.sql.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +43,7 @@ public class PatientService {
   private final PatientRegistrationFormRepository patientRegistrationFormRepository;
   private final PatientUtils patientUtils;
 
+  @Transactional
   public Success submitRegistrationForm(PatientRegistrationForm request) {
     patientUtils.confirmPatientUniqueness(request.getPersonalInfo().getEmail());
     PatientEntity newPatient = PatientEntity.builder()
@@ -51,11 +55,35 @@ public class PatientService {
         .build();
     PatientRegistrationFormEntity patientRegistrationFormEntity = patientEntityMapper.mapRegFormToRegFormEntity(
         request, newPatient);
-    newPatient.setPatientRegistrationForm(patientRegistrationFormEntity);
-    patientRepository.save(newPatient);
+    patientRegistrationFormRepository.save(patientRegistrationFormEntity);
     //    TODO: send email
-    return new Success(true, "Patient Registered Successfully",
+    return new Success(true, "Patient Registration Form Submitted Successfully",
         String.format("PatientId: %s", newPatient.getPatientId()));
+  }
+
+  public Success updateRegForm(String patientId, PatientRegistrationForm request) {
+    PatientEntity patient = patientUtils.checkIfPatientExists(patientId);
+    PatientRegistrationFormEntity existingRegForm = patient.getPatientRegistrationForm();
+    try {
+      validatePatientsRegFormAndDto(patient.getPatientRegistrationForm().getId(), request.getId());
+      PatientRegistrationFormEntity regFormToSave = patientEntityMapper.mapRegFormToRegFormEntity(request, patient);
+      regFormToSave.setId(null);
+//      CopyBeanUtil.copyNonNullProperties(existingRegForm, regFormToSave);
+      patientUtils.copyNonNullProperties(regFormToSave, existingRegForm);
+      patientRegistrationFormRepository.save(existingRegForm);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    return new Success(true, "Patient Registration Form Updated Successfully",
+        String.format("PatientId: %s", existingRegForm.getPatientId()));
+  }
+
+  private void validatePatientsRegFormAndDto(Long existingRegFormId, Long incomingRegFormId) {
+    if (!Objects.equals(existingRegFormId, incomingRegFormId)){
+      log.warn("Incoming Registration Form with id {} is not equal to existing reg form with id {}", incomingRegFormId, existingRegFormId);
+      throw new ConflictException("Patient Is Not The Owner Of Registration Form In The Request");
+    }
   }
 
   private String generatePatientId() {

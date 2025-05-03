@@ -5,17 +5,42 @@ import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.models.entity.AddressEntity;
 import com.fronteers.models.entity.PatientEntity;
+import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
 import com.fronteers.repositories.AddressRepository;
 import com.fronteers.repositories.PatientRepository;
+import java.beans.FeatureDescriptor;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.BeanWrapper;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PatientUtils {
 
   private final PatientRepository patientRepository;
   private final AddressRepository addressRepository;
+
+  public void copyNonNullProperties(Object source, Object target) {
+    try {
+      BeanUtils.copyProperties(source, target, getNullPropertyNames(source));
+    } catch (UnsupportedOperationException e) {
+      log.info("Error copying properties: " + e.getMessage());
+      throw e; // Re-throw the exception after logging
+    }
+  }
+
+  private String[] getNullPropertyNames(Object source) {
+    final BeanWrapper src = new BeanWrapperImpl(source);
+    return Arrays.stream(src.getPropertyDescriptors())
+        .map(FeatureDescriptor::getName)
+        .filter(propertyName -> src.getPropertyValue(propertyName) == null)
+        .toArray(String[]::new);
+  }
 
   public PatientEntity checkIfPatientExists(String patientId) {
     return patientRepository.findOneByPatientId(patientId).orElseThrow(() ->
@@ -30,12 +55,12 @@ public class PatientUtils {
   }
 
   public AddressEntity mapAddressProperties(Address address) {
-    return addressRepository.save(AddressEntity.builder()
+    return AddressEntity.builder()
         .streetName(address.getStreetName())
         .city(address.getCity())
         .state(address.getState())
         .zipCode(address.getZipCode())
-        .build());
+        .build();
   }
 
 }

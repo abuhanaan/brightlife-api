@@ -1,5 +1,6 @@
 package com.fronteers.models.mappers;
 
+import com.fronteers.brightlife.model.Address;
 import com.fronteers.brightlife.model.EmergencyContact;
 import com.fronteers.brightlife.model.Guarantor;
 import com.fronteers.brightlife.model.Insurance;
@@ -7,6 +8,8 @@ import com.fronteers.brightlife.model.ParentGuardian;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PaymentModeEnum;
 import com.fronteers.brightlife.model.PaymentStructure;
+import com.fronteers.brightlife.model.PersonalInfo;
+import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.models.entity.AddressEntity;
 import com.fronteers.models.entity.EmergencyContactEntity;
 import com.fronteers.models.entity.GuarantorEntity;
@@ -27,125 +30,152 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-
 @Component
 public class PatientEntityMapper {
 
-  private final PatientRepository patientRepository;
-  private final EmergencyContactRepository emergencyContactRepository;
-  private final ParentGuardianRepository parentGuardianRepository;
-  private final GuarantorRepository guarantorRepository;
   private final PatientUtils patientUtils;
 
-  public PatientRegistrationFormEntity mapRegFormToRegFormEntity(PatientRegistrationForm request,
-      PatientEntity patientEntity) {
-    PatientRegistrationFormEntity patientRegistrationFormEntity = PatientRegistrationFormEntity.builder()
-        .patientId(patientEntity.getPatientId())
-        .patient(patientEntity)
-        .firstName(request.getPersonalInfo().getFirstName())
-        .lastName(request.getPersonalInfo().getLastName())
-        .middleName(request.getPersonalInfo().getMiddleName())
-        .gender(request.getPersonalInfo().getGender())
-        .dob(request.getPersonalInfo().getDob() != null ? Date.valueOf(
-            request.getPersonalInfo().getDob()) : null)
-        .maritalStatus(request.getPersonalInfo().getMaritalStatus())
-        .socialSecurityNumber(request.getPersonalInfo().getSocialSecurityNumber())
-        .homePhone(request.getPersonalInfo().getHomePhone())
-        .cellPhone(request.getPersonalInfo().getCellPhone())
-        .workPhone(request.getPersonalInfo().getWorkPhone())
-        .preferredPhone(request.getPersonalInfo().getPreferredPhone())
-        .appointmentReminderMode(request.getPersonalInfo().getAppointmentReminderMode())
-        .email(request.getPersonalInfo().getEmail())
-        .sendMsgToHomePhone(request.getPersonalInfo().getSendMsgToHomePhone())
-        .sendMsgToRelative(request.getPersonalInfo().getSendMsgToRelative())
-        .sendMsgToWork(request.getPersonalInfo().getSendMsgToWork())
-        .sendMsgToCellPhone(request.getPersonalInfo().getSendMsgToCellPhone())
-        .highestEduLevel(request.getPersonalInfo().getHighestEduLevel())
-        .employmentStatus(request.getPersonalInfo().getEmploymentStatus())
-        .employer(request.getPersonalInfo().getEmployer())
-        .occupation(request.getPersonalInfo().getOccupation())
-        .religion(request.getPersonalInfo().getReligion())
-        .ethnicity(request.getPersonalInfo().getEthnicity())
-        .race(request.getPersonalInfo().getRace())
-        .preferredLanguage(request.getPersonalInfo().getPreferredLanguage())
-        .paymentMode(request.getPaymentStructure().getPaymentMode())
-        .date(request.getDate() != null ? Timestamp.from(request.getDate().toInstant()) : null)
-        .build();
-    patientEntity = patientRepository.save(patientEntity);
-    patientRegistrationFormEntity.setPatient(patientEntity);
-    patientRegistrationFormEntity.setPatientId(patientEntity.getPatientId());
-    AddressEntity addressEntity = patientUtils.mapAddressProperties(
-        request.getPersonalInfo().getAddress());
-    addressEntity.setPatientRegistrationForm(patientRegistrationFormEntity);
-    patientRegistrationFormEntity.setAddress(addressEntity);
-//    patientRegistrationFormEntity.getAddress().setPatientRegistrationForm(patientRegistrationFormEntity);
-//    patientRegistrationFormEntity.setGuarantor(mapRegFormToGuarantorEntity(request.getGuarantor(), patientRegistrationFormEntity));
-    GuarantorEntity guarantorEntity = mapRegFormToGuarantorEntity(request.getGuarantor(),
-        patientRegistrationFormEntity);
-    patientRegistrationFormEntity.setGuarantor(guarantorEntity);
-    patientRegistrationFormEntity.setParentGuardian(
-        mapRegFormToParentGuardianEntity(request.getParentGuardian(),
-            patientRegistrationFormEntity));
-    patientRegistrationFormEntity.setEmergencyContact(
-        mapRegFormToEmergencyContactEntity(request.getEmergency(), patientRegistrationFormEntity));
-    if (patientRegistrationFormEntity.getPaymentMode().equals(PaymentModeEnum.INSURANCE_CARD)) {
-      patientRegistrationFormEntity.setInsurances(
-          mapRegFormToInsuranceEntities(request.getPaymentStructure(),
-              patientRegistrationFormEntity));
+  // Map the entire registration form (used for create operations)
+  public PatientRegistrationFormEntity mapRegFormToRegFormEntity(PatientRegistrationForm request, PatientEntity patientEntity) {
+    PatientRegistrationFormEntity form = new PatientRegistrationFormEntity();
+
+    // Map patient details
+    mapPatientDetails(request, patientEntity, form);
+
+    // Map address
+    mapAddress(request, form);
+
+    // Map guarantor
+    if (request.getGuarantor() != null) {
+      form.setGuarantor(mapGuarantor(request.getGuarantor(), form));
     }
-    return patientRegistrationFormEntity;
-  }
 
-  public List<InsuranceEntity> mapRegFormToInsuranceEntities(PaymentStructure paymentStructure,
-      PatientRegistrationFormEntity patientRegistrationFormEntity) {
-    List<InsuranceEntity> insuranceEntities = new ArrayList<>();
-    for (Insurance insurance : paymentStructure.getInsurances()) {
-      InsuranceEntity insuranceEntity = InsuranceEntity.builder()
-          .primary(insurance.getPrimary())
-          .firstName(insurance.getPolicyHolder().getFirstName())
-          .lastName(insurance.getPolicyHolder().getLastName())
-          .middleName(insurance.getPolicyHolder().getMiddleName())
-          .relationship(insurance.getPolicyHolder().getRelationship())
-          .phone(insurance.getPolicyHolder().getPhone())
-          .dob(insurance.getPolicyHolder().getDob() != null ? Date.valueOf(
-              insurance.getPolicyHolder().getDob()) : null)
-          .providerName(insurance.getInsuranceProvider().getName())
-          .providerPhone(insurance.getInsuranceProvider().getPhone())
-          .policyId(insurance.getInsuranceProvider().getPolicyId())
-          .groupNumber(insurance.getInsuranceProvider().getGroupNumber())
-          .authorizationId(insurance.getInsuranceProvider().getAuthorizationId())
-          .coPay(insurance.getInsuranceProvider().getCoPay())
-          .coverageStartDate(Date.valueOf(insurance.getInsuranceProvider().getCoverageStartDate()))
-          .coverageEndDate(Date.valueOf(insurance.getInsuranceProvider().getCoverageEndDate()))
-          .address(patientUtils.mapAddressProperties(insurance.getInsuranceProvider().getAddress()))
-          .patientRegistrationForm(patientRegistrationFormEntity)
-          .build();
-      insuranceEntity.getAddress().setInsurance(insuranceEntity);
-      insuranceEntities.add(insuranceEntity);
+    // Map parent/guardian
+    if (request.getParentGuardian() != null) {
+      form.setParentGuardian(mapParentGuardian(request.getParentGuardian(), form));
     }
-    return insuranceEntities;
+
+    // Map emergency contact
+    if (request.getEmergency() != null) {
+      form.setEmergencyContact(mapEmergencyContact(request.getEmergency(), form));
+    }
+
+    // Map insurances
+    if (request.getPaymentStructure() != null) {
+      form.setInsurances(mapInsurances(request.getPaymentStructure(), form));
+    }
+
+    return form;
   }
 
-  public EmergencyContactEntity mapRegFormToEmergencyContactEntity(EmergencyContact emergency,
-      PatientRegistrationFormEntity patientRegistrationFormEntity) {
-    EmergencyContactEntity emergencyContactEntity = EmergencyContactEntity.builder()
-        .firstName(emergency.getFirstName())
-        .lastName(emergency.getLastName())
-        .address(patientUtils.mapAddressProperties(emergency.getAddress()))
-        .relationship(emergency.getRelationship())
-        .homePhone(emergency.getHomePhone())
-        .cellPhone(emergency.getCellPhone())
-        .email(emergency.getEmail())
-        .address(patientUtils.mapAddressProperties(emergency.getAddress()))
+  // Map only the fields that should be updated
+  public void mapRegFormForUpdate(PatientRegistrationForm request, PatientRegistrationFormEntity existingForm) {
+    // Update patient details
+    if (request.getPersonalInfo() != null) {
+      mapPersonalInfoForUpdate(request.getPersonalInfo(), existingForm);
+    }
+
+    // Update address
+    if (request.getPersonalInfo() != null && request.getPersonalInfo().getAddress() != null) {
+      mapAddressForUpdate(request.getPersonalInfo().getAddress(), existingForm);
+    }
+
+    // Update guarantor
+    if (request.getGuarantor() != null) {
+      existingForm.setGuarantor(mapGuarantor(request.getGuarantor(), existingForm));
+    }
+
+    // Update parent/guardian
+    if (request.getParentGuardian() != null) {
+      existingForm.setParentGuardian(mapParentGuardian(request.getParentGuardian(), existingForm));
+    }
+
+    // Update emergency contact
+    if (request.getEmergency() != null) {
+      existingForm.setEmergencyContact(mapEmergencyContact(request.getEmergency(), existingForm));
+    }
+
+    // Update insurances
+    if (request.getPaymentStructure() != null) {
+      existingForm.setInsurances(mapInsurances(request.getPaymentStructure(), existingForm));
+    }
+  }
+
+  // Map patient details (used for create)
+  private void mapPatientDetails(PatientRegistrationForm request, PatientEntity patientEntity, PatientRegistrationFormEntity form) {
+    form.setPatientId(patientEntity.getPatientId());
+    form.setPatient(patientEntity);
+    form.setDate(request.getDate() != null ? Timestamp.from(request.getDate().toInstant()) : null);
+    form.setPatientRegFormFile(request.getPatientRegForm());
+    form.setPaymentMode(request.getPaymentStructure().getPaymentMode());
+    mapPersonalInfoForUpdate(request.getPersonalInfo(), form);
+  }
+
+  // Map personal info (used for update)
+  private void mapPersonalInfoForUpdate(PersonalInfo personalInfo, PatientRegistrationFormEntity form) {
+    form.setFirstName(personalInfo.getFirstName());
+    form.setLastName(personalInfo.getLastName());
+    form.setMiddleName(personalInfo.getMiddleName());
+    form.setGender(personalInfo.getGender());
+    form.setDob(personalInfo.getDob() != null ? Date.valueOf(personalInfo.getDob()) : null);
+    form.setMaritalStatus(personalInfo.getMaritalStatus());
+    form.setSocialSecurityNumber(personalInfo.getSocialSecurityNumber());
+    form.setHomePhone(personalInfo.getHomePhone());
+    form.setCellPhone(personalInfo.getCellPhone());
+    form.setWorkPhone(personalInfo.getWorkPhone());
+    form.setPreferredPhone(personalInfo.getPreferredPhone());
+    form.setAppointmentReminderMode(personalInfo.getAppointmentReminderMode());
+    form.setEmail(personalInfo.getEmail());
+    form.setSendMsgToHomePhone(personalInfo.getSendMsgToHomePhone());
+    form.setSendMsgToRelative(personalInfo.getSendMsgToRelative());
+    form.setSendMsgToWork(personalInfo.getSendMsgToWork());
+    form.setSendMsgToCellPhone(personalInfo.getSendMsgToCellPhone());
+    form.setHighestEduLevel(personalInfo.getHighestEduLevel());
+    form.setEmploymentStatus(personalInfo.getEmploymentStatus());
+    form.setEmployer(personalInfo.getEmployer());
+    form.setOccupation(personalInfo.getOccupation());
+    form.setReligion(personalInfo.getReligion());
+    form.setEthnicity(personalInfo.getEthnicity());
+    form.setRace(personalInfo.getRace());
+    form.setPreferredLanguage(personalInfo.getPreferredLanguage());
+  }
+
+  // Map address (used for create)
+  private void mapAddress(PatientRegistrationForm request, PatientRegistrationFormEntity form) {
+    AddressEntity addressEntity = patientUtils.mapAddressProperties(request.getPersonalInfo().getAddress());
+    addressEntity.setPatientRegistrationForm(form);
+    form.setAddress(addressEntity);
+  }
+
+  // Map address (used for update)
+  private void mapAddressForUpdate(Address address, PatientRegistrationFormEntity form) {
+    AddressEntity addressEntity = patientUtils.mapAddressProperties(address);
+    addressEntity.setPatientRegistrationForm(form);
+    form.setAddress(addressEntity);
+  }
+
+  // Map guarantor
+  private GuarantorEntity mapGuarantor(Guarantor guarantor, PatientRegistrationFormEntity form) {
+    AddressEntity address = patientUtils.mapAddressProperties(guarantor.getAddress());
+    GuarantorEntity guarantorEntity = GuarantorEntity.builder()
+        .firstName(guarantor.getFirstName())
+        .lastName(guarantor.getLastName())
+        .dob(guarantor.getDob() != null ? Date.valueOf(guarantor.getDob()) : null)
+        .relationship(guarantor.getRelationship())
+        .phone(guarantor.getPhone())
+        .email(guarantor.getEmail())
+        .address(address)
+        .insuranceCardFile(guarantor.getInsuranceCard())
+        .stateIssuedIdFile(guarantor.getStateIssuedId())
         .build();
-    emergencyContactEntity.getAddress().setEmergencyContact(emergencyContactEntity);
-    emergencyContactEntity.setPatientRegistrationForm(patientRegistrationFormEntity);
-    emergencyContactRepository.save(emergencyContactEntity);
-    return emergencyContactEntity;
+    address.setGuarantor(guarantorEntity);
+    guarantorEntity.setPatientRegistrationForm(form);
+    return guarantorEntity;
   }
 
-  public ParentGuardianEntity mapRegFormToParentGuardianEntity(ParentGuardian parentGuardian,
-      PatientRegistrationFormEntity patientRegistrationFormEntity) {
+  // Map parent/guardian
+  private ParentGuardianEntity mapParentGuardian(ParentGuardian parentGuardian, PatientRegistrationFormEntity form) {
+    AddressEntity address = patientUtils.mapAddressProperties(parentGuardian.getAddress());
     ParentGuardianEntity parentGuardianEntity = ParentGuardianEntity.builder()
         .firstName(parentGuardian.getFirstName())
         .lastName(parentGuardian.getLastName())
@@ -157,28 +187,60 @@ public class PatientEntityMapper {
         .employmentStatus(parentGuardian.getEmploymentStatus())
         .employer(parentGuardian.getEmployer())
         .occupation(parentGuardian.getOccupation())
-        .address(patientUtils.mapAddressProperties(parentGuardian.getAddress()))
+        .address(address)
         .build();
-    parentGuardianEntity.getAddress().setParentGuardian(parentGuardianEntity);
-    parentGuardianRepository.save(parentGuardianEntity);
-    parentGuardianEntity.setPatientRegistrationForm(patientRegistrationFormEntity);
+    address.setParentGuardian(parentGuardianEntity);
+    parentGuardianEntity.setPatientRegistrationForm(form);
     return parentGuardianEntity;
   }
 
-  public GuarantorEntity mapRegFormToGuarantorEntity(Guarantor guarantor,
-      PatientRegistrationFormEntity patientRegistrationFormEntity) {
-    GuarantorEntity guarantorEntity = GuarantorEntity.builder()
-        .firstName(guarantor.getFirstName())
-        .lastName(guarantor.getLastName())
-        .dob(guarantor.getDob() != null ? Date.valueOf(guarantor.getDob()) : null)
-        .relationship(guarantor.getRelationship())
-        .address(patientUtils.mapAddressProperties(guarantor.getAddress()))
-        .insuranceCardFile(guarantor.getInsuranceCard())
-        .stateIssuedIdFile(guarantor.getStateIssuedId())
+  // Map emergency contact
+  private EmergencyContactEntity mapEmergencyContact(EmergencyContact emergency, PatientRegistrationFormEntity form) {
+    AddressEntity address = patientUtils.mapAddressProperties(emergency.getAddress());
+    EmergencyContactEntity emergencyContactEntity = EmergencyContactEntity.builder()
+        .firstName(emergency.getFirstName())
+        .lastName(emergency.getLastName())
+        .relationship(emergency.getRelationship())
+        .homePhone(emergency.getHomePhone())
+        .cellPhone(emergency.getCellPhone())
+        .email(emergency.getEmail())
+        .address(address)
         .build();
-    guarantorEntity.getAddress().setGuarantor(guarantorEntity);
-    guarantorRepository.save(guarantorEntity);
-    guarantorEntity.setPatientRegistrationForm(patientRegistrationFormEntity);
-    return guarantorEntity;
+    address.setEmergencyContact(emergencyContactEntity);
+    emergencyContactEntity.setPatientRegistrationForm(form);
+    return emergencyContactEntity;
+  }
+
+  // Map insurances
+  private List<InsuranceEntity> mapInsurances(PaymentStructure paymentStructure, PatientRegistrationFormEntity form) {
+    if (paymentStructure.getPaymentMode().equals(PaymentModeEnum.INSURANCE_CARD) &&
+        (paymentStructure.getInsurances() == null || paymentStructure.getInsurances().isEmpty())) {
+      throw new BadRequestException("Insurance Data Is Required If Payment Mode Is Not Self Pay");
+    }
+    return paymentStructure.getInsurances().stream().map(insurance -> {
+      InsuranceEntity insuranceEntity = InsuranceEntity.builder()
+          .primary(insurance.getPrimary())
+          .firstName(insurance.getPolicyHolder().getFirstName())
+          .lastName(insurance.getPolicyHolder().getLastName())
+          .middleName(insurance.getPolicyHolder().getMiddleName())
+          .relationship(insurance.getPolicyHolder().getRelationship())
+          .phone(insurance.getPolicyHolder().getPhone())
+          .dob(insurance.getPolicyHolder().getDob() != null ? Date.valueOf(insurance.getPolicyHolder().getDob()) : null)
+          .providerName(insurance.getInsuranceProvider().getName())
+          .providerPhone(insurance.getInsuranceProvider().getPhone())
+          .policyId(insurance.getInsuranceProvider().getPolicyId())
+          .groupNumber(insurance.getInsuranceProvider().getGroupNumber())
+          .authorizationId(insurance.getInsuranceProvider().getAuthorizationId())
+          .coPay(insurance.getInsuranceProvider().getCoPay())
+          .coverageStartDate(insurance.getInsuranceProvider().getCoverageStartDate() != null ?
+              Date.valueOf(insurance.getInsuranceProvider().getCoverageStartDate()) : null)
+          .coverageEndDate(insurance.getInsuranceProvider().getCoverageEndDate() != null ?
+              Date.valueOf(insurance.getInsuranceProvider().getCoverageEndDate()) : null)
+          .address(patientUtils.mapAddressProperties(insurance.getInsuranceProvider().getAddress()))
+          .patientRegistrationForm(form)
+          .build();
+      insuranceEntity.getAddress().setInsurance(insuranceEntity);
+      return insuranceEntity;
+    }).toList();
   }
 }
