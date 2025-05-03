@@ -1,7 +1,6 @@
 package com.fronteers.models.entity;
 
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -37,37 +36,34 @@ public class AddressEntity extends BaseEntity {
   @Column(name = "zip_code")
   private String zipCode;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "address")
   private PrimaryCarePhysicianEntity adhdForm;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "address")
   private PharmacyEntity pharmacy;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "address")
   private PatientRegistrationFormEntity patientRegistrationForm;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "address")
   private ParentGuardianEntity parentGuardian;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "address")
   private EmergencyContactEntity emergencyContact;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "address")
   private GuarantorEntity guarantor;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "address")
   private InsuranceEntity insurance;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "address")
   private ReferralEntity referral;
 
-  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "address")
   private PartyEntity party;
 
-//  @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
-//  private AppointmentEntity appointment;
-
-  @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "address")
   @Fetch(FetchMode.SELECT)
   private List<AppointmentEntity> appointments;
 }

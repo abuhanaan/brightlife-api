@@ -49,7 +49,7 @@ public class PatientRegistrationFormEntity extends BaseEntity {
   @Column(name = "patient_id", updatable = false, insertable = false)
   private String patientId;
 
-  @OneToOne()
+  @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "patient_id", referencedColumnName = "patient_id")
   private PatientEntity patient;
 

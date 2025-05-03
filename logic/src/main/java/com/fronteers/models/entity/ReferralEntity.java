@@ -52,7 +52,7 @@ public class ReferralEntity extends BaseEntity {
   @Column(name = "address_id", updatable = false, insertable = false)
   private Long addressId;
 
-  @OneToOne()
+  @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "address_id", referencedColumnName = "id")
   private AddressEntity address;
 }

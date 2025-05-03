@@ -93,7 +93,7 @@ public class PatientEntity extends BaseEntity {
   @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL)
   private PatientInformationConsentAndFinancialPolicyFormEntity patientInformationConsentAndFinancialPolicyForm;
 
-  @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "patient")
   private PatientRegistrationFormEntity patientRegistrationForm;
 
   @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL)

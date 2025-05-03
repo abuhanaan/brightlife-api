@@ -6,6 +6,7 @@ import com.fronteers.brightlife.model.AppointmentStatusEnum;
 import com.fronteers.brightlife.model.GenderEnum;
 import com.fronteers.brightlife.model.InsuranceNameEnum;
 import com.fronteers.brightlife.model.PaymentModeEnum;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -66,7 +67,7 @@ public class AppointmentEntity extends BaseEntity {
   @Column(name = "email")
   private String email;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "address_id", referencedColumnName = "id")
   private AddressEntity address;
 

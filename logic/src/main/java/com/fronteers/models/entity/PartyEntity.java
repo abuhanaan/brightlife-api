@@ -1,6 +1,7 @@
 package com.fronteers.models.entity;
 
 import com.fronteers.models.entity.forms.ReleaseReceiveFormEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -37,7 +38,7 @@ public class PartyEntity extends BaseEntity {
   @Column(name = "address_id", updatable = false, insertable = false)
   private Long addressId;
 
-  @OneToOne()
+  @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "address_id", referencedColumnName = "id")
   private AddressEntity address;
 
