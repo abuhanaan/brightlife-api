@@ -75,6 +75,32 @@ components:
         type: string
 
   schemas:
+    UserDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        email:
+          type: string
+
+    PasswordUpdate:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+        confirmPassword:
+          type: string
+      required:
+        - oldPassword
+        - newPassword
+        - confirmPassword
+
     IdGenerationResponse:
       type: object
       properties:
@@ -1505,8 +1531,8 @@ components:
           type: string
         appointmentDateTime:
           $ref: "#/components/schemas/DateTime"
-        paymentMode:
-          $ref: '#/components/schemas/PaymentModeEnum'
+#        paymentMode:
+#          $ref: '#/components/schemas/PaymentModeEnum'
 
     ReviewSearch:
       type: object
@@ -1947,19 +1973,34 @@ paths:
 
   /api/v1/patients/forms/register/{patientId}/update:
     put:
-      summary: Updates A Patients Registration Form
+      summary: This endpoints uploads regForm pdf File and updates db record with the signature date and uploaded url of registration form
       tags:
         - Patients
-      operationId: updateRegistrationForm
+      operationId: uploadRegistrationForm
       parameters:
         - $ref: "#/components/parameters/patientId"
       requestBody:
-        description: This is used to update a patients registration form.
+        description: Uploads RegForm File
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatientRegistrationForm"
+              type: object
+              required:
+                - date
+                - file
+                - owner
+                - fileType
+              properties:
+                date:
+                  $ref: "#/components/schemas/DateTime"
+                fileType:
+                  type: string
+                owner:
+                  type: string
+                file:
+                  type: string
+                  format: binary
       responses:
         "201":
           description: Patient Registration Form Updated Successfully
@@ -3114,7 +3155,6 @@ paths:
         The number of search results shall be constrained by the limit params in Query.
         Search criteria, applies an **AND** based search on all fields passed in the request.
         If the search criteria is empty/null, it returns list of appointments.
-      security: [ ]
       tags:
         - Appointment
       operationId: listAppointments
@@ -3499,6 +3539,105 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/JwtAuthenticationResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/users/profile/{idParam}:
+    get:
+      summary: Fetches A User's Profile
+      tags:
+        - User
+      operationId: profile
+      parameters:
+        - description: User Id
+          $ref: "#/components/parameters/idParam"
+      responses:
+        "200":
+          description: User's Profile Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/users/profile/{idParam}/update:
+    put:
+      summary:
+        Updates A User's Profile
+      tags:
+        - User
+      operationId: updateProfile
+      parameters:
+        - description: User Id
+          $ref: "#/components/parameters/idParam"
+      requestBody:
+        description:
+          "User Profile Update"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDto"
+      responses:
+        "200":
+          description: User Profile Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/users/profile/{idParam}/password/update:
+    put:
+      summary:
+        Changes A User's Profile
+      tags:
+        - User
+      operationId: updatePassword
+      parameters:
+        - description: User Id
+          $ref: "#/components/parameters/idParam"
+      requestBody:
+        description:
+          "User Profile Update"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordUpdate"
+      responses:
+        "200":
+          description: User Password Changed Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
