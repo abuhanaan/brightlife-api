@@ -138,40 +138,37 @@ public class AppointmentService {
     QAppointmentEntity qAppointment = QAppointmentEntity.appointmentEntity;
 
     if (searchCriteria.getPatientId() != null) {
-      predicate.and(qAppointment.patient.patientId.eq(searchCriteria.getFirstName()));
+      predicate.or(qAppointment.patient.patientId.eq(searchCriteria.getPatientId().toString()));
     }
     if (searchCriteria.getFirstName() != null) {
-      predicate.and(qAppointment.firstName.eq(searchCriteria.getFirstName()));
+      predicate.or(qAppointment.firstName.eq(searchCriteria.getFirstName()));
     }
     if (searchCriteria.getLastName() != null) {
-      predicate.and(qAppointment.lastName.eq(searchCriteria.getLastName()));
+      predicate.or(qAppointment.lastName.eq(searchCriteria.getLastName()));
     }
     if (searchCriteria.getMiddleName() != null) {
-      predicate.and(qAppointment.middleName.eq(searchCriteria.getMiddleName()));
+      predicate.or(qAppointment.middleName.eq(searchCriteria.getMiddleName()));
     }
     if (searchCriteria.getDob() != null) {
-      predicate.and(qAppointment.dob.eq(Date.valueOf(searchCriteria.getDob())));
+      predicate.or(qAppointment.dob.eq(Date.valueOf(searchCriteria.getDob())));
     }
     if (searchCriteria.getPhone() != null) {
-      predicate.and(qAppointment.phone.eq(searchCriteria.getPhone()));
+      predicate.or(qAppointment.phone.eq(searchCriteria.getPhone()));
     }
     if (searchCriteria.getEmail() != null) {
-      predicate.and(qAppointment.email.eq(searchCriteria.getEmail()));
+      predicate.or(qAppointment.email.eq(searchCriteria.getEmail()));
     }
     if (searchCriteria.getGender() != null) {
-      predicate.and(qAppointment.gender.eq(searchCriteria.getGender()));
+      predicate.or(qAppointment.gender.eq(searchCriteria.getGender()));
     }
     if (searchCriteria.getCity() != null) {
-      predicate.and(qAppointment.address.city.eq(searchCriteria.getCity()));
+      predicate.or(qAppointment.address.city.eq(searchCriteria.getCity()));
     }
     if (searchCriteria.getState() != null) {
-      predicate.and(qAppointment.address.state.eq(searchCriteria.getState()));
+      predicate.or(qAppointment.address.state.eq(searchCriteria.getState()));
     }
     if (searchCriteria.getAppointmentDateTime() != null) {
-      predicate.and(qAppointment.appointmentDateTime.eq(searchCriteria.getAppointmentDateTime()));
-    }
-    if (searchCriteria.getPaymentMode() != null) {
-      predicate.and(qAppointment.paymentMethod.eq(searchCriteria.getPaymentMode()));
+      predicate.or(qAppointment.appointmentDateTime.eq(searchCriteria.getAppointmentDateTime()));
     }
 
     // Fetch all records if no filters are applied
