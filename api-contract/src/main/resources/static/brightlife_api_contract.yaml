@@ -886,7 +886,6 @@ components:
     PaymentModeEnum:
       type: string
       enum:
-        - ""
         - Self Pay
         - Insurance Card
 
@@ -1946,14 +1945,14 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
-  /api/v1/patients/forms/register/update/{idParam}:
+  /api/v1/patients/forms/register/{patientId}/update:
     put:
       summary: Updates A Patients Registration Form
       tags:
         - Patients
       operationId: updateRegistrationForm
       parameters:
-        - $ref: "#/components/parameters/idParam"
+        - $ref: "#/components/parameters/patientId"
       requestBody:
         description: This is used to update a patients registration form.
         required: true
@@ -1964,6 +1963,176 @@ paths:
       responses:
         "201":
           description: Patient Registration Form Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/forms/register/{patientId}/personal-info/{idParam}:
+    put:
+      summary: Updates A Patients Personal
+      tags:
+        - Patients
+      operationId: updatePersonalInfo
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        description: This is used to update the personal info section of a patient's registration form.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonalInfo"
+      responses:
+        "201":
+          description: Patient Personal Info Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/forms/register/{patientId}/parent-guardian/{idParam}:
+    put:
+      summary: Updates A Patients Parent/Guardian Details
+      tags:
+        - Patients
+      operationId: updateParentGuardian
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        description: This is used to update the Parent/Guardian info section of a patient's registration form.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParentGuardian"
+      responses:
+        "201":
+          description: Patient Parent/Guardian Info Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/forms/register/{patientId}/emergency-contact/{idParam}:
+    put:
+      summary: Updates A Patients EmergencyContact Details
+      tags:
+        - Patients
+      operationId: updateEmergencyContact
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        description: This is used to update the EmergencyContact info section of a patient's registration form.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmergencyContact"
+      responses:
+        "201":
+          description: Patient EmergencyContact Info Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/forms/register/{patientId}/payment-structure/{idParam}:
+    put:
+      summary: Updates A Patients PaymentStructure Details
+      tags:
+        - Patients
+      operationId: updatePaymentStructure
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        description: This is used to update the PaymentStructure info section of a patient's registration form.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentStructure"
+      responses:
+        "201":
+          description: Patient PaymentStructure Info Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/forms/register/{patientId}/guarantor/{idParam}:
+    put:
+      summary: Updates A Patients Guarantor Details
+      tags:
+        - Patients
+      operationId: updateGuarantor
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        description: This is used to update the guarantor info section of a patient's registration form.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Guarantor"
+      responses:
+        "201":
+          description: Patient Personal Info Updated Successfully
           content:
             application/json:
               schema:
@@ -3199,7 +3368,6 @@ paths:
   /api/v1/reviews/publish/{idParam}:
     put:
       summary: Fetches A Review Record Using A Unique idParam And Publishes it
-      security: [ ]
       tags:
         - Review
       operationId: publish
@@ -3226,7 +3394,6 @@ paths:
   /api/v1/reviews/unpublish/{idParam}:
     put:
       summary: Fetches A Review Record Using A Unique idParam And Un-publishes it, thereby Sending It To The List Of Drafts
-      security: [ ]
       tags:
         - Review
       operationId: unpublish
