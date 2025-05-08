@@ -109,7 +109,8 @@ public class PatientDtoMapper {
         mapPaymentStructureDtoProps(patientRegistrationFormEntity));
     patientRegistrationForm.setDate(patientRegistrationFormEntity.getDate() != null ?
         patientRegistrationFormEntity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
-    patientRegistrationForm.setPatientRegForm(patientRegistrationFormEntity.getPatientRegFormFile());
+    patientRegistrationForm.setPatientRegForm(
+        patientRegistrationFormEntity.getPatientRegFormFile());
     return patientRegistrationForm;
   }
 
@@ -434,13 +435,17 @@ public class PatientDtoMapper {
     controlledSubstanceDto.setPatientId(
         UUID.fromString(controlledSubstanceFormEntity.getPatientId()));
     controlledSubstanceDto.setIsMinor(controlledSubstanceFormEntity.getIsMinor());
-    controlledSubstanceDto.setPatientSignDate(controlledSubstanceFormEntity.getPatientSignDate() != null ?
-        controlledSubstanceFormEntity.getPatientSignDate().toInstant().atOffset(ZoneOffset.UTC) : null);
+    controlledSubstanceDto.setPatientSignDate(
+        controlledSubstanceFormEntity.getPatientSignDate() != null ?
+            controlledSubstanceFormEntity.getPatientSignDate().toInstant().atOffset(ZoneOffset.UTC)
+            : null);
     controlledSubstanceDto.setGuardianName(controlledSubstanceFormEntity.getGuardianName());
     controlledSubstanceDto.setPatientGuardianRelationship(
         controlledSubstanceFormEntity.getPatientGuardianRelationship());
-    controlledSubstanceDto.setGuardianSignDate(controlledSubstanceFormEntity.getGuardianSignDate() != null ?
-        controlledSubstanceFormEntity.getGuardianSignDate().toInstant().atOffset(ZoneOffset.UTC) : null);
+    controlledSubstanceDto.setGuardianSignDate(
+        controlledSubstanceFormEntity.getGuardianSignDate() != null ?
+            controlledSubstanceFormEntity.getGuardianSignDate().toInstant().atOffset(ZoneOffset.UTC)
+            : null);
     controlledSubstanceDto.setFile(controlledSubstanceFormEntity.getControlledSubstanceFile());
     return controlledSubstanceDto;
   }

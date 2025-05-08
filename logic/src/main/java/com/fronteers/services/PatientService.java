@@ -21,17 +21,14 @@ import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.models.mappers.PatientEntityMapper;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
-import com.fronteers.utils.CopyBeanUtil;
 import com.fronteers.utils.PatientUtils;
 import com.querydsl.core.BooleanBuilder;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.Email;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +73,9 @@ public class PatientService {
     PatientRegistrationFormEntity existingRegForm = patient.getPatientRegistrationForm();
     FileUploadResponse uploadResponse = fileUploadService.upload(fileType, owner, file);
     existingRegForm.setPatientRegFormFile(uploadResponse.getFileUrl());
-    if (date == null) throw new BadRequestException("Signature Date is Required");
+    if (date == null) {
+      throw new BadRequestException("Signature Date is Required");
+    }
     existingRegForm.setDate(Timestamp.from(date.toInstant()));
     return new Success(true, "Reg Form Uploaded", "Completed Reg Form Uploaded Successfully");
   }
@@ -256,22 +255,27 @@ public class PatientService {
   public Success updatePersonalIfo(String patientId, PersonalInfo request) {
     PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
     PatientEntity patientEntity = regFormEntity.getPatient();
-    if (request.getEmail() != null) validateEmail(regFormEntity, request.getEmail());
+    if (request.getEmail() != null) {
+      validateEmail(regFormEntity, request.getEmail());
+    }
     PatientEntityMapper.mapPersonalInfoForUpdate(request, regFormEntity);
-    PatientEntityMapper.prepareAddressEntityForSave(regFormEntity.getAddress(), request.getAddress());
+    PatientEntityMapper.prepareAddressEntityForSave(regFormEntity.getAddress(),
+        request.getAddress());
     PatientEntityMapper.updatePatientBasics(patientEntity, request);
     patientRegistrationFormRepository.save(regFormEntity);
     return new Success(true, "Personal Info Updated", "Patient Personal Info Updated Successfully");
   }
 
   private void validateEmail(PatientRegistrationFormEntity regFormEntity, String incomingEmail) {
-    if (!regFormEntity.getEmail().equals(incomingEmail)){
+    if (!regFormEntity.getEmail().equals(incomingEmail)) {
       boolean alreadyExist = patientRepository.existsByEmail(incomingEmail);
-      if (alreadyExist) throw new BadRequestException("Email is already taken");
+      if (alreadyExist) {
+        throw new BadRequestException("Email is already taken");
+      }
     }
   }
 
-  private PatientRegistrationFormEntity checkIfPatientRegistrationFormExists(String patientId){
+  private PatientRegistrationFormEntity checkIfPatientRegistrationFormExists(String patientId) {
     return patientRegistrationFormRepository.findOneByPatientId(patientId).orElseThrow(() ->
         new BadRequestException("Registration Form Not Found"));
   }

@@ -1,6 +1,5 @@
 package com.fronteers.models.entity;
 
-import com.fronteers.brightlife.model.PersonalInfo;
 import com.fronteers.models.entity.forms.AdhdFormEntity;
 import com.fronteers.models.entity.forms.AnxietyDisorderFormEntity;
 import com.fronteers.models.entity.forms.ControlledSubstanceFormEntity;

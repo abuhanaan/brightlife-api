@@ -18,7 +18,7 @@ public class UserController implements UserApi {
   private final UserService userService;
 
   @Override
-  public ResponseEntity<Success> updatePassword(Long userId, PasswordUpdate request){
+  public ResponseEntity<Success> updatePassword(Long userId, PasswordUpdate request) {
     log.info("Updating User Password");
     Success response = userService.changePassword(userId, request);
     log.info("Password update response: {}", response);
@@ -26,7 +26,7 @@ public class UserController implements UserApi {
   }
 
   @Override
-  public ResponseEntity<UserDto> profile(Long userId){
+  public ResponseEntity<UserDto> profile(Long userId) {
     log.info("Fetching User Profile Details");
     UserDto response = userService.fetchUser(userId);
     log.info("User Profile Retrieved Successfully");
@@ -34,7 +34,7 @@ public class UserController implements UserApi {
   }
 
   @Override
-  public ResponseEntity<Success> updateProfile(Long userId, UserDto request){
+  public ResponseEntity<Success> updateProfile(Long userId, UserDto request) {
     log.info("Updating User Profile");
     Success response = userService.updateProfile(userId, request);
     log.info("User Profile Updated Successfully");

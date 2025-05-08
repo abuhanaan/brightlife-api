@@ -207,8 +207,8 @@ public class AppointmentService {
     } else {
       mapNewPatientAppointmentDetails(appointmentEntity, request, appointmentDateTime);
     }
-    if (isUpdateRequest){
-      if (appointmentEntity.getAppointmentDateTime() != request.getAppointmentDateTime()){
+    if (isUpdateRequest) {
+      if (appointmentEntity.getAppointmentDateTime() != request.getAppointmentDateTime()) {
         validateAppointmentDateTime(appointmentDateTime);
       }
     } else {
@@ -217,7 +217,9 @@ public class AppointmentService {
   }
 
   private void validateAppointmentDateTime(OffsetDateTime appointmentDateTime) {
-    if (appointmentDateTime == null) return;
+    if (appointmentDateTime == null) {
+      return;
+    }
     LocalDate appointmentDate = appointmentDateTime.toLocalDate();
     int appointmentHour = appointmentDateTime.getHour();
     // 0. Check if the appointment date is in the past

@@ -43,7 +43,6 @@ import com.fronteers.services.TerminationPolicyService;
 import com.fronteers.services.TreatmentConsentTelehealthInPersonTreatmentConsentService;
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -416,7 +415,7 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> uploadRegistrationForm(String patientId, OffsetDateTime date,
-      String fileType, String owner, MultipartFile file){
+      String fileType, String owner, MultipartFile file) {
     try {
       log.info("Uploading Completed Patient Registration Form For patient {} on {}", patientId,
           date);
@@ -430,7 +429,7 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> updatePersonalInfo(String patientId, PersonalInfo request){
+  public ResponseEntity<Success> updatePersonalInfo(String patientId, PersonalInfo request) {
     log.info("Updating Personal Info Record for Patient: {}", patientId);
     Success response = patientService.updatePersonalIfo(patientId, request);
     log.info("Patient Personal Info Updated Successfully: {}", response);

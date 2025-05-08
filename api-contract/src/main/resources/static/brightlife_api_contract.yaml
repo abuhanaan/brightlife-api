@@ -1531,8 +1531,8 @@ components:
           type: string
         appointmentDateTime:
           $ref: "#/components/schemas/DateTime"
-#        paymentMode:
-#          $ref: '#/components/schemas/PaymentModeEnum'
+    #        paymentMode:
+    #          $ref: '#/components/schemas/PaymentModeEnum'
 
     ReviewSearch:
       type: object

@@ -4,11 +4,9 @@ import com.fronteers.brightlife.model.PasswordUpdate;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.brightlife.model.UserDto;
 import com.fronteers.exceptions.BadRequestException;
-import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.User;
 import com.fronteers.repositories.UserRepository;
-import com.fronteers.utils.CopyBeanUtil;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,7 +51,8 @@ public class UserService {
     }
     user.setPassword(passwordEncoder.encode(request.getNewPassword()));
     userRepository.save(user);
-    return new Success(true, "Password Update Successful", "User Password Has Been Changed Successfully");
+    return new Success(true, "Password Update Successful",
+        "User Password Has Been Changed Successfully");
   }
 
   public UserDto fetchUser(Long userId) {
@@ -68,15 +67,24 @@ public class UserService {
 
   public Success updateProfile(Long userId, UserDto request) {
     User existingUser = fetchUserById(userId);
-    if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
-    if (request.getFirstName() != null) existingUser.setFirstName(request.getFirstName());
-    if (request.getLastName() != null) existingUser.setLastName(request.getLastName());
-    if (request.getMiddleName() != null) existingUser.setMiddleName(request.getMiddleName());
+    if (request.getEmail() != null) {
+      existingUser.setEmail(request.getEmail());
+    }
+    if (request.getFirstName() != null) {
+      existingUser.setFirstName(request.getFirstName());
+    }
+    if (request.getLastName() != null) {
+      existingUser.setLastName(request.getLastName());
+    }
+    if (request.getMiddleName() != null) {
+      existingUser.setMiddleName(request.getMiddleName());
+    }
     existingUser = userRepository.save(existingUser);
-    return new Success(true, "Profile Update Successful", "User Profile Has Been Updated Successfully");
+    return new Success(true, "Profile Update Successful",
+        "User Profile Has Been Updated Successfully");
   }
 
-  private User fetchUserById(Long userId){
+  private User fetchUserById(Long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException("User not found"));
   }

@@ -5,7 +5,6 @@ import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.models.entity.AddressEntity;
 import com.fronteers.models.entity.PatientEntity;
-import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
 import com.fronteers.repositories.AddressRepository;
 import com.fronteers.repositories.PatientRepository;
 import java.beans.FeatureDescriptor;
@@ -13,9 +12,9 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.BeanWrapper;
 
 @Slf4j
 @Component
