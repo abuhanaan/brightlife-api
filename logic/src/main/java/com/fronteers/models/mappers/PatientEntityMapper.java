@@ -35,6 +35,13 @@ public class PatientEntityMapper {
 
   private final PatientUtils patientUtils;
 
+  public static void updatePatientBasics(PatientEntity patientEntity, PersonalInfo request) {
+    if (request.getFirstName() != null) patientEntity.setFirstName(request.getFirstName());
+    if (request.getLastName() != null) patientEntity.setLastName(request.getLastName());
+    if (request.getMiddleName() != null) patientEntity.setMiddleName(request.getMiddleName());
+    if (request.getEmail() != null) patientEntity.setEmail(request.getEmail());
+  }
+
   // Map the entire registration form (used for create operations)
   public PatientRegistrationFormEntity mapRegFormToRegFormEntity(PatientRegistrationForm request, PatientEntity patientEntity) {
     PatientRegistrationFormEntity form = new PatientRegistrationFormEntity();
@@ -111,8 +118,15 @@ public class PatientEntityMapper {
     mapPersonalInfoForUpdate(request.getPersonalInfo(), form);
   }
 
+  public static void prepareAddressEntityForSave(AddressEntity entity, Address dto){
+    if (dto.getStreetName() != null) entity.setStreetName(dto.getStreetName());
+    if (dto.getCity() != null) entity.setCity(dto.getCity());
+    if (dto.getZipCode() != null) entity.setZipCode(dto.getZipCode());
+    if (dto.getState() != null) entity.setState(dto.getState());
+  }
+
   // Map personal info (used for update)
-  private void mapPersonalInfoForUpdate(PersonalInfo personalInfo, PatientRegistrationFormEntity form) {
+  public static void mapPersonalInfoForUpdate(PersonalInfo personalInfo, PatientRegistrationFormEntity form) {
     form.setFirstName(personalInfo.getFirstName());
     form.setLastName(personalInfo.getLastName());
     form.setMiddleName(personalInfo.getMiddleName());

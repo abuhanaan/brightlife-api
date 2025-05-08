@@ -17,12 +17,14 @@ import com.fronteers.brightlife.model.PatientIdValidationResponse;
 import com.fronteers.brightlife.model.PatientInformationConsentAndFinancialPolicyForm;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PatientSearch;
+import com.fronteers.brightlife.model.PersonalInfo;
 import com.fronteers.brightlife.model.ReleaseReceiveForm;
 import com.fronteers.brightlife.model.ScreeningForm;
 import com.fronteers.brightlife.model.SelfPayForm;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.brightlife.model.TerminationPolicyForm;
 import com.fronteers.brightlife.model.TreatmentConsentTelehealthInPersonTreatmentConsent;
+import com.fronteers.exceptions.ProcessingException;
 import com.fronteers.services.AdhdService;
 import com.fronteers.services.AnxietyDisorderService;
 import com.fronteers.services.ControlledSubstanceService;
@@ -39,11 +41,14 @@ import com.fronteers.services.ScreeningService;
 import com.fronteers.services.SelfPayService;
 import com.fronteers.services.TerminationPolicyService;
 import com.fronteers.services.TreatmentConsentTelehealthInPersonTreatmentConsentService;
+import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Controller
@@ -410,10 +415,25 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> updateRegistrationForm(String patientId, PatientRegistrationForm request){
-    log.info("Updating Patient record with id {}", request.getPatientId());
-    Success response = patientService.updateRegForm(patientId, request);
-    log.info("Patient Record Updated Successfully with response: {}", response);
+  public ResponseEntity<Success> uploadRegistrationForm(String patientId, OffsetDateTime date,
+      String fileType, String owner, MultipartFile file){
+    try {
+      log.info("Uploading Completed Patient Registration Form For patient {} on {}", patientId,
+          date);
+      Success response = patientService.updateRegForm(patientId, date, fileType, owner, file);
+      log.info("Patient RegistrationForm Uploaded Successfully with response: {}", response);
+      return ResponseEntity.ok(response);
+    } catch (IOException e) {
+      log.error("File could not be uploaded {}", e.toString());
+      throw new ProcessingException("file could not be uploaded " + e);
+    }
+  }
+
+  @Override
+  public ResponseEntity<Success> updatePersonalInfo(String patientId, PersonalInfo request){
+    log.info("Updating Personal Info Record for Patient: {}", patientId);
+    Success response = patientService.updatePersonalIfo(patientId, request);
+    log.info("Patient Personal Info Updated Successfully: {}", response);
     return ResponseEntity.ok(response);
   }
 }

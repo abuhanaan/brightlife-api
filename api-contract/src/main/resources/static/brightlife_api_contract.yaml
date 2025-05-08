@@ -2019,7 +2019,7 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
-  /api/v1/patients/forms/register/{patientId}/personal-info/{idParam}:
+  /api/v1/patients/forms/register/{patientId}/personal-info:
     put:
       summary: Updates A Patients Personal
       tags:
@@ -2027,7 +2027,6 @@ paths:
       operationId: updatePersonalInfo
       parameters:
         - $ref: "#/components/parameters/patientId"
-        - $ref: "#/components/parameters/idParam"
       requestBody:
         description: This is used to update the personal info section of a patient's registration form.
         required: true

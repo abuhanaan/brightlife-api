@@ -107,7 +107,8 @@ public class PatientDtoMapper {
         mapEmergencyDtoProps(patientRegistrationFormEntity.getEmergencyContact()));
     patientRegistrationForm.setPaymentStructure(
         mapPaymentStructureDtoProps(patientRegistrationFormEntity));
-    patientRegistrationForm.setDate(patientRegistrationFormEntity.getDate().toInstant().atOffset(ZoneOffset.UTC));
+    patientRegistrationForm.setDate(patientRegistrationFormEntity.getDate() != null ?
+        patientRegistrationFormEntity.getDate().toInstant().atOffset(ZoneOffset.UTC) : null);
     patientRegistrationForm.setPatientRegForm(patientRegistrationFormEntity.getPatientRegFormFile());
     return patientRegistrationForm;
   }
@@ -158,8 +159,10 @@ public class PatientDtoMapper {
     insuranceProvider.setName(insuranceEntity.getProviderName());
     insuranceProvider.setPhone(insuranceEntity.getPhone());
     insuranceProvider.setAuthorizationId(insuranceEntity.getAuthorizationId());
-    insuranceProvider.setCoverageEndDate(insuranceEntity.getCoverageEndDate().toLocalDate());
-    insuranceProvider.setCoverageStartDate(insuranceEntity.getCoverageStartDate().toLocalDate());
+    insuranceProvider.setCoverageEndDate(insuranceEntity.getCoverageEndDate() != null ?
+        insuranceEntity.getCoverageEndDate().toLocalDate() : null);
+    insuranceProvider.setCoverageStartDate(insuranceEntity.getCoverageStartDate() != null ?
+        insuranceEntity.getCoverageStartDate().toLocalDate() : null);
     insuranceProvider.setGroupNumber(insuranceEntity.getGroupNumber());
     insuranceProvider.setPolicyId(insuranceEntity.getPolicyId());
     return insuranceProvider;
@@ -431,13 +434,13 @@ public class PatientDtoMapper {
     controlledSubstanceDto.setPatientId(
         UUID.fromString(controlledSubstanceFormEntity.getPatientId()));
     controlledSubstanceDto.setIsMinor(controlledSubstanceFormEntity.getIsMinor());
-    controlledSubstanceDto.setPatientSignDate(
-        controlledSubstanceFormEntity.getPatientSignDate().toInstant().atOffset(ZoneOffset.UTC));
+    controlledSubstanceDto.setPatientSignDate(controlledSubstanceFormEntity.getPatientSignDate() != null ?
+        controlledSubstanceFormEntity.getPatientSignDate().toInstant().atOffset(ZoneOffset.UTC) : null);
     controlledSubstanceDto.setGuardianName(controlledSubstanceFormEntity.getGuardianName());
     controlledSubstanceDto.setPatientGuardianRelationship(
         controlledSubstanceFormEntity.getPatientGuardianRelationship());
-    controlledSubstanceDto.setGuardianSignDate(
-        controlledSubstanceFormEntity.getGuardianSignDate().toInstant().atOffset(ZoneOffset.UTC));
+    controlledSubstanceDto.setGuardianSignDate(controlledSubstanceFormEntity.getGuardianSignDate() != null ?
+        controlledSubstanceFormEntity.getGuardianSignDate().toInstant().atOffset(ZoneOffset.UTC) : null);
     controlledSubstanceDto.setFile(controlledSubstanceFormEntity.getControlledSubstanceFile());
     return controlledSubstanceDto;
   }
@@ -575,7 +578,9 @@ public class PatientDtoMapper {
         adhEntity.getPastTreatments().stream().map(pastTreatmentEntity -> {
           PastTreatmentInfo pastTreatment = new PastTreatmentInfo();
           pastTreatment.setId(pastTreatmentEntity.getId());
-          pastTreatment.setDate(pastTreatmentEntity.getDate().toLocalDate());
+          pastTreatment.setDate(pastTreatmentEntity.getDate() != null ?
+              pastTreatmentEntity.getDate().toLocalDate() : null
+          );
           pastTreatment.setDrugTreated(pastTreatmentEntity.getDrugTreated());
           pastTreatment.setIsTreatmentCompleted(pastTreatmentEntity.getIsTreatmentCompleted());
           pastTreatment.setFacility(pastTreatmentEntity.getFacility());

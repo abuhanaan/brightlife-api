@@ -1,6 +1,7 @@
 package com.fronteers.services;
 
 import com.fronteers.brightlife.model.BasicPatientInfo;
+import com.fronteers.brightlife.model.FileUploadResponse;
 import com.fronteers.brightlife.model.Forms;
 import com.fronteers.brightlife.model.IdGenerationResponse;
 import com.fronteers.brightlife.model.PaginatedPatients;
@@ -8,7 +9,9 @@ import com.fronteers.brightlife.model.Patient;
 import com.fronteers.brightlife.model.PatientIdValidationResponse;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PatientSearch;
+import com.fronteers.brightlife.model.PersonalInfo;
 import com.fronteers.brightlife.model.Success;
+import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
@@ -22,7 +25,11 @@ import com.fronteers.utils.CopyBeanUtil;
 import com.fronteers.utils.PatientUtils;
 import com.querydsl.core.BooleanBuilder;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -32,6 +39,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -42,6 +50,7 @@ public class PatientService {
   private final PatientEntityMapper patientEntityMapper;
   private final PatientRegistrationFormRepository patientRegistrationFormRepository;
   private final PatientUtils patientUtils;
+  private final FileUploadService fileUploadService;
 
   @Transactional
   public Success submitRegistrationForm(PatientRegistrationForm request) {
@@ -61,30 +70,17 @@ public class PatientService {
         String.format("PatientId: %s", newPatient.getPatientId()));
   }
 
-  public Success updateRegForm(String patientId, PatientRegistrationForm request) {
+  public Success updateRegForm(String patientId, OffsetDateTime date,
+      String fileType, String owner, MultipartFile file) throws IOException {
     PatientEntity patient = patientUtils.checkIfPatientExists(patientId);
     PatientRegistrationFormEntity existingRegForm = patient.getPatientRegistrationForm();
-    try {
-      validatePatientsRegFormAndDto(patient.getPatientRegistrationForm().getId(), request.getId());
-      PatientRegistrationFormEntity regFormToSave = patientEntityMapper.mapRegFormToRegFormEntity(request, patient);
-      regFormToSave.setId(null);
-//      CopyBeanUtil.copyNonNullProperties(existingRegForm, regFormToSave);
-      patientUtils.copyNonNullProperties(regFormToSave, existingRegForm);
-      patientRegistrationFormRepository.save(existingRegForm);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-
-    return new Success(true, "Patient Registration Form Updated Successfully",
-        String.format("PatientId: %s", existingRegForm.getPatientId()));
+    FileUploadResponse uploadResponse = fileUploadService.upload(fileType, owner, file);
+    existingRegForm.setPatientRegFormFile(uploadResponse.getFileUrl());
+    if (date == null) throw new BadRequestException("Signature Date is Required");
+    existingRegForm.setDate(Timestamp.from(date.toInstant()));
+    return new Success(true, "Reg Form Uploaded", "Completed Reg Form Uploaded Successfully");
   }
 
-  private void validatePatientsRegFormAndDto(Long existingRegFormId, Long incomingRegFormId) {
-    if (!Objects.equals(existingRegFormId, incomingRegFormId)){
-      log.warn("Incoming Registration Form with id {} is not equal to existing reg form with id {}", incomingRegFormId, existingRegFormId);
-      throw new ConflictException("Patient Is Not The Owner Of Registration Form In The Request");
-    }
-  }
 
   private String generatePatientId() {
     return UUID.randomUUID().toString();
@@ -255,5 +251,28 @@ public class PatientService {
     response.setItemsPerPage(patientPage.getSize());
     response.setTotalPages(patientPage.getTotalPages());
     return response;
+  }
+
+  public Success updatePersonalIfo(String patientId, PersonalInfo request) {
+    PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
+    PatientEntity patientEntity = regFormEntity.getPatient();
+    if (request.getEmail() != null) validateEmail(regFormEntity, request.getEmail());
+    PatientEntityMapper.mapPersonalInfoForUpdate(request, regFormEntity);
+    PatientEntityMapper.prepareAddressEntityForSave(regFormEntity.getAddress(), request.getAddress());
+    PatientEntityMapper.updatePatientBasics(patientEntity, request);
+    patientRegistrationFormRepository.save(regFormEntity);
+    return new Success(true, "Personal Info Updated", "Patient Personal Info Updated Successfully");
+  }
+
+  private void validateEmail(PatientRegistrationFormEntity regFormEntity, String incomingEmail) {
+    if (!regFormEntity.getEmail().equals(incomingEmail)){
+      boolean alreadyExist = patientRepository.existsByEmail(incomingEmail);
+      if (alreadyExist) throw new BadRequestException("Email is already taken");
+    }
+  }
+
+  private PatientRegistrationFormEntity checkIfPatientRegistrationFormExists(String patientId){
+    return patientRegistrationFormRepository.findOneByPatientId(patientId).orElseThrow(() ->
+        new BadRequestException("Registration Form Not Found"));
   }
 }
