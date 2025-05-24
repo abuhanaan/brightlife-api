@@ -16,19 +16,23 @@ import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.QPatientEntity;
+import com.fronteers.models.entity.User;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
 import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.models.mappers.PatientEntityMapper;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
+import com.fronteers.repositories.UserRepository;
 import com.fronteers.utils.PatientUtils;
 import com.querydsl.core.BooleanBuilder;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +52,8 @@ public class PatientService {
   private final PatientRegistrationFormRepository patientRegistrationFormRepository;
   private final PatientUtils patientUtils;
   private final FileUploadService fileUploadService;
+  private final EmailService emailService;
+  private final UserRepository userRepository;
 
   @Transactional
   public Success submitRegistrationForm(PatientRegistrationForm request) {
@@ -63,6 +69,17 @@ public class PatientService {
         request, newPatient);
     patientRegistrationFormRepository.save(patientRegistrationFormEntity);
     //    TODO: send email
+    Map<String, Object> variables = Map.of(
+        "name", newPatient.getFirstName() + " " + newPatient.getLastName(),
+        "email", newPatient.getEmail()
+    );
+    try {
+      emailService.sendEmail("fronteers.dev@gmail.com", "New Patient Registration", "admin-notification", variables);
+    } catch (MessagingException e) {
+      log.warn(e.getMessage());
+      e.printStackTrace();
+      throw new BadRequestException(e.getMessage());
+    }
     return new Success(true, "Patient Registration Form Submitted Successfully",
         String.format("PatientId: %s", newPatient.getPatientId()));
   }
