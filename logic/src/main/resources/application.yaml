@@ -16,13 +16,13 @@ spring:
     add-properties: false
   application:
     name: brightlife
-    liquibase:
-    user: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
-    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${MYSQL_DATABASE}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    change-log: classpath:/db/changelog/changelog-master.xml
-    enabled: true
+#    liquibase:
+#    user: ${MYSQL_USER}
+#    password: ${MYSQL_PASSWORD}
+#    url: jdbc:mysql://${DB_URL}:${DB_PORT}/${MYSQL_DATABASE}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    change-log: classpath:/db/changelog/changelog-master.xml
+#    enabled: true
 
   datasource:
     url: jdbc:mysql://${DB_URL}:${DB_PORT}/${MYSQL_DATABASE}

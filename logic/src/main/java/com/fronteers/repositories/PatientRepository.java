@@ -8,7 +8,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PatientRepository extends JpaRepository<PatientEntity, String>,
+public interface PatientRepository extends JpaRepository<PatientEntity, Long>,
     QuerydslPredicateExecutor<PatientEntity> {
 
   Optional<PatientEntity> findOneByPatientId(String patientId);

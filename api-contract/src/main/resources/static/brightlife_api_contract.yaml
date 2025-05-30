@@ -73,6 +73,13 @@ components:
       required: true
       schema:
         type: string
+    consentType:
+      in: path
+      name: consentType
+      description: Type of the consent form.
+      required: true
+      schema:
+        $ref: "#/components/schemas/ConsentTypeEnum"
 
   schemas:
     UserDto:
@@ -1251,6 +1258,41 @@ components:
           type: integer
           format: int64
 
+    ConsentForm:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        consentType:
+          $ref: "#/components/schemas/ConsentTypeEnum"
+        patientId:
+          $ref: "#/components/schemas/PatientId"
+        patientSignDate:
+          $ref: "#/components/schemas/DateTime"
+        file:
+          type: string
+
+    ConsentTypeEnum:
+      type: string
+      enum:
+        - omhc-consent
+        - prp-consent
+        - asam-0.5-early-intervention
+        - asam-1.0-outpatient-treatment
+        - asam-2.1-outpatient-treatment
+        - asam-2.5-outpatient-treatment
+        - community-housing
+        - dui-dwi
+        - supported-employment
+        - medication-assisted-weight-loss
+
+    PatientConsentForms:
+      type: array
+      items:
+        $ref: "#/components/schemas/ConsentForm"
+        max: 10
+
     PaginatedReviews:
       type: object
       properties:
@@ -1301,6 +1343,8 @@ components:
     Forms:
       type: object
       properties:
+        consentForms:
+          $ref: '#/components/schemas/PatientConsentForms'
         adhdForm:
           $ref: '#/components/schemas/ADHDForm'
         anxietyDisorderForm:
@@ -1808,6 +1852,111 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Dashboard"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/consent-form/upload:
+    post:
+      summary:
+        Uploads Patients Consent Form to s3bucket
+      security: [ ]
+      tags:
+        - Patients
+      operationId: uploadConsentForm
+      requestBody:
+        description: Uploads Consent Form
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - patientId
+                - consentType
+                - patientSignDate
+              properties:
+                patientId:
+                  type: string
+                  format: uuid
+                consentType:
+                  $ref: "#/components/schemas/ConsentTypeEnum"
+                patientSignDate:
+                  $ref: "#/components/schemas/DateTime"
+                file:
+                  type: string
+                  format: binary
+
+      responses:
+        "200":
+          description: Consent Form Uploaded Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/consent-form/{patientId}/{consentType}:
+    get:
+      summary:
+        Retrieves Patient's Specific Consent Form.
+      tags:
+        - Patients
+      operationId: getConsentForm
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+        - $ref: "#/components/parameters/consentType"
+      responses:
+        "200":
+          description: Patient Consent Form Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsentForm"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/consent-form/{patientId}:
+    get:
+      summary:
+        Retrieves All 10 Patient's Consent Forms.
+      tags:
+        - Patients
+      operationId: getAllConsentForm
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+      responses:
+        "200":
+          description: All Patient Consent Forms Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientConsentForms"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":

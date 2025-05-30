@@ -1,6 +1,8 @@
 package com.fronteers.services;
 
 import com.fronteers.brightlife.model.BasicPatientInfo;
+import com.fronteers.brightlife.model.ConsentForm;
+import com.fronteers.brightlife.model.ConsentTypeEnum;
 import com.fronteers.brightlife.model.FileUploadResponse;
 import com.fronteers.brightlife.model.Forms;
 import com.fronteers.brightlife.model.IdGenerationResponse;
@@ -17,9 +19,12 @@ import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.QPatientEntity;
 import com.fronteers.models.entity.User;
+import com.fronteers.models.entity.forms.ConsentFormEntity;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
+import com.fronteers.models.mappers.ConsentFormMapper;
 import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.models.mappers.PatientEntityMapper;
+import com.fronteers.repositories.ConsentFormRepository;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.UserRepository;
@@ -33,12 +38,14 @@ import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,6 +60,7 @@ public class PatientService {
   private final PatientUtils patientUtils;
   private final FileUploadService fileUploadService;
   private final EmailService emailService;
+  private final ConsentFormRepository consentRepository;
   private final UserRepository userRepository;
 
   @Transactional
@@ -82,6 +90,34 @@ public class PatientService {
     }
     return new Success(true, "Patient Registration Form Submitted Successfully",
         String.format("PatientId: %s", newPatient.getPatientId()));
+  }
+
+  public Success uploadConsentForm(String patientId, OffsetDateTime patientSignDate,
+      ConsentTypeEnum consentType, MultipartFile file) throws IOException {
+    PatientEntity patient = patientUtils.checkIfPatientExists(patientId);
+    checkIfConsentFormAlreadyExists(patient, consentType);
+    FileUploadResponse uploadResponse = fileUploadService.upload(consentType.name(), patientId, file);
+    ConsentFormEntity newConsentForm = ConsentFormEntity.builder()
+        .consentType(consentType)
+        .file(uploadResponse.getFileUrl())
+        .patient(patient)
+        .patientSignDate(Timestamp.from(patientSignDate.toInstant()))
+        .build();
+    consentRepository.save(newConsentForm);
+    return  new Success(true, "Form Uploaded Successfully",
+        String.format(consentType + " Uploaded Successfully"));
+  }
+
+  public List<ConsentForm> getAllPatientConsents(String patientId) {
+    PatientEntity patient = patientUtils.checkIfPatientExists(patientId);
+    return ConsentFormMapper.mapConsentEntitiesToDtos(patient.getConsentForms());
+  }
+
+  public ConsentForm getConsentForm(String patientId, ConsentTypeEnum consentType) {
+    ConsentFormEntity consentForm = consentRepository.findOneByPatientIdAndConsentType(patientId, consentType)
+        .orElseThrow(() -> new NotFoundException(String.format("Consent form of type %s not found for patient %s",
+            consentType, patientId)));
+    return ConsentFormMapper.mapConsentEntityToDto(consentForm);
   }
 
   public Success updateRegForm(String patientId, OffsetDateTime date,
@@ -160,6 +196,15 @@ public class PatientService {
     dto.setReviews(null);
     dto.setAppointments(null);
     return dto;
+  }
+
+  private void checkIfConsentFormAlreadyExists(PatientEntity patient, ConsentTypeEnum consentType) {
+    List<ConsentFormEntity> patientConsentForms = patient.getConsentForms();
+    Optional<ConsentFormEntity> currentConsentForm = patientConsentForms.stream().filter
+        (consentFormEntity -> consentFormEntity.getConsentType().equals(consentType)).findFirst();
+    if (currentConsentForm.isPresent()) {
+      throw new ConflictException(String.format("Patient already submitted %s", consentType));
+    }
   }
 
   private Forms setPatientForms(PatientEntity patient) {

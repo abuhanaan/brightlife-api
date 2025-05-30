@@ -2,6 +2,7 @@ package com.fronteers.models.entity;
 
 import com.fronteers.models.entity.forms.AdhdFormEntity;
 import com.fronteers.models.entity.forms.AnxietyDisorderFormEntity;
+import com.fronteers.models.entity.forms.ConsentFormEntity;
 import com.fronteers.models.entity.forms.ControlledSubstanceFormEntity;
 import com.fronteers.models.entity.forms.DepressionAssessmentFormEntity;
 import com.fronteers.models.entity.forms.InitialEvaluationFormEntity;
@@ -23,6 +24,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -55,6 +57,9 @@ public class PatientEntity extends BaseEntity {
   @Column(name = "email", unique = true, nullable = false)
   private String email;
 
+  @Column
+  private Map<String, String> programs;
+
   @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
   @Fetch(FetchMode.SELECT)
   private List<ReviewEntity> reviews;
@@ -62,6 +67,10 @@ public class PatientEntity extends BaseEntity {
   @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
   @Fetch(FetchMode.SELECT)
   private List<AppointmentEntity> appointments;
+
+  @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+  @Fetch(FetchMode.SELECT)
+  private List<ConsentFormEntity> consentForms;
 
   @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL)
   private AdhdFormEntity adhdForm;

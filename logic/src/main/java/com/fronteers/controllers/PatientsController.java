@@ -3,8 +3,11 @@ package com.fronteers.controllers;
 import com.fronteers.brightlife.api.PatientsApi;
 import com.fronteers.brightlife.model.ADHDForm;
 import com.fronteers.brightlife.model.AnxietyDisorderForm;
+import com.fronteers.brightlife.model.ConsentForm;
+import com.fronteers.brightlife.model.ConsentTypeEnum;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
+import com.fronteers.brightlife.model.FileUploadResponse;
 import com.fronteers.brightlife.model.IdGenerationResponse;
 import com.fronteers.brightlife.model.InitialEvaluationForm;
 import com.fronteers.brightlife.model.IntakeForm;
@@ -43,6 +46,8 @@ import com.fronteers.services.TerminationPolicyService;
 import com.fronteers.services.TreatmentConsentTelehealthInPersonTreatmentConsentService;
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +76,38 @@ public class PatientsController implements PatientsApi {
   private final TerminationPolicyService terminationPolicyService;
   private final TreatmentConsentTelehealthInPersonTreatmentConsentService tctInPersontcService;
 
+
+//  Consent Forms
+  @Override
+  public ResponseEntity<List<ConsentForm>> getAllConsentForm(String patientId){
+    log.info("Fetching All Consent Forms For Patient: {}", patientId);
+    List<ConsentForm> response = patientService.getAllPatientConsents(patientId);
+    log.info("Patients Consients Retrieved Successfully: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<Success> uploadConsentForm(UUID patientId,
+      ConsentTypeEnum consentType, OffsetDateTime patientSignDate, MultipartFile file){
+    try {
+      log.info("Uploading {} Form For patient {} on {}", consentType, patientId,
+          patientSignDate);
+      Success response = patientService.uploadConsentForm(patientId.toString(), patientSignDate, consentType, file);
+      log.info("Patient Consent Form Uploaded Successfully with response: {}", response);
+      return ResponseEntity.ok(response);
+    } catch (IOException e) {
+      log.error("File could not be uploaded {}", e.toString());
+      throw new ProcessingException("file could not be uploaded " + e);
+    }
+  }
+
+  @Override
+  public ResponseEntity<ConsentForm> getConsentForm(String patientId, ConsentTypeEnum consentType){
+    log.info("Fetching {} Form for Patient {}", consentType, patientId);
+    ConsentForm response = patientService.getConsentForm(patientId, consentType);
+    log.info("Consent Form Fetch Response: {}", response);
+    return ResponseEntity.ok(response);
+  }
   //  ADHD
   @Override
   public ResponseEntity<ADHDForm> getAdhd(Long id) {
