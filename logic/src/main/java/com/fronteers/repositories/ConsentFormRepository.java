@@ -11,7 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConsentFormRepository extends JpaRepository<ConsentFormEntity, Long> {
 
-  Optional<ConsentFormEntity> findOneByPatientIdAndConsentType(String patientId, ConsentTypeEnum consentType);
-
-
+  Optional<ConsentFormEntity> findOneByPatient_PatientIdAndConsentType(String patientId, ConsentTypeEnum consentType);
 }

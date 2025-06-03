@@ -85,7 +85,7 @@ public class SecurityConfig {
                 "/api/v1/patients/forms/mood-disorder-assessment",
                 "/api/v1/patients/forms/privacy-practices",
                 "/api/v1/patients/forms/info-and-fin-policy",
-                "/api/v1/patients/forms/release-receive",
+                "/api/v1/patients/forms/release-receive", "/api/v1/patients/consent-form/upload",
                 "/api/v1/patients/forms/screening", "/api/v1/patients/forms/self-pay",
                 "/api/v1/patients/forms/termination-policy",
                 "/api/v1/patients/forms/treatment-consent")

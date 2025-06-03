@@ -9,6 +9,7 @@ import com.fronteers.brightlife.model.PastTreatmentInfo;
 import com.fronteers.brightlife.model.RelativeWithMentalIllnessOrSuicide;
 import com.fronteers.brightlife.model.SubstanceUsage;
 import com.fronteers.brightlife.model.Success;
+import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
 import com.fronteers.models.entity.AlcoholDrugHistoryEntity;
@@ -31,14 +32,19 @@ import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.RelativeWithMentalIllnessOrSuicideRepository;
 import com.fronteers.repositories.SubstanceUsageRepository;
 import com.fronteers.utils.PatientUtils;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class IntakeService {
@@ -53,6 +59,9 @@ public class IntakeService {
   private final SubstanceUsageRepository substanceUsageRepository;
   private final PastTreatmentRepository pastTreatmentRepository;
   private final RelativeWithMentalIllnessOrSuicideRepository relWithMentalIllnessOrSuicideRepository;
+  private final EmailService emailService;
+  @Value("${fe.base.url}")
+  private String feBaseUrl;
 
 //  TODO: Do null checks on arrays as oppose to empty checks
 
@@ -84,7 +93,25 @@ public class IntakeService {
         processAlcoholDrugHistory(request.getAlcoholDrugHistory(), newIntakeForm) : null);
     patient.setIntakeForm(newIntakeForm);
     patientRepository.save(patient);
+    notifyAdminAndPatient(patient);
     return new Success(true, "Form Submitted Successfully", "Intake Form Submitted");
+  }
+
+  private void notifyAdminAndPatient(PatientEntity patient) {
+    Map<String, Object> variables = Map.of(
+        "name", patient.getFirstName() + " " + patient.getLastName(),
+        "email", patient.getEmail(),
+        "formType", "Intake",
+        "appointmentUrl", feBaseUrl + "/appointment/" + patient.getPatientId());
+    try {
+      emailService.sendEmail("fronteers.dev@gmail.com", "Intake Form Submission Details",
+          "admin-form-submission-notification", variables);
+      emailService.sendEmail(patient.getEmail(), "Acknowledgement",
+          "patient-appointment-template.html", variables);
+    } catch (MessagingException e) {
+      log.warn(e.getMessage());
+      throw new BadRequestException(e.getMessage());
+    }
   }
 
   public IntakeForm getIntake(Long id) {

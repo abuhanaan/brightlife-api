@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Next Step From Brightlife!</title>
+</head>
+<body>
+<h1>Next Step Of your Behavioral treatment Journey</h1>
+<p>
+  Dear <span th:text="${name}">Patient</span>, the Brightlife team is thriled to receive your OMHC
+  consent form, the next step is to complete your intake form.
+</p>
+<p>
+  Click the link below to complete your intake form :<br>
+  <a th:href="${intakeForm}" target="_blank">intake form</a>
+</p>
+<p>
+  If you have any questions or need assistance, feel free to reply to this email.<br>
+  <br>
+  Best regards,<br>
+  The BrightLife Team
+</p>
+</body>
+</html>

@@ -36,16 +36,18 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -62,6 +64,8 @@ public class PatientService {
   private final EmailService emailService;
   private final ConsentFormRepository consentRepository;
   private final UserRepository userRepository;
+  @Value("${fe.base.url}")
+  private String feBaseUrl;
 
   @Transactional
   public Success submitRegistrationForm(PatientRegistrationForm request) {
@@ -75,17 +79,21 @@ public class PatientService {
         .build();
     PatientRegistrationFormEntity patientRegistrationFormEntity = patientEntityMapper.mapRegFormToRegFormEntity(
         request, newPatient);
+    Set<String> programs = new HashSet<>();
+    programs.add("OMHC");
+    newPatient.setPrograms(programs);
     patientRegistrationFormRepository.save(patientRegistrationFormEntity);
     //    TODO: send email
     Map<String, Object> variables = Map.of(
         "name", newPatient.getFirstName() + " " + newPatient.getLastName(),
-        "email", newPatient.getEmail()
+        "email", newPatient.getEmail(),
+        "omhcForm", feBaseUrl + "/forms/consent/omhc-consent/" + request.getPatientId()
     );
     try {
       emailService.sendEmail("fronteers.dev@gmail.com", "New Patient Registration", "admin-notification", variables);
+      emailService.sendEmail(patientRegistrationFormEntity.getEmail(), "Patient Onboarding Message", "patient-onboarding", variables);
     } catch (MessagingException e) {
       log.warn(e.getMessage());
-      e.printStackTrace();
       throw new BadRequestException(e.getMessage());
     }
     return new Success(true, "Patient Registration Form Submitted Successfully",
@@ -104,6 +112,47 @@ public class PatientService {
         .patientSignDate(Timestamp.from(patientSignDate.toInstant()))
         .build();
     consentRepository.save(newConsentForm);
+    Map<String, Object> variables = Map.of(
+        "name", patient.getFirstName() + " " + patient.getLastName(),
+        "email", patient.getEmail(),
+        "formType", consentType,
+        "formUrl", uploadResponse.getFileUrl(),
+        "intakeForm", feBaseUrl + "/forms/intake/" + patient.getPatientId()
+    );
+    String formLink = "";
+    if (consentType.equals(ConsentTypeEnum.OMHC_CONSENT)){
+      notifyAdminAboutOmhcAndSendIntakeToPatient(patient, variables);
+    }
+    else if (consentType.equals(ConsentTypeEnum.PRP_CONSENT)){
+      formLink = feBaseUrl + "/forms/consent/prp-consent/" + patient.getPatientId();
+    }
+    if (consentType.equals(ConsentTypeEnum.ASAM_0_5_EARLY_INTERVENTION)){
+      formLink = feBaseUrl + "/forms/consent/asam-0.5-early-intervention/" + patient.getPatientId();
+    } else if (consentType.equals(ConsentTypeEnum.ASAM_1_0_OUTPATIENT_TREATMENT)) {
+      formLink = feBaseUrl + "/forms/consent/asam-1.0-outpatient-treatment/" + patient.getPatientId();
+    }
+    else if (consentType.equals(ConsentTypeEnum.ASAM_2_1_OUTPATIENT_TREATMENT)) {
+      formLink = feBaseUrl + "/forms/consent/asam-2.1-outpatient-treatment/" + patient.getPatientId();
+    }
+    else if (consentType.equals(ConsentTypeEnum.ASAM_2_5_OUTPATIENT_TREATMENT)) {
+      formLink = feBaseUrl + "/forms/consent/asam-2.5-outpatient-treatment/" + patient.getPatientId();
+    }
+    else if (consentType.equals(ConsentTypeEnum.COMMUNITY_HOUSING)) {
+      formLink = feBaseUrl + "/forms/consent/community-housing/" + patient.getPatientId();
+    }
+    else if (consentType.equals(ConsentTypeEnum.DUI_DWI)) {
+      formLink = feBaseUrl + "/forms/consent/dui-dwi/" + patient.getPatientId();
+    }
+    else if (consentType.equals(ConsentTypeEnum.SUPPORTED_EMPLOYMENT)) {
+      formLink = feBaseUrl + "/forms/consent/supported-employment/" + patient.getPatientId();
+    }
+    else if (consentType.equals(ConsentTypeEnum.MEDICATION_ASSISTED_WEIGHT_LOSS)) {
+      formLink = feBaseUrl + "/forms/consent/medication-assisted-weight-loss/" + patient.getPatientId();
+    } else {
+      throw new BadRequestException("Unsupported Consent Type");
+    }
+    variables.put("formLink", formLink);
+    notifyAdminAndPatientAboutConsentForm(patient, variables);
     return  new Success(true, "Form Uploaded Successfully",
         String.format(consentType + " Uploaded Successfully"));
   }
@@ -114,7 +163,7 @@ public class PatientService {
   }
 
   public ConsentForm getConsentForm(String patientId, ConsentTypeEnum consentType) {
-    ConsentFormEntity consentForm = consentRepository.findOneByPatientIdAndConsentType(patientId, consentType)
+    ConsentFormEntity consentForm = consentRepository.findOneByPatient_PatientIdAndConsentType(patientId, consentType)
         .orElseThrow(() -> new NotFoundException(String.format("Consent form of type %s not found for patient %s",
             consentType, patientId)));
     return ConsentFormMapper.mapConsentEntityToDto(consentForm);
@@ -133,6 +182,29 @@ public class PatientService {
     return new Success(true, "Reg Form Uploaded", "Completed Reg Form Uploaded Successfully");
   }
 
+  private void notifyAdminAndPatientAboutConsentForm(PatientEntity patient, Map<String, Object> variables) {
+    try { // process patient and admin for intake form
+      emailService.sendEmail("fronteers.dev@gmail.com", "Consent Form Submission Details",
+          "admin-form-submission-notification", variables);
+      emailService.sendEmail(patient.getEmail(), "Acknowledgement",
+          "patient-consent-form-template.html", variables);
+    } catch (MessagingException e) {
+      log.warn(e.getMessage());
+      throw new BadRequestException(e.getMessage());
+    }
+  }
+
+  private void notifyAdminAboutOmhcAndSendIntakeToPatient(PatientEntity patient, Map<String, Object> variables) {
+    try { // process patient and admin for intake form
+      emailService.sendEmail("fronteers.dev@gmail.com", "OMHC Form Submission Details",
+          "admin-form-submission-notification", variables);
+      emailService.sendEmail(patient.getEmail(), "Next Step",
+          "patient-intake-template", variables);
+    } catch (MessagingException e) {
+      log.warn(e.getMessage());
+      throw new BadRequestException(e.getMessage());
+    }
+  }
 
   private String generatePatientId() {
     return UUID.randomUUID().toString();
@@ -209,6 +281,7 @@ public class PatientService {
 
   private Forms setPatientForms(PatientEntity patient) {
     Forms patientForms = new Forms();
+    patientForms.setConsentForms(ConsentFormMapper.mapConsentEntitiesToDtos(patient.getConsentForms()));
     patientForms.setAdhdForm(patient.getAdhdForm() != null ? PatientDtoMapper.mapAdhdEntityToDto(
         patient.getAdhdForm()) : null);
     patientForms.setAnxietyDisorderForm(patient.getAnxietyDisorderForm() != null ?

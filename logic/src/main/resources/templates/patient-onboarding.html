@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to BrightLife!</title>
+</head>
+<body>
+<h1>Welcome to BrightLife, <span th:text="${name}">Patient</span>!</h1>
+<p>
+  We are excited to have you onboard. To complete your registration, please fill out the onboarding consent form.
+</p>
+<p>
+  Click the link below to get started:<br>
+  <a th:href="${omhcForm}" target="_blank">Complete Onboarding Consent Form</a>
+</p>
+<p>
+  If you have any questions or need assistance, feel free to reply to this email.<br>
+  <br>
+  Best regards,<br>
+  The BrightLife Team
+</p>
+</body>
+</html>

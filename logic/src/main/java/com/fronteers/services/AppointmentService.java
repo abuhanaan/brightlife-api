@@ -19,6 +19,7 @@ import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.utils.CopyBeanUtil;
 import com.fronteers.utils.PatientUtils;
 import com.querydsl.core.BooleanBuilder;
+import jakarta.mail.MessagingException;
 import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +56,9 @@ public class AppointmentService {
   private final PatientService patientService;
   private final PatientUtils patientUtils;
   private final PatientRegistrationFormRepository regRepository;
+  private final EmailService emailService;
+  @Value("${fe.base.url}")
+  private String feBaseUrl;
 
   public Success updateAppointment(Appointment request) {
     AppointmentEntity existingAppointment = checkIfAppointmentExists(request.getId());
@@ -72,9 +77,27 @@ public class AppointmentService {
     prepareAppointmentForSave(appointmentEntity, request, false);
     appointmentEntity.setStatus(AppointmentStatusEnum.UPCOMING);
     appointmentRepository.save(appointmentEntity);
+    notifyAdminAndPatient(appointmentEntity);
     return new Success(true, "Appointment Submitted Successfully",
         String.format("Appointment id: %s, Appointment time: %s",
             appointmentEntity.getId(), appointmentEntity.getAppointmentDateTime()));
+  }
+
+  private void notifyAdminAndPatient(AppointmentEntity appointmentEntity) {
+    Map<String, Object> variables = Map.of(
+        "name", appointmentEntity.getFirstName() + " " + appointmentEntity.getLastName(),
+        "email", appointmentEntity.getEmail(),
+        "formType", "Intake Form",
+        "appointmentUrl", feBaseUrl + "/appointments/" + appointmentEntity.getPatient().getPatientId());
+    try {
+      emailService.sendEmail("fronteers.dev@gmail.com", "Intake Form Submission Details",
+          "admin-form-submission-notification", variables);
+      emailService.sendEmail(appointmentEntity.getEmail(), "Acknowledgement",
+          "patient-appointment-template.html", variables);
+    } catch (MessagingException e) {
+      log.warn(e.getMessage());
+      throw new BadRequestException(e.getMessage());
+    }
   }
 
   public Success changeAppointmentStatus(Long id, UpdateAppointmentStatus request) {

@@ -21,7 +21,7 @@ public class ConsentFormMapper {
   }
 
   public static List<ConsentForm> mapConsentEntitiesToDtos(List<ConsentFormEntity> consentForms) {
-    if (consentForms.isEmpty()){
+    if (consentForms == null || consentForms.isEmpty()){
       return Collections.emptyList();
     }
     return consentForms.stream().map(ConsentFormMapper::mapConsentEntityToDto).toList();

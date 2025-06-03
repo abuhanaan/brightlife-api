@@ -12,7 +12,7 @@ info:
 servers:
   - url: http://localhost:7081
     description: Local test server
-  - url: http://ec2-3-148-228-186.us-east-2.compute.amazonaws.com:7081
+  - url: http://ec2-13-60-241-205.eu-north-1.compute.amazonaws.com:7081
     description: Temporary http test server
   - url: https://bright-life-enhancement.fronteers-dev.com/
     description: Dev test server

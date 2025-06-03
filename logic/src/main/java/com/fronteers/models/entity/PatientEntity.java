@@ -23,8 +23,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -57,9 +59,6 @@ public class PatientEntity extends BaseEntity {
   @Column(name = "email", unique = true, nullable = false)
   private String email;
 
-  @Column
-  private Map<String, String> programs;
-
   @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
   @Fetch(FetchMode.SELECT)
   private List<ReviewEntity> reviews;
@@ -71,6 +70,9 @@ public class PatientEntity extends BaseEntity {
   @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
   @Fetch(FetchMode.SELECT)
   private List<ConsentFormEntity> consentForms;
+
+  @Column(name = "programs")
+  private Set<String> programs;
 
   @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL)
   private AdhdFormEntity adhdForm;
