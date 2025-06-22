@@ -87,13 +87,21 @@ public class AppointmentService {
     Map<String, Object> variables = Map.of(
         "name", appointmentEntity.getFirstName() + " " + appointmentEntity.getLastName(),
         "email", appointmentEntity.getEmail(),
+        "patientId", appointmentEntity.getPatient() != null ? appointmentEntity.getPatient().getPatientId() : null,
         "formType", "Intake Form",
+        "appointmentType", appointmentEntity.getAppointmentType(),
+        "service", appointmentEntity.getService(),
+        "date", String.format("%s, %s-%s-%s", appointmentEntity.getAppointmentDateTime().getDayOfWeek(),
+            appointmentEntity.getAppointmentDateTime().getMonthValue(),
+            appointmentEntity.getAppointmentDateTime().getDayOfMonth(), appointmentEntity.getAppointmentDateTime().getYear()),
+        "time", String.format("%s:%s", appointmentEntity.getAppointmentDateTime().getHour(),
+            appointmentEntity.getAppointmentDateTime().getMinute()),
         "appointmentUrl", feBaseUrl + "/appointments/" + appointmentEntity.getPatient().getPatientId());
     try {
-      emailService.sendEmail("fronteers.dev@gmail.com", "Intake Form Submission Details",
-          "admin-form-submission-notification", variables);
-      emailService.sendEmail(appointmentEntity.getEmail(), "Acknowledgement",
-          "patient-appointment-template.html", variables);
+      emailService.sendEmail("fronteers.dev@gmail.com", "Appointment Submission Details",
+          "admin-appointment-submission-notification", variables);
+      emailService.sendEmail(appointmentEntity.getEmail(), "Appointment Acknowledgement",
+          "patient-appointment-aknowledgement-template.html", variables);
     } catch (MessagingException e) {
       log.warn(e.getMessage());
       throw new BadRequestException(e.getMessage());

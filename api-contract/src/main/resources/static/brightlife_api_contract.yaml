@@ -81,6 +81,14 @@ components:
       schema:
         $ref: "#/components/schemas/ConsentTypeEnum"
 
+    programType:
+      in: path
+      name: programType
+      description: Type of the program.
+      required: true
+      schema:
+        $ref: "#/components/schemas/ProgramTypeEnum"
+
   schemas:
     UserDto:
       type: object
@@ -370,6 +378,65 @@ components:
           type: string
       type: object
 
+    IntakeIntroUpdate:
+      type: object
+      required:
+        - patientId
+        - intakeId
+      properties:
+        patientId:
+          $ref: "#/components/schemas/PatientId"
+        intakeId:
+          type: integer
+          format: int64
+        doYouShareHome:
+          type: string
+        complaints:
+          type: string
+        sexPreference:
+          type: string
+        onProbation:
+          type: string
+        inLawsuit:
+          type: string
+        childrenCount:
+          type: integer
+        marriageCount:
+          type: integer
+        pastMarriagesInfo:
+          items:
+            $ref: '#/components/schemas/PastMarriagesInfo'
+          type: array
+
+    IntakePsychHistoryUpdate:
+      type: object
+      required:
+        - patientId
+        - intakeId
+      properties:
+        patientId:
+          $ref: "#/components/schemas/PatientId"
+        intakeId:
+          type: integer
+          format:
+            int64
+        pastProviders:
+          items:
+            $ref: '#/components/schemas/PastProviders'
+          type: array
+        currentMedications:
+          items:
+            $ref: '#/components/schemas/Medication'
+          type: array
+        hasAttemptedSuicide:
+          type: boolean
+        isPsychHospitalized:
+          type: boolean
+        pastMedications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Medication'
+
     IntakeForm:
       properties:
         id:
@@ -542,7 +609,7 @@ components:
             - Xanax
             - Valium
             - Klonapin
-            - Activan
+            - Ativan
             - Dextromethorphan
             - Steroids
             - Spice
@@ -1287,6 +1354,20 @@ components:
         - supported-employment
         - medication-assisted-weight-loss
 
+    ProgramTypeEnum:
+      type: string
+      enum:
+        - OMHC
+        - PRP-Adults
+        - ASAM 0.5 Early Intervention
+        - ASAM Level 1.0 Outpatient Treatment
+        - ASAM Outpatient Treatment Level 2.1
+        - ASAM Level Outpatient Treatment 2.5
+        - 3.1 Community Housing
+        - DUI/DWI
+        - Supported Employment
+        - Medication assisted Weightloss
+
     PatientConsentForms:
       type: array
       items:
@@ -1380,6 +1461,22 @@ components:
         terminationPolicy:
           $ref: '#/components/schemas/TerminationPolicyForm'
 
+    Program:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/ProgramTypeEnum"
+        submittedConsentForm:
+          type: boolean
+        consentForm:
+          type: string
+
+    Programs:
+      type: array
+      items:
+        $ref: '#/components/schemas/Program'
+
+
     Patient:
       type: object
       properties:
@@ -1390,6 +1487,8 @@ components:
           $ref: "#/components/schemas/PatientId"
         forms:
           $ref: '#/components/schemas/Forms'
+        programs:
+          $ref: '#/components/schemas/Programs'
         reviews:
           type: array
           items:
@@ -2209,7 +2308,6 @@ paths:
       operationId: updateParentGuardian
       parameters:
         - $ref: "#/components/parameters/patientId"
-        - $ref: "#/components/parameters/idParam"
       requestBody:
         description: This is used to update the Parent/Guardian info section of a patient's registration form.
         required: true
@@ -2243,7 +2341,6 @@ paths:
       operationId: updateEmergencyContact
       parameters:
         - $ref: "#/components/parameters/patientId"
-        - $ref: "#/components/parameters/idParam"
       requestBody:
         description: This is used to update the EmergencyContact info section of a patient's registration form.
         required: true
@@ -2269,7 +2366,7 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
-  /api/v1/patients/forms/register/{patientId}/payment-structure/{idParam}:
+  /api/v1/patients/forms/register/{patientId}/payment-structure:
     put:
       summary: Updates A Patients PaymentStructure Details
       tags:
@@ -2277,7 +2374,6 @@ paths:
       operationId: updatePaymentStructure
       parameters:
         - $ref: "#/components/parameters/patientId"
-        - $ref: "#/components/parameters/idParam"
       requestBody:
         description: This is used to update the PaymentStructure info section of a patient's registration form.
         required: true
@@ -2311,7 +2407,6 @@ paths:
       operationId: updateGuarantor
       parameters:
         - $ref: "#/components/parameters/patientId"
-        - $ref: "#/components/parameters/idParam"
       requestBody:
         description: This is used to update the guarantor info section of a patient's registration form.
         required: true
@@ -2700,6 +2795,105 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/IntakeForm"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/forms/intake/{idParam}/update/intro:
+    put:
+      summary: Updates Intake Intro For A Patient
+      tags:
+        - Patients
+      operationId: updateIntakeIntro
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        description: This is used to update Intro details In Intake Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntakeIntroUpdate"
+      responses:
+        "201":
+          description: Patient Intake Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/forms/intake/{idParam}/update/psych-history:
+    put:
+      summary: Updates Intake PsychHistory For A Patient
+      tags:
+        - Patients
+      operationId: updateIntakePsychHistory
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        description: This is used to update Pysch-History In Intake Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IntakePsychHistoryUpdate"
+      responses:
+        "201":
+          description: Patient Intake Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/forms/intake/{idParam}/update/drug-history:
+    put:
+      summary: Updates Intake Alcohol Drug History For A Patient
+      tags:
+        - Patients
+      operationId: updateIntakeDrugHistory
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      requestBody:
+        description: This is used to update Alcohol Drug History details In Intake Form for an already existing patient
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AlcoholDrugHistory"
+      responses:
+        "201":
+          description: Patient Intake Form Submitted Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -3797,3 +3991,57 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
+  /api/v1/patients/{patientId}/programs/enrol/{programType}:
+    get:
+      summary:
+        Retrieves Patient's Specific Consent Form.
+      tags:
+        - Patients
+      operationId: enrollProgram
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+        - $ref: "#/components/parameters/programType"
+      responses:
+        "200":
+          description: Program Enrolled Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Success"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/v1/patients/{patientId}/programs:
+    get:
+      summary:
+        Retrieves Patient's Programs.
+      tags:
+        - Patients
+      operationId: fetchPrograms
+      parameters:
+        - $ref: "#/components/parameters/patientId"
+      responses:
+        "200":
+          description: Programs Fetched Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Programs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnProcessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
