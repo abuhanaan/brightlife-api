@@ -11,12 +11,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = "alcoholDrugHistory")
+@ToString(exclude = "alcoholDrugHistory")
 @Entity
 @Table(name = "past_treatment")
 
