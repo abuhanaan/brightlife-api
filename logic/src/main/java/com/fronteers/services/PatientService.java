@@ -3,31 +3,42 @@ package com.fronteers.services;
 import com.fronteers.brightlife.model.BasicPatientInfo;
 import com.fronteers.brightlife.model.ConsentForm;
 import com.fronteers.brightlife.model.ConsentTypeEnum;
+import com.fronteers.brightlife.model.EmergencyContact;
 import com.fronteers.brightlife.model.FileUploadResponse;
 import com.fronteers.brightlife.model.Forms;
+import com.fronteers.brightlife.model.Guarantor;
 import com.fronteers.brightlife.model.IdGenerationResponse;
 import com.fronteers.brightlife.model.PaginatedPatients;
+import com.fronteers.brightlife.model.ParentGuardian;
 import com.fronteers.brightlife.model.Patient;
 import com.fronteers.brightlife.model.PatientIdValidationResponse;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PatientSearch;
+import com.fronteers.brightlife.model.PaymentStructure;
 import com.fronteers.brightlife.model.PersonalInfo;
+import com.fronteers.brightlife.model.ProgramTypeEnum;
 import com.fronteers.brightlife.model.Success;
 import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
+import com.fronteers.exceptions.ProcessingException;
+import com.fronteers.models.entity.EmergencyContactEntity;
+import com.fronteers.models.entity.GuarantorEntity;
+import com.fronteers.models.entity.InsuranceEntity;
+import com.fronteers.models.entity.ParentGuardianEntity;
 import com.fronteers.models.entity.PatientEntity;
 import com.fronteers.models.entity.QPatientEntity;
-import com.fronteers.models.entity.User;
 import com.fronteers.models.entity.forms.ConsentFormEntity;
 import com.fronteers.models.entity.forms.PatientRegistrationFormEntity;
 import com.fronteers.models.mappers.ConsentFormMapper;
 import com.fronteers.models.mappers.PatientDtoMapper;
 import com.fronteers.models.mappers.PatientEntityMapper;
 import com.fronteers.repositories.ConsentFormRepository;
+import com.fronteers.repositories.InsuranceRepository;
 import com.fronteers.repositories.PatientRegistrationFormRepository;
 import com.fronteers.repositories.PatientRepository;
 import com.fronteers.repositories.UserRepository;
+import com.fronteers.utils.CopyBeanUtil;
 import com.fronteers.utils.PatientUtils;
 import com.querydsl.core.BooleanBuilder;
 import jakarta.mail.MessagingException;
@@ -36,6 +47,8 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +72,7 @@ public class PatientService {
   private final PatientRepository patientRepository;
   private final PatientEntityMapper patientEntityMapper;
   private final PatientRegistrationFormRepository patientRegistrationFormRepository;
+  private final InsuranceRepository insuranceRepository;
   private final PatientUtils patientUtils;
   private final FileUploadService fileUploadService;
   private final EmailService emailService;
@@ -79,11 +93,10 @@ public class PatientService {
         .build();
     PatientRegistrationFormEntity patientRegistrationFormEntity = patientEntityMapper.mapRegFormToRegFormEntity(
         request, newPatient);
-    Set<String> programs = new HashSet<>();
-    programs.add("OMHC");
+    Set<ProgramTypeEnum> programs = new HashSet<>();
+    programs.add(ProgramTypeEnum.OMHC);
     newPatient.setPrograms(programs);
     patientRegistrationFormRepository.save(patientRegistrationFormEntity);
-    //    TODO: send email
     Map<String, Object> variables = Map.of(
         "name", newPatient.getFirstName() + " " + newPatient.getLastName(),
         "email", newPatient.getEmail(),
@@ -100,6 +113,64 @@ public class PatientService {
         String.format("PatientId: %s", newPatient.getPatientId()));
   }
 
+  public Success enrollProgram(String patientId, ProgramTypeEnum programType) {
+    PatientEntity patient = patientUtils.checkIfPatientExists(patientId);
+    if (patient.getPrograms().contains(programType)) {
+      throw new ConflictException(String.format("Patient already enrolled in %s", programType));
+    }
+    patient.getPrograms().add(programType);
+    patientRepository.save(patient);
+    sendProgramConsentFormToPatient(patient, programType);
+    return new Success(true, "Program Enrollment Successful",
+        String.format("Patient enrolled in %s successfully", programType));
+  }
+
+  private void sendProgramConsentFormToPatient(PatientEntity patient, ProgramTypeEnum programType) {
+    Map<String, Object> variables = new HashMap<>(Map.of(
+        "name", patient.getFirstName() + " " + patient.getLastName(),
+        "email", patient.getEmail(),
+        "program", programType.getValue()
+    ));
+    String formLink = "";
+    if (programType.equals(ProgramTypeEnum.PRP_ADULTS)){
+      formLink = feBaseUrl + "/forms/consent/prp-consent/" + patient.getPatientId();
+    }
+    else if (programType.equals(ProgramTypeEnum.ASAM_0_5_EARLY_INTERVENTION)){
+      formLink = feBaseUrl + "/forms/consent/asam-0.5-early-intervention/" + patient.getPatientId();
+    }
+    else if (programType.equals(ProgramTypeEnum.ASAM_LEVEL_1_0_OUTPATIENT_TREATMENT)){
+      formLink = feBaseUrl + "/forms/consent/asam-1.0-outpatient-treatment/" + patient.getPatientId();
+    }
+    else if (programType.equals(ProgramTypeEnum.ASAM_OUTPATIENT_TREATMENT_LEVEL_2_1)){
+      formLink = feBaseUrl + "/forms/consent/asam-2.1-outpatient-treatment/" + patient.getPatientId();
+    }
+    else if (programType.equals(ProgramTypeEnum.ASAM_LEVEL_OUTPATIENT_TREATMENT_2_5)){
+      formLink = feBaseUrl + "/forms/consent/asam-2.5-outpatient-treatment/" + patient.getPatientId();
+    }
+    else if (programType.equals(ProgramTypeEnum._3_1_COMMUNITY_HOUSING)){
+      formLink = feBaseUrl + "/forms/consent/community-housing/" + patient.getPatientId();
+    }
+    else if (programType.equals(ProgramTypeEnum.DUI_DWI)){
+      formLink = feBaseUrl + "/forms/consent/dui-dwi/" + patient.getPatientId();
+    }
+    else if (programType.equals(ProgramTypeEnum.SUPPORTED_EMPLOYMENT)){
+      formLink = feBaseUrl + "/forms/consent/supported-employment/" + patient.getPatientId();
+    }
+    else if (programType.equals(ProgramTypeEnum.MEDICATION_ASSISTED_WEIGHTLOSS)){
+      formLink = feBaseUrl + "/forms/consent/medication-assisted-weight-loss/" + patient.getPatientId();
+    } else {
+      throw new BadRequestException("Unsupported Program Type");
+    }
+    variables.put("formLink", formLink);
+    try {
+      emailService.sendEmail("fronteers.dev@gmail.com", "Patient Program Enrollment Notification", "admin-notification", variables);
+      emailService.sendEmail(patient.getEmail(), "Patient Program Enrollment Notification", "patient-program-enrollment-template", variables);
+    } catch (MessagingException e) {
+      log.warn(e.getMessage());
+      throw new BadRequestException(e.getMessage());
+    }
+  }
+
   public Success uploadConsentForm(String patientId, OffsetDateTime patientSignDate,
       ConsentTypeEnum consentType, MultipartFile file) throws IOException {
     PatientEntity patient = patientUtils.checkIfPatientExists(patientId);
@@ -112,47 +183,17 @@ public class PatientService {
         .patientSignDate(Timestamp.from(patientSignDate.toInstant()))
         .build();
     consentRepository.save(newConsentForm);
-    Map<String, Object> variables = Map.of(
+    Map<String, Object> variables = new HashMap<>(Map.of(
         "name", patient.getFirstName() + " " + patient.getLastName(),
         "email", patient.getEmail(),
         "formType", consentType,
         "formUrl", uploadResponse.getFileUrl(),
-        "intakeForm", feBaseUrl + "/forms/intake/" + patient.getPatientId()
-    );
-    String formLink = "";
-    if (consentType.equals(ConsentTypeEnum.OMHC_CONSENT)){
-      notifyAdminAboutOmhcAndSendIntakeToPatient(patient, variables);
+        "intakeForm", feBaseUrl + "/forms/intake-form/" + patient.getPatientId()
+    ));
+    notifyAdminAndPatientAboutConsentForm(patient, variables, consentType);
+    if (consentType.getValue().equals(ConsentTypeEnum.OMHC_CONSENT.getValue())){
+      sendIntakeFormToPatient(patient, variables);
     }
-    else if (consentType.equals(ConsentTypeEnum.PRP_CONSENT)){
-      formLink = feBaseUrl + "/forms/consent/prp-consent/" + patient.getPatientId();
-    }
-    if (consentType.equals(ConsentTypeEnum.ASAM_0_5_EARLY_INTERVENTION)){
-      formLink = feBaseUrl + "/forms/consent/asam-0.5-early-intervention/" + patient.getPatientId();
-    } else if (consentType.equals(ConsentTypeEnum.ASAM_1_0_OUTPATIENT_TREATMENT)) {
-      formLink = feBaseUrl + "/forms/consent/asam-1.0-outpatient-treatment/" + patient.getPatientId();
-    }
-    else if (consentType.equals(ConsentTypeEnum.ASAM_2_1_OUTPATIENT_TREATMENT)) {
-      formLink = feBaseUrl + "/forms/consent/asam-2.1-outpatient-treatment/" + patient.getPatientId();
-    }
-    else if (consentType.equals(ConsentTypeEnum.ASAM_2_5_OUTPATIENT_TREATMENT)) {
-      formLink = feBaseUrl + "/forms/consent/asam-2.5-outpatient-treatment/" + patient.getPatientId();
-    }
-    else if (consentType.equals(ConsentTypeEnum.COMMUNITY_HOUSING)) {
-      formLink = feBaseUrl + "/forms/consent/community-housing/" + patient.getPatientId();
-    }
-    else if (consentType.equals(ConsentTypeEnum.DUI_DWI)) {
-      formLink = feBaseUrl + "/forms/consent/dui-dwi/" + patient.getPatientId();
-    }
-    else if (consentType.equals(ConsentTypeEnum.SUPPORTED_EMPLOYMENT)) {
-      formLink = feBaseUrl + "/forms/consent/supported-employment/" + patient.getPatientId();
-    }
-    else if (consentType.equals(ConsentTypeEnum.MEDICATION_ASSISTED_WEIGHT_LOSS)) {
-      formLink = feBaseUrl + "/forms/consent/medication-assisted-weight-loss/" + patient.getPatientId();
-    } else {
-      throw new BadRequestException("Unsupported Consent Type");
-    }
-    variables.put("formLink", formLink);
-    notifyAdminAndPatientAboutConsentForm(patient, variables);
     return  new Success(true, "Form Uploaded Successfully",
         String.format(consentType + " Uploaded Successfully"));
   }
@@ -182,22 +223,20 @@ public class PatientService {
     return new Success(true, "Reg Form Uploaded", "Completed Reg Form Uploaded Successfully");
   }
 
-  private void notifyAdminAndPatientAboutConsentForm(PatientEntity patient, Map<String, Object> variables) {
-    try { // process patient and admin for intake form
+  private void notifyAdminAndPatientAboutConsentForm(PatientEntity patient, Map<String, Object> variables, ConsentTypeEnum consentType) {
+    try {
       emailService.sendEmail("fronteers.dev@gmail.com", "Consent Form Submission Details",
           "admin-form-submission-notification", variables);
       emailService.sendEmail(patient.getEmail(), "Acknowledgement",
-          "patient-consent-form-template.html", variables);
+          "patient-consent-form-acknowledgement-template.html", variables);
     } catch (MessagingException e) {
       log.warn(e.getMessage());
       throw new BadRequestException(e.getMessage());
     }
   }
 
-  private void notifyAdminAboutOmhcAndSendIntakeToPatient(PatientEntity patient, Map<String, Object> variables) {
-    try { // process patient and admin for intake form
-      emailService.sendEmail("fronteers.dev@gmail.com", "OMHC Form Submission Details",
-          "admin-form-submission-notification", variables);
+  private void sendIntakeFormToPatient(PatientEntity patient, Map<String, Object> variables) {
+    try {
       emailService.sendEmail(patient.getEmail(), "Next Step",
           "patient-intake-template", variables);
     } catch (MessagingException e) {
@@ -265,6 +304,7 @@ public class PatientService {
     dto.setId(patient.getId());
     dto.setPatientId(UUID.fromString(patientId));
     dto.setForms(setPatientForms(patient));
+    dto.setPrograms(PatientDtoMapper.mapProgramEntitiesToDtos(patient));
     dto.setReviews(null);
     dto.setAppointments(null);
     return dto;
@@ -399,6 +439,81 @@ public class PatientService {
     PatientEntityMapper.updatePatientBasics(patientEntity, request);
     patientRegistrationFormRepository.save(regFormEntity);
     return new Success(true, "Personal Info Updated", "Patient Personal Info Updated Successfully");
+  }
+
+  public Success updateGuarantor(String patientId, Guarantor request) {
+    PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
+    GuarantorEntity existingGuarantorEntity = regFormEntity.getGuarantor();
+    GuarantorEntity updatedGuaratorEntity = patientEntityMapper.mapGuarantor(request, regFormEntity);
+    updatedGuaratorEntity.getAddress().setGuarantor(null);
+    updatedGuaratorEntity.getAddress().setId(null);
+    updatedGuaratorEntity.setAddressId(null);
+    updatedGuaratorEntity.setPatientRegistrationForm(null);
+    updatedGuaratorEntity.setId(null);
+    CopyBeanUtil.copyNonNullProperties(updatedGuaratorEntity, existingGuarantorEntity);
+    patientRegistrationFormRepository.save(regFormEntity);
+    return new Success(true, "Update Successful", "Guarantor Record Updated Successfully");
+  }
+
+  public Success updateParentGuardian(String patientId, ParentGuardian request) {
+    PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
+    ParentGuardianEntity existingPgEntity = regFormEntity.getParentGuardian();
+    ParentGuardianEntity updatedPgEntity = patientEntityMapper.mapParentGuardian(request, regFormEntity);
+    updatedPgEntity.getAddress().setParentGuardian(null);
+    updatedPgEntity.getAddress().setId(null);
+    updatedPgEntity.setAddressId(null);
+    updatedPgEntity.setPatientRegistrationForm(null);
+    updatedPgEntity.setId(null);
+    CopyBeanUtil.copyNonNullProperties(updatedPgEntity, existingPgEntity);
+    patientRegistrationFormRepository.save(regFormEntity);
+    return new Success(true, "Update Successful", "Parent/Guardian Record Updated Successfully");
+  }
+
+  public Success updateEmergencyContact(String patientId, EmergencyContact request) {
+    PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
+    EmergencyContactEntity existingEcEntity = regFormEntity.getEmergencyContact();
+    EmergencyContactEntity updatedEcEntity = patientEntityMapper.mapEmergencyContact(request, regFormEntity);
+    updatedEcEntity.getAddress().setEmergencyContact(null);
+    updatedEcEntity.getAddress().setId(null);
+    updatedEcEntity.setAddressId(null);
+    updatedEcEntity.setPatientRegistrationForm(null);
+    updatedEcEntity.setId(null);
+    CopyBeanUtil.copyNonNullProperties(updatedEcEntity, existingEcEntity);
+    patientRegistrationFormRepository.save(regFormEntity);
+    return new Success(true, "Update Successful", "EmergencyContact Record Updated Successfully");
+  }
+
+//  public Success updatePaymentStructure(String patientId, PaymentStructure request) {
+//    PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
+//    ParentGuardianEntity existingPgEntity = regFormEntity.getParentGuardian();
+//    regFormEntity.setPaymentMode(request.getPaymentMode());
+//    List<InsuranceEntity> existingInsurances = regFormEntity.getInsurances();
+//    if (existingInsurances.isEmpty()){
+//      List<InsuranceEntity> newInsurances = patientEntityMapper.mapInsurances(request, regFormEntity);
+//      regFormEntity.setInsurances(newInsurances);
+//    } else {
+//      // TODO: processupdate
+//    }
+//    patientRegistrationFormRepository.save(regFormEntity);
+//    return new Success(true, "Update Successful", "Payment Structure Updated Successfully");
+//  }
+
+  @Transactional
+  public Success updatePaymentStructure(String patientId, PaymentStructure request) {
+    PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
+    List<InsuranceEntity> existingInsurances = new ArrayList<>(regFormEntity.getInsurances());
+    regFormEntity.getInsurances().clear();
+    insuranceRepository.deleteAll(existingInsurances);
+    regFormEntity.setPaymentMode(request.getPaymentMode());
+    List<InsuranceEntity> newInsurances = patientEntityMapper.mapInsurances(request, regFormEntity);
+    regFormEntity.setInsurances(newInsurances);
+    try {
+      patientRegistrationFormRepository.save(regFormEntity);
+    } catch (Exception e) {
+      log.warn("Exception occurred while saving: ", e);
+      throw new RuntimeException(e);
+    }
+    return new Success(true, "Update Successful", "Payment Structure Updated Successfully");
   }
 
   private void validateEmail(PatientRegistrationFormEntity regFormEntity, String incomingEmail) {

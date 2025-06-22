@@ -20,6 +20,7 @@ import com.fronteers.utils.PatientUtils;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -184,7 +185,7 @@ public class PatientEntityMapper {
   }
 
   // Map guarantor
-  private GuarantorEntity mapGuarantor(Guarantor guarantor, PatientRegistrationFormEntity form) {
+  public GuarantorEntity mapGuarantor(Guarantor guarantor, PatientRegistrationFormEntity form) {
     AddressEntity address = patientUtils.mapAddressProperties(guarantor.getAddress());
     GuarantorEntity guarantorEntity = GuarantorEntity.builder()
         .firstName(guarantor.getFirstName())
@@ -203,7 +204,7 @@ public class PatientEntityMapper {
   }
 
   // Map parent/guardian
-  private ParentGuardianEntity mapParentGuardian(ParentGuardian parentGuardian,
+  public ParentGuardianEntity mapParentGuardian(ParentGuardian parentGuardian,
       PatientRegistrationFormEntity form) {
     AddressEntity address = patientUtils.mapAddressProperties(parentGuardian.getAddress());
     ParentGuardianEntity parentGuardianEntity = ParentGuardianEntity.builder()
@@ -225,7 +226,7 @@ public class PatientEntityMapper {
   }
 
   // Map emergency contact
-  private EmergencyContactEntity mapEmergencyContact(EmergencyContact emergency,
+  public EmergencyContactEntity mapEmergencyContact(EmergencyContact emergency,
       PatientRegistrationFormEntity form) {
     AddressEntity address = patientUtils.mapAddressProperties(emergency.getAddress());
     EmergencyContactEntity emergencyContactEntity = EmergencyContactEntity.builder()
@@ -243,7 +244,7 @@ public class PatientEntityMapper {
   }
 
   // Map insurances
-  private List<InsuranceEntity> mapInsurances(PaymentStructure paymentStructure,
+  public List<InsuranceEntity> mapInsurances(PaymentStructure paymentStructure,
       PatientRegistrationFormEntity form) {
     if (paymentStructure.getPaymentMode().equals(PaymentModeEnum.INSURANCE_CARD) &&
         (paymentStructure.getInsurances() == null || paymentStructure.getInsurances().isEmpty())) {
@@ -274,6 +275,6 @@ public class PatientEntityMapper {
           .build();
       insuranceEntity.getAddress().setInsurance(insuranceEntity);
       return insuranceEntity;
-    }).toList();
+    }).collect(Collectors.toList());
   }
 }

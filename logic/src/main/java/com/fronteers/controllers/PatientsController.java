@@ -2,25 +2,34 @@ package com.fronteers.controllers;
 
 import com.fronteers.brightlife.api.PatientsApi;
 import com.fronteers.brightlife.model.ADHDForm;
+import com.fronteers.brightlife.model.AlcoholDrugHistory;
 import com.fronteers.brightlife.model.AnxietyDisorderForm;
 import com.fronteers.brightlife.model.ConsentForm;
 import com.fronteers.brightlife.model.ConsentTypeEnum;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
+import com.fronteers.brightlife.model.EmergencyContact;
 import com.fronteers.brightlife.model.FileUploadResponse;
+import com.fronteers.brightlife.model.Guarantor;
 import com.fronteers.brightlife.model.IdGenerationResponse;
 import com.fronteers.brightlife.model.InitialEvaluationForm;
 import com.fronteers.brightlife.model.IntakeForm;
+import com.fronteers.brightlife.model.IntakeIntroUpdate;
+import com.fronteers.brightlife.model.IntakePsychHistoryUpdate;
 import com.fronteers.brightlife.model.MedicationConsentForm;
 import com.fronteers.brightlife.model.MoodDisorderAssessmentForm;
 import com.fronteers.brightlife.model.NoticeOfPrivacyPracticesForm;
 import com.fronteers.brightlife.model.PaginatedPatients;
+import com.fronteers.brightlife.model.ParentGuardian;
 import com.fronteers.brightlife.model.Patient;
 import com.fronteers.brightlife.model.PatientIdValidationResponse;
 import com.fronteers.brightlife.model.PatientInformationConsentAndFinancialPolicyForm;
 import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PatientSearch;
+import com.fronteers.brightlife.model.PaymentStructure;
 import com.fronteers.brightlife.model.PersonalInfo;
+import com.fronteers.brightlife.model.Program;
+import com.fronteers.brightlife.model.ProgramTypeEnum;
 import com.fronteers.brightlife.model.ReleaseReceiveForm;
 import com.fronteers.brightlife.model.ScreeningForm;
 import com.fronteers.brightlife.model.SelfPayForm;
@@ -52,6 +61,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.concurrent.SuccessCallback;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -214,6 +224,32 @@ public class PatientsController implements PatientsApi {
     return ResponseEntity.ok(response);
   }
 
+  @Override
+  public ResponseEntity<Success> updateIntakeIntro(Long intakeId, IntakeIntroUpdate request){
+    log.info("Updating Intake form Intro for patient {} with request payload {}",
+        request.getPatientId(), request);
+    Success response = intakeService.updateIntakeIntro(intakeId, request);
+    log.info("Intake form Intro updated successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<Success> updateIntakePsychHistory(Long intakeId, IntakePsychHistoryUpdate request){
+    log.info("Updating Intake form PsychHistory for patient {} with request payload {}",
+        request.getPatientId(), request);
+    Success response = intakeService.updateIntakePsychHistory(intakeId, request);
+    log.info("Intake form PsychHistory updated successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<Success> updateIntakeDrugHistory(Long intakeId, AlcoholDrugHistory request){
+    log.info("Updating Intake form DrugHistory with request payload {}", request);
+    Success response = intakeService.updateIntakeDrugHistory(intakeId, request);
+    log.info("Intake form DrugHistory updated successfully with response payload: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
   //  MedicationConsent
   @Override
   public ResponseEntity<MedicationConsentForm> getMedicationConsent(Long id) {
@@ -321,6 +357,61 @@ public class PatientsController implements PatientsApi {
     log.info("Patient Registration Request payload: {}", request.toString());
     Success response = patientService.submitRegistrationForm(request);
     log.info("Patient Registration Response: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<Success> uploadRegistrationForm(String patientId, OffsetDateTime date,
+      String fileType, String owner, MultipartFile file) {
+    try {
+      log.info("Uploading Completed Patient Registration Form For patient {} on {}", patientId,
+          date);
+      Success response = patientService.updateRegForm(patientId, date, fileType, owner, file);
+      log.info("Patient RegistrationForm Uploaded Successfully with response: {}", response);
+      return ResponseEntity.ok(response);
+    } catch (IOException e) {
+      log.error("File could not be uploaded {}", e.toString());
+      throw new ProcessingException("file could not be uploaded " + e);
+    }
+  }
+
+  @Override
+  public ResponseEntity<Success> updatePersonalInfo(String patientId, PersonalInfo request) {
+    log.info("Updating Personal Info Record for Patient: {}", patientId);
+    Success response = patientService.updatePersonalIfo(patientId, request);
+    log.info("Patient Personal Info Updated Successfully: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<Success> updateGuarantor(String patientId, Guarantor request){
+    log.info("Updating Guarantor Record for Patient {} with request {}", patientId, request);
+    Success response = patientService.updateGuarantor(patientId, request);
+    log.info("Patient Guarantor Record Updated Successfully: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<Success> updateParentGuardian(String patientId, ParentGuardian request){
+    log.info("Updating Parent/Guardian Record for Patient {} with request {}", patientId, request);
+    Success response = patientService.updateParentGuardian(patientId, request);
+    log.info("Patient Parent/Guardian Record Updated Successfully: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<Success> updatePaymentStructure(String patientId, PaymentStructure request){
+    log.info("Updating PaymentStructure Record for Patient {} with request {}", patientId, request);
+    Success response = patientService.updatePaymentStructure(patientId, request);
+    log.info("Patient PaymentStructure Record Updated Successfully: {}", response);
+    return ResponseEntity.ok(response);
+  }
+
+  @Override
+  public ResponseEntity<Success> updateEmergencyContact(String patientId, EmergencyContact request){
+    log.info("Updating EmergencyContact Record for Patient {} with request {}", patientId, request);
+    Success response = patientService.updateEmergencyContact(patientId, request);
+    log.info("Patient EmergencyContact Record Updated Successfully: {}", response);
     return ResponseEntity.ok(response);
   }
 
@@ -451,25 +542,15 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> uploadRegistrationForm(String patientId, OffsetDateTime date,
-      String fileType, String owner, MultipartFile file) {
-    try {
-      log.info("Uploading Completed Patient Registration Form For patient {} on {}", patientId,
-          date);
-      Success response = patientService.updateRegForm(patientId, date, fileType, owner, file);
-      log.info("Patient RegistrationForm Uploaded Successfully with response: {}", response);
-      return ResponseEntity.ok(response);
-    } catch (IOException e) {
-      log.error("File could not be uploaded {}", e.toString());
-      throw new ProcessingException("file could not be uploaded " + e);
-    }
-  }
-
-  @Override
-  public ResponseEntity<Success> updatePersonalInfo(String patientId, PersonalInfo request) {
-    log.info("Updating Personal Info Record for Patient: {}", patientId);
-    Success response = patientService.updatePersonalIfo(patientId, request);
-    log.info("Patient Personal Info Updated Successfully: {}", response);
+  public ResponseEntity<Success> enrollProgram(String patientId, ProgramTypeEnum programType){
+    log.info("Enrolling Patient {} for Program: {}", patientId, programType);
+    Success response = patientService.enrollProgram(patientId, programType);
+    log.info("Patient Successfully Enrolled For Program: {}", response);
     return ResponseEntity.ok(response);
   }
+
+//  @Override
+//  public ResponseEntity<List<Program>> fetchPrograms(String patientId){
+//
+//  }
 }

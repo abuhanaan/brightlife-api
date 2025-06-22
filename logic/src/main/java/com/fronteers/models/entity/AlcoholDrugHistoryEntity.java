@@ -17,6 +17,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -24,7 +25,12 @@ import org.hibernate.annotations.FetchMode;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false, exclude = {
+    "substanceUsages", "pastTreatments", "relativesWithMentalIllnessOrSuicide", "intakeForm"
+})
+@ToString(exclude = {
+    "substanceUsages", "pastTreatments", "relativesWithMentalIllnessOrSuicide", "intakeForm"
+})
 @Entity
 @Table(name = "alcohol_drug_history")
 public class AlcoholDrugHistoryEntity extends BaseEntity {
@@ -42,14 +48,14 @@ public class AlcoholDrugHistoryEntity extends BaseEntity {
   @Column(name = "drink_guilt_check")
   private String drinkGuiltCheck;
 
-  @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL, orphanRemoval = true)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<SubstanceUsageEntity> substanceUsages;
 
   @Column(name = "weekly_average_spending")
   private Double weeklyAverageSpending;
 
-  @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL, orphanRemoval = true)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<PastTreatmentEntity> pastTreatments;
 
@@ -98,7 +104,7 @@ public class AlcoholDrugHistoryEntity extends BaseEntity {
   @Column(name = "others")
   private String otherUsefulInfo;
 
-  @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "alcoholDrugHistory", cascade = CascadeType.ALL, orphanRemoval = true)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<RelativesWithMentalIllnessOrSuicideEntity> relativesWithMentalIllnessOrSuicide;
 

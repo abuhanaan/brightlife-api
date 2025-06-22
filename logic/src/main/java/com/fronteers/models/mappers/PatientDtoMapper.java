@@ -5,6 +5,7 @@ import com.fronteers.brightlife.model.Address;
 import com.fronteers.brightlife.model.AlcoholDrugHistory;
 import com.fronteers.brightlife.model.AnxietyDisorderForm;
 import com.fronteers.brightlife.model.BasicPatientInfo;
+import com.fronteers.brightlife.model.ConsentTypeEnum;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
 import com.fronteers.brightlife.model.EmergencyContact;
@@ -30,6 +31,8 @@ import com.fronteers.brightlife.model.PersonalInfo;
 import com.fronteers.brightlife.model.Pharmacy;
 import com.fronteers.brightlife.model.PolicyHolder;
 import com.fronteers.brightlife.model.PrimaryCarePhysician;
+import com.fronteers.brightlife.model.Program;
+import com.fronteers.brightlife.model.ProgramTypeEnum;
 import com.fronteers.brightlife.model.Referral;
 import com.fronteers.brightlife.model.RelativeWithMentalIllnessOrSuicide;
 import com.fronteers.brightlife.model.ReleaseReceiveForm;
@@ -51,6 +54,7 @@ import com.fronteers.models.entity.PrimaryCarePhysicianEntity;
 import com.fronteers.models.entity.ReferralEntity;
 import com.fronteers.models.entity.forms.AdhdFormEntity;
 import com.fronteers.models.entity.forms.AnxietyDisorderFormEntity;
+import com.fronteers.models.entity.forms.ConsentFormEntity;
 import com.fronteers.models.entity.forms.ControlledSubstanceFormEntity;
 import com.fronteers.models.entity.forms.DepressionAssessmentFormEntity;
 import com.fronteers.models.entity.forms.InitialEvaluationFormEntity;
@@ -65,8 +69,12 @@ import com.fronteers.models.entity.forms.ScreeningFormEntity;
 import com.fronteers.models.entity.forms.SelfPayFormEntity;
 import com.fronteers.models.entity.forms.TerminationPolicyFormEntity;
 import com.fronteers.models.entity.forms.TreatmentConsentTelehealthInPersonTreatmentConsentEntity;
+
+import jakarta.validation.Valid;
+
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -670,5 +678,57 @@ public class PatientDtoMapper {
     pcpDto.setPhone(pcpEntity.getPhone());
     pcpDto.setAddress(PatientDtoMapper.mapAddressEntityToAddressDto(pcpEntity.getAddress()));
     return pcpDto;
+  }
+
+  public static List<Program> mapProgramEntitiesToDtos(PatientEntity patient) {
+    if (patient.getPrograms() == null || patient.getPrograms().isEmpty()) {
+      return Collections.emptyList();
+    }
+    return patient.getPrograms().stream()
+        .map(program -> {
+          ConsentFormEntity consentForm = patient.getConsentForms()
+              .stream()
+              .filter(cf -> cf.getConsentType() == getProgramConsentType(program))
+              .findFirst()
+              .orElse(null);
+          Program programDto = new Program();
+          programDto.setName(program);
+          programDto.setSubmittedConsentForm(consentForm != null);
+          programDto.setConsentForm(consentForm != null ? consentForm.getFile() : null);
+          return programDto;
+        }).toList();
+      }
+
+  private static ConsentTypeEnum getProgramConsentType(ProgramTypeEnum program) {
+    if (program.equals(ProgramTypeEnum.OMHC)){
+      return ConsentTypeEnum.OMHC_CONSENT;
+    }
+    else if (program.equals(ProgramTypeEnum.PRP_ADULTS)){
+      return ConsentTypeEnum.PRP_CONSENT;
+    }
+    else if (program.equals(ProgramTypeEnum.ASAM_0_5_EARLY_INTERVENTION)){
+      return ConsentTypeEnum.ASAM_0_5_EARLY_INTERVENTION;
+    }
+    else if (program.equals(ProgramTypeEnum.ASAM_LEVEL_1_0_OUTPATIENT_TREATMENT)){
+      return ConsentTypeEnum.ASAM_1_0_OUTPATIENT_TREATMENT;
+    }
+    else if (program.equals(ProgramTypeEnum.ASAM_OUTPATIENT_TREATMENT_LEVEL_2_1)){
+      return ConsentTypeEnum.ASAM_2_1_OUTPATIENT_TREATMENT;
+    }
+    else if (program.equals(ProgramTypeEnum.ASAM_LEVEL_OUTPATIENT_TREATMENT_2_5)){
+      return ConsentTypeEnum.ASAM_2_5_OUTPATIENT_TREATMENT;
+    }
+    else if (program.equals(ProgramTypeEnum._3_1_COMMUNITY_HOUSING)){
+      return ConsentTypeEnum.COMMUNITY_HOUSING;
+    }
+    else if (program.equals(ProgramTypeEnum.DUI_DWI)){
+      return ConsentTypeEnum.DUI_DWI;
+    }
+    else if (program.equals(ProgramTypeEnum.SUPPORTED_EMPLOYMENT)){
+      return ConsentTypeEnum.SUPPORTED_EMPLOYMENT;
+    }
+    else {
+      return ConsentTypeEnum.MEDICATION_ASSISTED_WEIGHT_LOSS;
+    }
   }
 }

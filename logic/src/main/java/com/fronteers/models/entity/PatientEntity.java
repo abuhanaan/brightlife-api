@@ -1,5 +1,7 @@
 package com.fronteers.models.entity;
 
+import com.fronteers.brightlife.model.ConsentTypeEnum;
+import com.fronteers.brightlife.model.ProgramTypeEnum;
 import com.fronteers.models.entity.forms.AdhdFormEntity;
 import com.fronteers.models.entity.forms.AnxietyDisorderFormEntity;
 import com.fronteers.models.entity.forms.ConsentFormEntity;
@@ -72,7 +74,7 @@ public class PatientEntity extends BaseEntity {
   private List<ConsentFormEntity> consentForms;
 
   @Column(name = "programs")
-  private Set<String> programs;
+  private Set<ProgramTypeEnum> programs;
 
   @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL)
   private AdhdFormEntity adhdForm;
