@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Acknowledgement Of Form Submission!</title>
+</head>
+<body>
+<h1>Acknowledgement Of <span th:text="${formType}"> form</span> Form Submission!</h1>
+<p>
+  Dear <span th:text="${name}"></span>, </br>
+  The Brightlife team is using this medium to acknowledge
+  the receipt of your appointment submission. A team member would reach out to you
+  to notify you about the next step of your treatment process. Find the details of your appointment below
+</p>
+
+<h3>Appointment Details</h3>
+<p>
+Appointment Date: <span th:text="${date}"></span> </br>
+  Appointment Time: <span th:text="${time}"></span>
+  Service Type: <span th:text="${service}"></span>
+</p>
+<p>
+  If you have any questions or need assistance, feel free to reply to this email.<br>
+  <br>
+  Best regards,<br>
+  The BrightLife Team
+</p>
+</body>
+</html>
