@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class ProgramTypeEnumConverter implements Converter<String, ProgramTypeEnum> {
 
   @Override
-  public ProgramTypeEnum convert(String source){
+  public ProgramTypeEnum convert(String source) {
     return ProgramTypeEnum.fromValue(source);
   }
 }

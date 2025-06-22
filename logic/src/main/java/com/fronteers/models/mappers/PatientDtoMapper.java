@@ -69,9 +69,6 @@ import com.fronteers.models.entity.forms.ScreeningFormEntity;
 import com.fronteers.models.entity.forms.SelfPayFormEntity;
 import com.fronteers.models.entity.forms.TerminationPolicyFormEntity;
 import com.fronteers.models.entity.forms.TreatmentConsentTelehealthInPersonTreatmentConsentEntity;
-
-import jakarta.validation.Valid;
-
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -697,37 +694,28 @@ public class PatientDtoMapper {
           programDto.setConsentForm(consentForm != null ? consentForm.getFile() : null);
           return programDto;
         }).toList();
-      }
+  }
 
   private static ConsentTypeEnum getProgramConsentType(ProgramTypeEnum program) {
-    if (program.equals(ProgramTypeEnum.OMHC)){
+    if (program.equals(ProgramTypeEnum.OMHC)) {
       return ConsentTypeEnum.OMHC_CONSENT;
-    }
-    else if (program.equals(ProgramTypeEnum.PRP_ADULTS)){
+    } else if (program.equals(ProgramTypeEnum.PRP_ADULTS)) {
       return ConsentTypeEnum.PRP_CONSENT;
-    }
-    else if (program.equals(ProgramTypeEnum.ASAM_0_5_EARLY_INTERVENTION)){
+    } else if (program.equals(ProgramTypeEnum.ASAM_0_5_EARLY_INTERVENTION)) {
       return ConsentTypeEnum.ASAM_0_5_EARLY_INTERVENTION;
-    }
-    else if (program.equals(ProgramTypeEnum.ASAM_LEVEL_1_0_OUTPATIENT_TREATMENT)){
+    } else if (program.equals(ProgramTypeEnum.ASAM_LEVEL_1_0_OUTPATIENT_TREATMENT)) {
       return ConsentTypeEnum.ASAM_1_0_OUTPATIENT_TREATMENT;
-    }
-    else if (program.equals(ProgramTypeEnum.ASAM_OUTPATIENT_TREATMENT_LEVEL_2_1)){
+    } else if (program.equals(ProgramTypeEnum.ASAM_OUTPATIENT_TREATMENT_LEVEL_2_1)) {
       return ConsentTypeEnum.ASAM_2_1_OUTPATIENT_TREATMENT;
-    }
-    else if (program.equals(ProgramTypeEnum.ASAM_LEVEL_OUTPATIENT_TREATMENT_2_5)){
+    } else if (program.equals(ProgramTypeEnum.ASAM_LEVEL_OUTPATIENT_TREATMENT_2_5)) {
       return ConsentTypeEnum.ASAM_2_5_OUTPATIENT_TREATMENT;
-    }
-    else if (program.equals(ProgramTypeEnum._3_1_COMMUNITY_HOUSING)){
+    } else if (program.equals(ProgramTypeEnum._3_1_COMMUNITY_HOUSING)) {
       return ConsentTypeEnum.COMMUNITY_HOUSING;
-    }
-    else if (program.equals(ProgramTypeEnum.DUI_DWI)){
+    } else if (program.equals(ProgramTypeEnum.DUI_DWI)) {
       return ConsentTypeEnum.DUI_DWI;
-    }
-    else if (program.equals(ProgramTypeEnum.SUPPORTED_EMPLOYMENT)){
+    } else if (program.equals(ProgramTypeEnum.SUPPORTED_EMPLOYMENT)) {
       return ConsentTypeEnum.SUPPORTED_EMPLOYMENT;
-    }
-    else {
+    } else {
       return ConsentTypeEnum.MEDICATION_ASSISTED_WEIGHT_LOSS;
     }
   }

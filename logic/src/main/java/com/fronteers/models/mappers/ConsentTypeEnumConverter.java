@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ConsentTypeEnumConverter implements Converter<String, ConsentTypeEnum> {
+
   @Override
   public ConsentTypeEnum convert(String source) {
     return ConsentTypeEnum.fromValue(source);

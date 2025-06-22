@@ -47,7 +47,7 @@ public class PatientUtils {
   }
 
   public void confirmPatientUniqueness(String email) {
-    if (email == null){
+    if (email == null) {
       throw new BadRequestException("Email is required");
     }
     PatientEntity patientEntity = patientRepository.findOneByEmail(email);

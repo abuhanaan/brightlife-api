@@ -9,7 +9,6 @@ import com.fronteers.brightlife.model.ConsentTypeEnum;
 import com.fronteers.brightlife.model.ControlledSubstanceForm;
 import com.fronteers.brightlife.model.DepressionAssessmentForm;
 import com.fronteers.brightlife.model.EmergencyContact;
-import com.fronteers.brightlife.model.FileUploadResponse;
 import com.fronteers.brightlife.model.Guarantor;
 import com.fronteers.brightlife.model.IdGenerationResponse;
 import com.fronteers.brightlife.model.InitialEvaluationForm;
@@ -28,7 +27,6 @@ import com.fronteers.brightlife.model.PatientRegistrationForm;
 import com.fronteers.brightlife.model.PatientSearch;
 import com.fronteers.brightlife.model.PaymentStructure;
 import com.fronteers.brightlife.model.PersonalInfo;
-import com.fronteers.brightlife.model.Program;
 import com.fronteers.brightlife.model.ProgramTypeEnum;
 import com.fronteers.brightlife.model.ReleaseReceiveForm;
 import com.fronteers.brightlife.model.ScreeningForm;
@@ -61,7 +59,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.concurrent.SuccessCallback;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -87,9 +84,9 @@ public class PatientsController implements PatientsApi {
   private final TreatmentConsentTelehealthInPersonTreatmentConsentService tctInPersontcService;
 
 
-//  Consent Forms
+  //  Consent Forms
   @Override
-  public ResponseEntity<List<ConsentForm>> getAllConsentForm(String patientId){
+  public ResponseEntity<List<ConsentForm>> getAllConsentForm(String patientId) {
     log.info("Fetching All Consent Forms For Patient: {}", patientId);
     List<ConsentForm> response = patientService.getAllPatientConsents(patientId);
     log.info("Patients Consients Retrieved Successfully: {}", response);
@@ -98,11 +95,12 @@ public class PatientsController implements PatientsApi {
 
   @Override
   public ResponseEntity<Success> uploadConsentForm(UUID patientId,
-      ConsentTypeEnum consentType, OffsetDateTime patientSignDate, MultipartFile file){
+      ConsentTypeEnum consentType, OffsetDateTime patientSignDate, MultipartFile file) {
     try {
       log.info("Uploading {} Form For patient {} on {}", consentType, patientId,
           patientSignDate);
-      Success response = patientService.uploadConsentForm(patientId.toString(), patientSignDate, consentType, file);
+      Success response = patientService.uploadConsentForm(patientId.toString(), patientSignDate,
+          consentType, file);
       log.info("Patient Consent Form Uploaded Successfully with response: {}", response);
       return ResponseEntity.ok(response);
     } catch (IOException e) {
@@ -112,12 +110,13 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<ConsentForm> getConsentForm(String patientId, ConsentTypeEnum consentType){
+  public ResponseEntity<ConsentForm> getConsentForm(String patientId, ConsentTypeEnum consentType) {
     log.info("Fetching {} Form for Patient {}", consentType, patientId);
     ConsentForm response = patientService.getConsentForm(patientId, consentType);
     log.info("Consent Form Fetch Response: {}", response);
     return ResponseEntity.ok(response);
   }
+
   //  ADHD
   @Override
   public ResponseEntity<ADHDForm> getAdhd(Long id) {
@@ -225,7 +224,7 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> updateIntakeIntro(Long intakeId, IntakeIntroUpdate request){
+  public ResponseEntity<Success> updateIntakeIntro(Long intakeId, IntakeIntroUpdate request) {
     log.info("Updating Intake form Intro for patient {} with request payload {}",
         request.getPatientId(), request);
     Success response = intakeService.updateIntakeIntro(intakeId, request);
@@ -234,7 +233,8 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> updateIntakePsychHistory(Long intakeId, IntakePsychHistoryUpdate request){
+  public ResponseEntity<Success> updateIntakePsychHistory(Long intakeId,
+      IntakePsychHistoryUpdate request) {
     log.info("Updating Intake form PsychHistory for patient {} with request payload {}",
         request.getPatientId(), request);
     Success response = intakeService.updateIntakePsychHistory(intakeId, request);
@@ -243,7 +243,8 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> updateIntakeDrugHistory(Long intakeId, AlcoholDrugHistory request){
+  public ResponseEntity<Success> updateIntakeDrugHistory(Long intakeId,
+      AlcoholDrugHistory request) {
     log.info("Updating Intake form DrugHistory with request payload {}", request);
     Success response = intakeService.updateIntakeDrugHistory(intakeId, request);
     log.info("Intake form DrugHistory updated successfully with response payload: {}", response);
@@ -384,7 +385,7 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> updateGuarantor(String patientId, Guarantor request){
+  public ResponseEntity<Success> updateGuarantor(String patientId, Guarantor request) {
     log.info("Updating Guarantor Record for Patient {} with request {}", patientId, request);
     Success response = patientService.updateGuarantor(patientId, request);
     log.info("Patient Guarantor Record Updated Successfully: {}", response);
@@ -392,7 +393,7 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> updateParentGuardian(String patientId, ParentGuardian request){
+  public ResponseEntity<Success> updateParentGuardian(String patientId, ParentGuardian request) {
     log.info("Updating Parent/Guardian Record for Patient {} with request {}", patientId, request);
     Success response = patientService.updateParentGuardian(patientId, request);
     log.info("Patient Parent/Guardian Record Updated Successfully: {}", response);
@@ -400,7 +401,8 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> updatePaymentStructure(String patientId, PaymentStructure request){
+  public ResponseEntity<Success> updatePaymentStructure(String patientId,
+      PaymentStructure request) {
     log.info("Updating PaymentStructure Record for Patient {} with request {}", patientId, request);
     Success response = patientService.updatePaymentStructure(patientId, request);
     log.info("Patient PaymentStructure Record Updated Successfully: {}", response);
@@ -408,7 +410,8 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> updateEmergencyContact(String patientId, EmergencyContact request){
+  public ResponseEntity<Success> updateEmergencyContact(String patientId,
+      EmergencyContact request) {
     log.info("Updating EmergencyContact Record for Patient {} with request {}", patientId, request);
     Success response = patientService.updateEmergencyContact(patientId, request);
     log.info("Patient EmergencyContact Record Updated Successfully: {}", response);
@@ -542,7 +545,7 @@ public class PatientsController implements PatientsApi {
   }
 
   @Override
-  public ResponseEntity<Success> enrollProgram(String patientId, ProgramTypeEnum programType){
+  public ResponseEntity<Success> enrollProgram(String patientId, ProgramTypeEnum programType) {
     log.info("Enrolling Patient {} for Program: {}", patientId, programType);
     Success response = patientService.enrollProgram(patientId, programType);
     log.info("Patient Successfully Enrolled For Program: {}", response);

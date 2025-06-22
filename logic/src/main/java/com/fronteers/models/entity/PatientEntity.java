@@ -1,6 +1,5 @@
 package com.fronteers.models.entity;
 
-import com.fronteers.brightlife.model.ConsentTypeEnum;
 import com.fronteers.brightlife.model.ProgramTypeEnum;
 import com.fronteers.models.entity.forms.AdhdFormEntity;
 import com.fronteers.models.entity.forms.AnxietyDisorderFormEntity;
@@ -25,9 +24,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -7,12 +7,13 @@
 <body>
 <h1>Next Step Of your Behavioral treatment Journey</h1>
 <p>
-  Dear <span th:text="${name}">Patient</span>, you have just been enrolled to <span th:text="${program}"></span> Program.
+  Dear <span th:text="${name}">Patient</span>, you have just been enrolled to <span
+    th:text="${program}"></span> Program.
   To complete the enrollment process, you are required the complete the consent form below.
 </p>
 <p>
   Click the link below to complete your <span th:text="${program}"></span> consent form :<br>
-  <a th:href="${formLink}" target="_blank">intake form</a>
+  <a target="_blank" th:href="${formLink}">intake form</a>
 </p>
 <p>
   If you have any questions or need assistance, feel free to reply to this email.<br>

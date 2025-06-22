@@ -21,7 +21,6 @@ import com.fronteers.brightlife.model.Success;
 import com.fronteers.exceptions.BadRequestException;
 import com.fronteers.exceptions.ConflictException;
 import com.fronteers.exceptions.NotFoundException;
-import com.fronteers.exceptions.ProcessingException;
 import com.fronteers.models.entity.EmergencyContactEntity;
 import com.fronteers.models.entity.GuarantorEntity;
 import com.fronteers.models.entity.InsuranceEntity;
@@ -103,8 +102,10 @@ public class PatientService {
         "omhcForm", feBaseUrl + "/forms/consent/omhc-consent/" + request.getPatientId()
     );
     try {
-      emailService.sendEmail("fronteers.dev@gmail.com", "New Patient Registration", "admin-notification", variables);
-      emailService.sendEmail(patientRegistrationFormEntity.getEmail(), "Patient Onboarding Message", "patient-onboarding", variables);
+      emailService.sendEmail("fronteers.dev@gmail.com", "New Patient Registration",
+          "admin-notification", variables);
+      emailService.sendEmail(patientRegistrationFormEntity.getEmail(), "Patient Onboarding Message",
+          "patient-onboarding", variables);
     } catch (MessagingException e) {
       log.warn(e.getMessage());
       throw new BadRequestException(e.getMessage());
@@ -132,39 +133,37 @@ public class PatientService {
         "program", programType.getValue()
     ));
     String formLink = "";
-    if (programType.equals(ProgramTypeEnum.PRP_ADULTS)){
+    if (programType.equals(ProgramTypeEnum.PRP_ADULTS)) {
       formLink = feBaseUrl + "/forms/consent/prp-consent/" + patient.getPatientId();
-    }
-    else if (programType.equals(ProgramTypeEnum.ASAM_0_5_EARLY_INTERVENTION)){
+    } else if (programType.equals(ProgramTypeEnum.ASAM_0_5_EARLY_INTERVENTION)) {
       formLink = feBaseUrl + "/forms/consent/asam-0.5-early-intervention/" + patient.getPatientId();
-    }
-    else if (programType.equals(ProgramTypeEnum.ASAM_LEVEL_1_0_OUTPATIENT_TREATMENT)){
-      formLink = feBaseUrl + "/forms/consent/asam-1.0-outpatient-treatment/" + patient.getPatientId();
-    }
-    else if (programType.equals(ProgramTypeEnum.ASAM_OUTPATIENT_TREATMENT_LEVEL_2_1)){
-      formLink = feBaseUrl + "/forms/consent/asam-2.1-outpatient-treatment/" + patient.getPatientId();
-    }
-    else if (programType.equals(ProgramTypeEnum.ASAM_LEVEL_OUTPATIENT_TREATMENT_2_5)){
-      formLink = feBaseUrl + "/forms/consent/asam-2.5-outpatient-treatment/" + patient.getPatientId();
-    }
-    else if (programType.equals(ProgramTypeEnum._3_1_COMMUNITY_HOUSING)){
+    } else if (programType.equals(ProgramTypeEnum.ASAM_LEVEL_1_0_OUTPATIENT_TREATMENT)) {
+      formLink =
+          feBaseUrl + "/forms/consent/asam-1.0-outpatient-treatment/" + patient.getPatientId();
+    } else if (programType.equals(ProgramTypeEnum.ASAM_OUTPATIENT_TREATMENT_LEVEL_2_1)) {
+      formLink =
+          feBaseUrl + "/forms/consent/asam-2.1-outpatient-treatment/" + patient.getPatientId();
+    } else if (programType.equals(ProgramTypeEnum.ASAM_LEVEL_OUTPATIENT_TREATMENT_2_5)) {
+      formLink =
+          feBaseUrl + "/forms/consent/asam-2.5-outpatient-treatment/" + patient.getPatientId();
+    } else if (programType.equals(ProgramTypeEnum._3_1_COMMUNITY_HOUSING)) {
       formLink = feBaseUrl + "/forms/consent/community-housing/" + patient.getPatientId();
-    }
-    else if (programType.equals(ProgramTypeEnum.DUI_DWI)){
+    } else if (programType.equals(ProgramTypeEnum.DUI_DWI)) {
       formLink = feBaseUrl + "/forms/consent/dui-dwi/" + patient.getPatientId();
-    }
-    else if (programType.equals(ProgramTypeEnum.SUPPORTED_EMPLOYMENT)){
+    } else if (programType.equals(ProgramTypeEnum.SUPPORTED_EMPLOYMENT)) {
       formLink = feBaseUrl + "/forms/consent/supported-employment/" + patient.getPatientId();
-    }
-    else if (programType.equals(ProgramTypeEnum.MEDICATION_ASSISTED_WEIGHTLOSS)){
-      formLink = feBaseUrl + "/forms/consent/medication-assisted-weight-loss/" + patient.getPatientId();
+    } else if (programType.equals(ProgramTypeEnum.MEDICATION_ASSISTED_WEIGHTLOSS)) {
+      formLink =
+          feBaseUrl + "/forms/consent/medication-assisted-weight-loss/" + patient.getPatientId();
     } else {
       throw new BadRequestException("Unsupported Program Type");
     }
     variables.put("formLink", formLink);
     try {
-      emailService.sendEmail("fronteers.dev@gmail.com", "Patient Program Enrollment Notification", "admin-notification", variables);
-      emailService.sendEmail(patient.getEmail(), "Patient Program Enrollment Notification", "patient-program-enrollment-template", variables);
+      emailService.sendEmail("fronteers.dev@gmail.com", "Patient Program Enrollment Notification",
+          "admin-notification", variables);
+      emailService.sendEmail(patient.getEmail(), "Patient Program Enrollment Notification",
+          "patient-program-enrollment-template", variables);
     } catch (MessagingException e) {
       log.warn(e.getMessage());
       throw new BadRequestException(e.getMessage());
@@ -175,7 +174,8 @@ public class PatientService {
       ConsentTypeEnum consentType, MultipartFile file) throws IOException {
     PatientEntity patient = patientUtils.checkIfPatientExists(patientId);
     checkIfConsentFormAlreadyExists(patient, consentType);
-    FileUploadResponse uploadResponse = fileUploadService.upload(consentType.name(), patientId, file);
+    FileUploadResponse uploadResponse = fileUploadService.upload(consentType.name(), patientId,
+        file);
     ConsentFormEntity newConsentForm = ConsentFormEntity.builder()
         .consentType(consentType)
         .file(uploadResponse.getFileUrl())
@@ -191,10 +191,10 @@ public class PatientService {
         "intakeForm", feBaseUrl + "/forms/intake-form/" + patient.getPatientId()
     ));
     notifyAdminAndPatientAboutConsentForm(patient, variables, consentType);
-    if (consentType.getValue().equals(ConsentTypeEnum.OMHC_CONSENT.getValue())){
+    if (consentType.getValue().equals(ConsentTypeEnum.OMHC_CONSENT.getValue())) {
       sendIntakeFormToPatient(patient, variables);
     }
-    return  new Success(true, "Form Uploaded Successfully",
+    return new Success(true, "Form Uploaded Successfully",
         String.format(consentType + " Uploaded Successfully"));
   }
 
@@ -204,9 +204,11 @@ public class PatientService {
   }
 
   public ConsentForm getConsentForm(String patientId, ConsentTypeEnum consentType) {
-    ConsentFormEntity consentForm = consentRepository.findOneByPatient_PatientIdAndConsentType(patientId, consentType)
-        .orElseThrow(() -> new NotFoundException(String.format("Consent form of type %s not found for patient %s",
-            consentType, patientId)));
+    ConsentFormEntity consentForm = consentRepository.findOneByPatient_PatientIdAndConsentType(
+            patientId, consentType)
+        .orElseThrow(() -> new NotFoundException(
+            String.format("Consent form of type %s not found for patient %s",
+                consentType, patientId)));
     return ConsentFormMapper.mapConsentEntityToDto(consentForm);
   }
 
@@ -223,7 +225,8 @@ public class PatientService {
     return new Success(true, "Reg Form Uploaded", "Completed Reg Form Uploaded Successfully");
   }
 
-  private void notifyAdminAndPatientAboutConsentForm(PatientEntity patient, Map<String, Object> variables, ConsentTypeEnum consentType) {
+  private void notifyAdminAndPatientAboutConsentForm(PatientEntity patient,
+      Map<String, Object> variables, ConsentTypeEnum consentType) {
     try {
       emailService.sendEmail("fronteers.dev@gmail.com", "Consent Form Submission Details",
           "admin-form-submission-notification", variables);
@@ -321,7 +324,8 @@ public class PatientService {
 
   private Forms setPatientForms(PatientEntity patient) {
     Forms patientForms = new Forms();
-    patientForms.setConsentForms(ConsentFormMapper.mapConsentEntitiesToDtos(patient.getConsentForms()));
+    patientForms.setConsentForms(
+        ConsentFormMapper.mapConsentEntitiesToDtos(patient.getConsentForms()));
     patientForms.setAdhdForm(patient.getAdhdForm() != null ? PatientDtoMapper.mapAdhdEntityToDto(
         patient.getAdhdForm()) : null);
     patientForms.setAnxietyDisorderForm(patient.getAnxietyDisorderForm() != null ?
@@ -444,7 +448,8 @@ public class PatientService {
   public Success updateGuarantor(String patientId, Guarantor request) {
     PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
     GuarantorEntity existingGuarantorEntity = regFormEntity.getGuarantor();
-    GuarantorEntity updatedGuaratorEntity = patientEntityMapper.mapGuarantor(request, regFormEntity);
+    GuarantorEntity updatedGuaratorEntity = patientEntityMapper.mapGuarantor(request,
+        regFormEntity);
     updatedGuaratorEntity.getAddress().setGuarantor(null);
     updatedGuaratorEntity.getAddress().setId(null);
     updatedGuaratorEntity.setAddressId(null);
@@ -458,7 +463,8 @@ public class PatientService {
   public Success updateParentGuardian(String patientId, ParentGuardian request) {
     PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
     ParentGuardianEntity existingPgEntity = regFormEntity.getParentGuardian();
-    ParentGuardianEntity updatedPgEntity = patientEntityMapper.mapParentGuardian(request, regFormEntity);
+    ParentGuardianEntity updatedPgEntity = patientEntityMapper.mapParentGuardian(request,
+        regFormEntity);
     updatedPgEntity.getAddress().setParentGuardian(null);
     updatedPgEntity.getAddress().setId(null);
     updatedPgEntity.setAddressId(null);
@@ -472,7 +478,8 @@ public class PatientService {
   public Success updateEmergencyContact(String patientId, EmergencyContact request) {
     PatientRegistrationFormEntity regFormEntity = checkIfPatientRegistrationFormExists(patientId);
     EmergencyContactEntity existingEcEntity = regFormEntity.getEmergencyContact();
-    EmergencyContactEntity updatedEcEntity = patientEntityMapper.mapEmergencyContact(request, regFormEntity);
+    EmergencyContactEntity updatedEcEntity = patientEntityMapper.mapEmergencyContact(request,
+        regFormEntity);
     updatedEcEntity.getAddress().setEmergencyContact(null);
     updatedEcEntity.getAddress().setId(null);
     updatedEcEntity.setAddressId(null);
